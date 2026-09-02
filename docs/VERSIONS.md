@@ -2,10 +2,10 @@
 
 Última verificación: **2026-09-02**
 
-> **Estado del PASO 00: INCOMPLETO.** Hay 3 acciones de instalación pendientes que
-> requieren ejecución en terminal por el usuario (Python 3.14.7, PostgreSQL 18.6,
-> PostGIS) y la prueba de compatibilidad 00.6, que depende de ellas. Ver
-> "Incompatibilidades y pendientes detectados".
+> **Estado del PASO 00: COMPLETO.** Todos los criterios de aceptación cumplidos.
+> Python 3.14.7 gestionado por uv; PostgreSQL 18.6 con `uuidv7()` nativo y las cinco
+> extensiones disponibles; librerías backend instaladas desde ruedas binarias en 3.14.7
+> con conexión real verificada. Pendientes solo del toolchain móvil (no bloquean 01–03).
 
 ## Entorno base
 | Componente | Versión | Comando de verificación | Notas |
@@ -16,10 +16,10 @@
 ## Base de datos
 | Componente | Versión | Notas |
 |---|---|---|
-| PostgreSQL servidor (corriendo) | **18.3** (Homebrew) | ⚠️ Objetivo 18.6. Homebrew ya ofrece 18.6 (`brew upgrade postgresql@18`). |
-| PostgreSQL cliente (`psql` en PATH) | 18.1 (libpq keg) | ⚠️ Segundo cliente conviviendo. Tras el upgrade, alinear el PATH. |
-| `uuidv7()` nativo | ✅ disponible en 18.3 | Devuelve UUID. No instalar extensión de terceros. |
-| PostGIS | ❌ **no disponible** | No figura en `pg_available_extensions`. Instalar (`brew install postgis`) y verificar versión compatible con PG18. |
+| PostgreSQL servidor | **18.6** (Homebrew) | `SHOW server_version;` → 18.6. |
+| PostgreSQL cliente (`psql`) | **18.6** | Alineado con el servidor tras el upgrade. |
+| `uuidv7()` nativo | ✅ | Devuelve UUID en 18.6. No usar extensión de terceros. |
+| PostGIS | ✅ **3.6.4** | `pg_available_extensions`. Homebrew la trae compilada contra PG18. |
 | pgcrypto | ✅ 1.4 | disponible |
 | pg_trgm | ✅ 1.6 | disponible |
 | btree_gist | ✅ 1.8 | disponible |
@@ -28,19 +28,21 @@
 ## Backend
 | Componente | Versión | ¿Rueda binaria? | Notas |
 |---|---|---|---|
-| Python (objetivo) | **3.14.7** | — | ❌ No instalado. Ver pendiente. |
-| Python (instalado) | 3.14.5 (Homebrew) / 3.13.5 (sistema) | — | `python3.14` = 3.14.5; `python3` = 3.13.5. |
-| uv | 0.11.7 (2026-04-15) | — | ⚠️ Su índice solo llega a 3.14.4 descargable; **no lista 3.14.6/3.14.7**. Requiere `uv self update`. |
-| SQLAlchemy | (sin verificar) | | Bloqueado hasta tener 3.14.7 (paso 00.6). |
-| psycopg | (sin verificar) | | Idem. |
-| Pydantic | (sin verificar) | | Idem. |
-| Alembic | (sin verificar) | | Idem. |
-| Framework web | (sin definir) | | Se decide en PASO 01. |
+| Python | **3.14.7** | — | Gestionado por uv (`~/.local/share/uv/python/cpython-3.14.7`). |
+| uv | 0.12.9 | — | Actualizado desde 0.11.7 para poder resolver 3.14.7. |
+| SQLAlchemy | 2.0.52 | ✅ sí | Importa OK en 3.14.7. |
+| psycopg | 3.3.5 (+ `psycopg-binary` 3.3.5, `psycopg-pool` 3.3.1) | ✅ sí | Conexión real a PG 18.6 verificada. |
+| Pydantic | 2.13.5 (`pydantic-core` 2.46.5) | ✅ sí | Sin DeprecationWarning de anotaciones (PEP 649). |
+| Alembic | 1.19.1 | ✅ sí | Importa OK. |
+| Framework web | (sin definir) | — | Se decide en PASO 01. |
+
+> Prueba 00.6: `uv pip install` resolvió e instaló 14 paquetes en 44 ms **sin compilar
+> desde fuente** (todas ruedas para cp314). Sin advertencias relacionadas con anotaciones.
 
 ## Frontend
 | Componente | Versión | Notas |
 |---|---|---|
-| Node.js | 22.18.0 | Línea 22 LTS. Confirmar si se adopta la LTS activa actual o se fija la 22.x. |
+| Node.js | 22.18.0 | Línea 22 LTS. (Pendiente de decisión: mantener 22.x o mover a LTS activa.) |
 | npm | 11.5.2 | — |
 | pnpm | 10.28.2 | vía corepack (0.33.0) |
 | Next.js / React / Tailwind / shadcn/ui | (sin definir) | Se fijan en PASO 02 |
@@ -48,30 +50,35 @@
 ## Móvil
 | Componente | Versión | Notas |
 |---|---|---|
-| @capacitor/core | **8.5.1** (a fijar) | Última estable de la serie 8.5.x (8.5.2 solo nightly). No subir a 9.x (alpha). |
+| @capacitor/core | **8.5.1** | Última estable de la serie 8.5.x (8.5.2 solo nightly). No subir a 9.x (alpha). Fijar en PASO 04. |
 | @capacitor/cli | 8.5.1 | — |
 | @capacitor/android | 8.5.1 | — |
 | @capacitor/ios | 8.5.1 | SPM por defecto desde Capacitor 8. |
-| JDK | 17.0.14 (JBR) | Es el runtime de JetBrains. Para build Android conviene un JDK estándar (17/21). |
-| Android SDK | ❌ `ANDROID_HOME` vacío | Pendiente. No bloquea pasos 01–03. |
-| Xcode | ❌ no disponible | `xcodebuild` no responde. Capacitor 8.5 requiere UIScene con Xcode 27. Pendiente. No bloquea 01–03. |
+| JDK | 17.0.14 (JBR) | Runtime de JetBrains. Para build Android usar un JDK estándar (17/21). |
+| Android SDK | ⏸️ `ANDROID_HOME` vacío | Pendiente. No bloquea pasos 01–03. |
+| Xcode | ⏸️ no disponible | `xcodebuild` no responde. Capacitor 8.5 requiere UIScene con Xcode 27. Pendiente. No bloquea 01–03. |
 
-## Incompatibilidades y pendientes detectados
+## Criterios de aceptación del PASO 00
+- [x] Python 3.14.7 disponible (vía uv) e imprime exactamente `Python 3.14.7`
+- [x] Servidor PostgreSQL 18.6
+- [x] `SELECT uuidv7()` devuelve un UUID
+- [x] Las cinco extensiones (postgis, pgcrypto, pg_trgm, btree_gist, unaccent) disponibles
+- [x] Node y pnpm registrados
+- [x] Versión exacta de Capacitor 8.5.x identificada (8.5.1)
+- [x] SQLAlchemy, psycopg, Pydantic y Alembic instalan e importan en 3.14.7
+- [x] Conexión psycopg contra PostgreSQL 18.6 funciona
+- [x] Repositorio git inicializado (este repo)
+- [x] `docs/VERSIONS.md` completo
+- [x] `docs/especificacion.md` con el documento funcional v2.0
 
-1. **Python 3.14.7 no instalable con el uv actual.** El índice de uv 0.11.7 (abr-2026)
-   solo ofrece hasta 3.14.4 descargable; 3.14.6/3.14.7 no aparecen. Acción propuesta:
-   `uv self update` y reintentar `uv python install 3.14.7`. Si tras actualizar uv la
-   versión sigue sin existir en el índice → **detener y reportar** (Regla 1), no sustituir.
-2. **PostgreSQL servidor en 18.3, objetivo 18.6.** Homebrew ya tiene 18.6 bottled.
-   Acción: `brew upgrade postgresql@18` + reinicio del servicio, luego reverificar
-   `SHOW server_version;`.
-3. **Dos clientes psql** (18.1 libpq + 18.3 postgresql@18). Resolver precedencia de PATH
-   tras el upgrade para que cliente y servidor coincidan en 18.6.
-4. **PostGIS ausente.** Instalar y registrar la versión exacta, confirmando compatibilidad
-   con PG18 antes de asumir nada.
-5. **Rol `postgres` inexistente.** El superusuario del server Homebrew es el usuario del SO
-   (`Jorge`), no `postgres`. Las verificaciones se corrieron con `psql -d postgres`. Decidir
-   en PASO 01 si se crea un rol `postgres`/rol de aplicación dedicado.
-6. **00.6 (compatibilidad SQLAlchemy/psycopg/Pydantic/Alembic en 3.14.7) pendiente**,
-   bloqueada por el pendiente 1.
-7. **Toolchain móvil incompleto** (Android SDK, Xcode). No bloquea backend/web (pasos 01–03).
+## Pendientes (no bloquean PASO 01–03)
+1. **Toolchain móvil**: Android SDK (`ANDROID_HOME`) y Xcode sin configurar. Se resuelven
+   antes del PASO 04 (móvil). Para Android, además, usar un JDK estándar en vez del JBR.
+2. **Node**: confirmar si se fija la línea 22.x o se adopta la LTS activa actual (decisión de PASO 02).
+3. **Rol de BD**: el superusuario del server Homebrew es el usuario del SO (`Jorge`), no
+   `postgres`. Definir en PASO 01 el rol de aplicación dedicado.
+
+## Estructura del proyecto (nota)
+El documento del PASO 00 planteaba `mkdir suite-tarjeta && git init`. Como este repositorio
+(`Suite-Tarjeta/`) ya estaba inicializado y sincronizado con GitHub, se usa **este repo como
+raíz del proyecto** en lugar de anidar otro repositorio.
