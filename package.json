@@ -1,0 +1,18 @@
+{
+  "name": "suite-tarjeta",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo de la Tarjeta de Beneficios Municipal",
+  "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "workspaces": [
+    "apps/web",
+    "apps/mobile",
+    "packages/*"
+  ],
+  "scripts": {
+    "//": "Los scripts de web/mobile se agregan en el PASO 02"
+  }
+}

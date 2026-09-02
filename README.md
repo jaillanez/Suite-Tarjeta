@@ -65,13 +65,35 @@ El **comercio absorbe el 100% del descuento** (el municipio no pone caja) y fija
 
 ```
 Suite-Tarjeta/
+├── apps/
+│   ├── api/                 # backend FastAPI (Python 3.14 + SQLAlchemy 2)
+│   ├── web/                 # Next.js SSR — público + portales (PASO 02)
+│   └── mobile/              # Next.js export + Capacitor (PASO 02)
+├── packages/
+│   ├── ui/                  # componentes shadcn/ui compartidos (PASO 02)
+│   ├── api-client/          # cliente TS generado del OpenAPI (PASO 02)
+│   └── config/              # tsconfig/eslint/tailwind compartidos (PASO 02)
 ├── docs/
-│   ├── especificacion.md   # Especificación funcional completa (v2.0)
-│   └── VERSIONS.md         # Versiones fijadas del entorno (PASO 00)
+│   ├── especificacion.md    # Especificación funcional completa (v2.0)
+│   ├── VERSIONS.md          # Versiones fijadas del entorno
+│   └── arquitectura.md      # Capas, módulos y reglas de dependencia
+├── infra/
+│   ├── docker-compose.yml   # PostgreSQL (perfil) + Redis para desarrollo
+│   └── sql/00-extensions.sql
+├── package.json             # workspace pnpm
+├── pnpm-workspace.yaml
 ├── .editorconfig
 ├── .gitignore
 └── README.md
 ```
+
+### Correr el backend (desarrollo)
+
+```bash
+cd apps/api && cp .env.example .env && uv sync --group dev && uv run alembic upgrade head && uv run uvicorn tarjeta.main:app --reload
+```
+
+Salud: `GET http://localhost:8000/health` y `GET /health/db`. Detalle de arquitectura en [`docs/arquitectura.md`](docs/arquitectura.md).
 
 ## Estado
 

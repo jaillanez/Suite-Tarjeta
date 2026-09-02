@@ -34,10 +34,29 @@
 | psycopg | 3.3.5 (+ `psycopg-binary` 3.3.5, `psycopg-pool` 3.3.1) | ✅ sí | Conexión real a PG 18.6 verificada. |
 | Pydantic | 2.13.5 (`pydantic-core` 2.46.5) | ✅ sí | Sin DeprecationWarning de anotaciones (PEP 649). |
 | Alembic | 1.19.1 | ✅ sí | Importa OK. |
-| Framework web | (sin definir) | — | Se decide en PASO 01. |
+| FastAPI | **0.141.1** | ✅ sí | Fijada en PASO 01. Starlette 1.6.0. |
+| uvicorn[standard] | **0.52.4** | ✅ sí | uvloop 0.22.1, watchfiles 1.2.0, websockets 17.1. |
+| pydantic-settings | **2.15.0** | ✅ sí | — |
+| redis | **8.1.0** | ✅ sí | Cliente Python. |
+| httpx | **0.28.1** | ✅ sí | Cliente HTTP (padrón, tests). |
+| greenlet | 3.5.5 | ✅ sí | Requerido por SQLAlchemy async (extra `[asyncio]`). |
 
 > Prueba 00.6: `uv pip install` resolvió e instaló 14 paquetes en 44 ms **sin compilar
 > desde fuente** (todas ruedas para cp314). Sin advertencias relacionadas con anotaciones.
+>
+> PASO 01: todas las dependencias del backend (prod y dev) resolvieron como **ruedas
+> binarias** para cp314 — ninguna compila desde fuente. Dev: ruff 0.16.5, mypy 2.3.1,
+> pytest 9.1.1, pytest-asyncio 1.4.0, testcontainers 4.15.0, import-linter 2.14.
+
+## Base de datos de desarrollo (PASO 01)
+| Tema | Definición |
+|---|---|
+| Camino elegido | **A — PostgreSQL nativo de Homebrew** (ya verificado en PASO 00). Redis nativo de Homebrew. |
+| Rol runtime | `tarjeta_app` (LOGIN, sin DDL). `CREATE TABLE` como este rol da *permission denied* (verificado). |
+| Rol migraciones | `tarjeta_migrator` (dueño del esquema, corre Alembic). |
+| Base | `tarjeta`, OWNER `tarjeta_migrator`, con las 5 extensiones (PostGIS 3.6.4). |
+| Redis | Homebrew, `redis-cli ping` → PONG. |
+| Docker | OrbStack (runtime del `docker` CLI). Usado por `testcontainers` en el test de integración. |
 
 ## Frontend
 | Componente | Versión | Notas |
@@ -75,8 +94,13 @@
 1. **Toolchain móvil**: Android SDK (`ANDROID_HOME`) y Xcode sin configurar. Se resuelven
    antes del PASO 04 (móvil). Para Android, además, usar un JDK estándar en vez del JBR.
 2. **Node**: confirmar si se fija la línea 22.x o se adopta la LTS activa actual (decisión de PASO 02).
-3. **Rol de BD**: el superusuario del server Homebrew es el usuario del SO (`Jorge`), no
-   `postgres`. Definir en PASO 01 el rol de aplicación dedicado.
+3. **Rol de BD**: resuelto en PASO 01 (`tarjeta_app` / `tarjeta_migrator`).
+4. **Test de integración con testcontainers**: escrito y correcto, pero en esta máquina
+   OrbStack **no logra descargar imágenes** (pulls colgados vía su proxy interno; incluso
+   `alpine` no baja). El test se saltea limpio si la imagen no está local. El mismo camino
+   api → sesión async → base se verificó **en vivo contra el PostgreSQL 18.6 nativo**
+   (`GET /health/db` devuelve `uuidv7()` + "PostgreSQL 18.6"). Para correr el de
+   testcontainers, una vez que Docker pueda bajar imágenes: `docker pull postgres:18.6`.
 
 ## Estructura del proyecto (nota)
 El documento del PASO 00 planteaba `mkdir suite-tarjeta && git init`. Como este repositorio
