@@ -1,46 +1,50 @@
-# Dependencias
+# === Python / backend ===
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# === Node / frontend ===
 node_modules/
 .pnp/
 .pnp.js
-vendor/
-
-# Builds / salidas
+.next/
+out/
 dist/
 build/
-out/
 *.tsbuildinfo
 
-# Entornos y secretos
+# === Móvil (Capacitor) ===
+android/
+ios/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+
+# === Entornos y secretos ===
 .env
 .env.*
 !.env.example
 *.pem
 *.key
 
-# Logs
+# === Logs ===
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 
-# Sistema operativo
+# === Cobertura / caché ===
+coverage/
+.cache/
+
+# === Sistema operativo / editores ===
 .DS_Store
 Thumbs.db
-
-# Editores / IDEs
 .idea/
 .vscode/
 *.swp
 *.swo
-
-# Cobertura / caché de tests
-coverage/
-.cache/
-
-# Flutter / móvil (si aplica)
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-*.iml

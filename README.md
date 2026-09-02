@@ -2,7 +2,8 @@
 
 Plataforma de **tarjeta de beneficios municipal** para el municipio de Rivadavia (San Juan). Conecta a **vecinos**, **comercios** y **el municipio** en un único sistema de descuentos, puntos y campañas, con el objetivo de fomentar el consumo local y **premiar al contribuyente al día**.
 
-> 📄 Especificación funcional completa: [`docs/especificacion-funcional-v2.md`](docs/especificacion-funcional-v2.md) — es la fuente de verdad del producto.
+> 📄 Especificación funcional completa: [`docs/especificacion.md`](docs/especificacion.md) — es la fuente de verdad del producto.
+> 🔧 Versiones fijadas del entorno: [`docs/VERSIONS.md`](docs/VERSIONS.md).
 
 ---
 
@@ -65,7 +66,10 @@ El **comercio absorbe el 100% del descuento** (el municipio no pone caja) y fija
 ```
 Suite-Tarjeta/
 ├── docs/
-│   └── especificacion-funcional-v2.md   # Especificación funcional completa (v2.0)
+│   ├── especificacion.md   # Especificación funcional completa (v2.0)
+│   └── VERSIONS.md         # Versiones fijadas del entorno (PASO 00)
+├── .editorconfig
+├── .gitignore
 └── README.md
 ```
 
