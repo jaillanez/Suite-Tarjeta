@@ -1,22 +1,43 @@
-name: api
+name: ci
 
+# Se dispara siempre (sin filtro de paths en el trigger). El job `changes` decide
+# qué áreas corren; `ci-ok` agrega el resultado y es el único check obligatorio.
 on:
   push:
     branches: [main]
-    paths:
-      - "apps/api/**"
-      - ".github/workflows/api.yml"
   pull_request:
-    paths:
-      - "apps/api/**"
-      - ".github/workflows/api.yml"
 
 concurrency:
-  group: api-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      web: ${{ steps.filter.outputs.web }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'apps/api/**'
+              - '.github/workflows/ci.yml'
+            web:
+              - 'apps/web/**'
+              - 'apps/mobile/**'
+              - 'packages/**'
+              - 'package.json'
+              - 'pnpm-workspace.yaml'
+              - 'pnpm-lock.yaml'
+              - '.github/workflows/ci.yml'
+
   api:
+    needs: changes
+    if: ${{ needs.changes.outputs.api == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -32,7 +53,6 @@ jobs:
       TARJETA_JWT_SECRET: ci-insecure-secret-change-me
     services:
       postgres:
-        # PostgreSQL 18 + PostGIS 3.6 (verificado en Docker Hub, ver docs/VERSIONS.md)
         image: postgis/postgis:18-3.6
         env:
           POSTGRES_USER: tarjeta
@@ -45,48 +65,35 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v5
       - name: Instalar uv
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-
       - name: Instalar Python 3.14.7
         run: uv python install 3.14.7
-
       - name: Instalar dependencias (lock congelado)
         run: uv sync --group dev --frozen
-
       - name: Crear extensiones en la base de test
         run: PGPASSWORD=tarjeta psql -h localhost -U tarjeta -d tarjeta_test -f "$GITHUB_WORKSPACE/infra/sql/00-extensions.sql"
-
-      # Los cuatro chequeos de calidad corren por separado; con !cancelled() se ejecutan
-      # todos aunque uno falle, para ver exactamente qué se rompió. El job igual falla.
       - name: ruff check
         if: ${{ !cancelled() }}
         run: uv run ruff check .
-
       - name: ruff format --check
         if: ${{ !cancelled() }}
         run: uv run ruff format --check .
-
       - name: mypy
         if: ${{ !cancelled() }}
         run: uv run mypy src
-
       - name: import-linter
         if: ${{ !cancelled() }}
         run: uv run lint-imports
-
       - name: Migraciones (alembic upgrade head)
         if: ${{ !cancelled() }}
         run: uv run alembic upgrade head
-
       - name: Tests + cobertura
         if: ${{ !cancelled() }}
         run: uv run pytest -v --cov=src/tarjeta --cov-report=term-missing --cov-report=json
-
       - name: El test de integración NO debe saltearse en CI
         if: ${{ !cancelled() }}
         run: |
@@ -98,9 +105,47 @@ jobs:
           if ! echo "$out" | grep -qE "[0-9]+ passed"; then
             echo "::error::No corrió ningún test de integración"; exit 1
           fi
-
       - name: Publicar cobertura en el resumen
         if: ${{ !cancelled() }}
         run: |
           pct=$(python3 -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
           echo "### Cobertura backend: ${pct}%" >> "$GITHUB_STEP_SUMMARY"
+
+  web:
+    needs: changes
+    if: ${{ needs.changes.outputs.web == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Instalar pnpm
+        uses: pnpm/action-setup@v4
+      - name: Instalar Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22.18.0"
+          cache: pnpm
+      - name: Instalar dependencias (lock congelado)
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+      - name: Build web
+        run: pnpm --filter @tarjeta/web build
+      - name: Build mobile (export estático)
+        run: pnpm --filter @tarjeta/mobile build
+      - name: Typecheck
+        run: pnpm typecheck
+
+  ci-ok:
+    needs: [changes, api, web]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar resultados de los jobs
+        run: |
+          echo "changes=${{ needs.changes.result }} api=${{ needs.api.result }} web=${{ needs.web.result }}"
+          for r in "${{ needs.changes.result }}" "${{ needs.api.result }}" "${{ needs.web.result }}"; do
+            if [ "$r" = "failure" ] || [ "$r" = "cancelled" ]; then
+              echo "::error::Un job del CI falló o fue cancelado"; exit 1
+            fi
+          done
+          echo "CI OK"

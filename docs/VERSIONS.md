@@ -72,13 +72,30 @@
 | Redis | Homebrew, `redis-cli ping` → PONG. |
 | Docker | OrbStack (runtime del `docker` CLI). Usado por `testcontainers` en el test de integración. |
 
-## Frontend
+## Frontend (PASO 02)
 | Componente | Versión | Notas |
 |---|---|---|
-| Node.js | 22.18.0 | Línea 22 LTS. (Pendiente de decisión: mantener 22.x o mover a LTS activa.) |
-| npm | 11.5.2 | — |
-| pnpm | 10.28.2 | vía corepack (0.33.0) |
-| Next.js / React / Tailwind / shadcn/ui | (sin definir) | Se fijan en PASO 02 |
+| Node.js | 22.18.0 | Línea 22 LTS (aceptada por Next 16, que exige ≥20). |
+| pnpm | 10.28.2 | vía corepack; `packageManager` en package.json |
+| Next.js | **16.3.4** | LTS activa (≥16.3.3, incluye fix de seguridad 25/08/2026). |
+| React / React DOM | **19.2.8** | Requerido por Next 16. |
+| TypeScript | **5.9.3** | TS 7.0.2 es latest y Next 16 lo aceptaría, pero `typescript-eslint` exige `<6.1.0`; se fija 5.9.3 (compatible con todo el tooling). |
+| Tailwind CSS | **4.3.3** | Config en CSS (`@theme`), sin `tailwind.config.js`. + `@tailwindcss/postcss` 4.3.3, `tw-animate-css` 1.4.0. |
+| shadcn/ui | CLI `new-york`, base neutral | 16 componentes en `packages/ui`. |
+| ESLint / eslint-config-next / typescript-eslint | 9.39.5 / 16.3.4 / 8.69.0 | jsx-a11y 6.10.2 (modo error). Prettier 3.9.6. |
+| openapi-typescript | **7.13.0** | Genera el cliente desde OpenAPI **3.1** de FastAPI. |
+| Capacitor (core/cli/android/ios) | **8.5.1** | Plugins (peer core ≥8): geolocation 8.2.2, push-notifications 8.1.2, preferences 8.0.1, network 8.0.1, app 8.1.1, @capacitor-mlkit/barcode-scanning 8.1.1. |
+| Otros UI | cva 0.7.1, clsx 2.1.1, tailwind-merge 3.6.0, lucide-react 1.40.0, radix-ui 1.6.7, next-themes 0.4.6, sonner 2.0.8, react-hook-form 7.87.0, zod 4.5.4 | Fijadas exactas. |
+
+> Piso de navegador (Tailwind 4): Safari/iOS 16.4+, Chrome/WebView 111+, Firefox 128+, Edge 111+.
+> Ver `docs/arquitectura.md`. La caja debe probarse en gama baja antes del PASO 06.
+
+## CI (actualizado en PASO 02)
+| Tema | Definición |
+|---|---|
+| Workflow único | `.github/workflows/ci.yml` con jobs `changes` → `api`/`web` → `ci-ok`. Sin filtro de paths en el trigger; `changes` (dorny/paths-filter) decide qué corre. |
+| Check obligatorio de `main` | **`ci-ok`** (reemplaza a `api`). Un PR de solo docs pasa sin override de admin. |
+| Job web | pnpm install (frozen), lint, build web + mobile, typecheck. |
 
 ## Móvil
 | Componente | Versión | Notas |
