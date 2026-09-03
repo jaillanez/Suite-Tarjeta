@@ -39,6 +39,10 @@ pnpm-debug.log*
 
 # === Cobertura / caché ===
 coverage/
+.coverage
+.coverage.*
+coverage.json
+htmlcov/
 .cache/
 
 # === Sistema operativo / editores ===
