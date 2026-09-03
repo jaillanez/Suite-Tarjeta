@@ -6,8 +6,6 @@ para demostrar que la arquitectura funciona de punta a punta.
 
 from __future__ import annotations
 
-import os  # ERROR DE LINT DELIBERADO (import sin usar) — probar que el CI falla
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
