@@ -44,9 +44,14 @@ def _perfiles_info(persona: Persona) -> list[PerfilInfo]:
     ]
 
 
-async def emitir_tokens(p: Puertos, persona: Persona, perfil: Perfil) -> Tokens:
+async def emitir_tokens(
+    p: Puertos, persona: Persona, perfil: Perfil, huella: str | None = None
+) -> Tokens:
     access = p.tokens.crear(
-        id_persona=str(persona.id), perfil=perfil.clave(), permisos=permisos_de(perfil)
+        id_persona=str(persona.id),
+        perfil=perfil.clave(),
+        permisos=permisos_de(perfil),
+        huella=huella,
     )
     refresh = await p.refresh.emitir(persona.id, perfil.clave())
     await p.outbox.escribir([SesionIniciada(id_persona=str(persona.id), perfil=perfil.clave())])
@@ -58,7 +63,9 @@ class IniciarSesion:
     def __init__(self, puertos: Puertos) -> None:
         self.p = puertos
 
-    async def ejecutar(self, *, dni: str, password: str, ip: str) -> LoginResultado:
+    async def ejecutar(
+        self, *, dni: str, password: str, ip: str, huella: str | None = None
+    ) -> LoginResultado:
         p = self.p
         if ip and not await p.rate_limiter.permitido(f"login:ip:{ip}", p.rate_limit_login, 60):
             raise AuthenticationError("Demasiados intentos. Probá más tarde.")
@@ -96,7 +103,7 @@ class IniciarSesion:
             )
 
         perfil = _perfil_default(persona)
-        tokens = await emitir_tokens(p, persona, perfil)
+        tokens = await emitir_tokens(p, persona, perfil, huella)
         return LoginResultado(
             mfa_requerido=False,
             perfiles=_perfiles_info(persona),
@@ -109,7 +116,9 @@ class VerificarMfa:
     def __init__(self, puertos: Puertos) -> None:
         self.p = puertos
 
-    async def ejecutar(self, *, mfa_token: str, codigo: str) -> LoginResultado:
+    async def ejecutar(
+        self, *, mfa_token: str, codigo: str, huella: str | None = None
+    ) -> LoginResultado:
         p = self.p
         claims = p.tokens.decodificar(mfa_token)
         if claims.perfil != _MFA_SCOPE:
@@ -135,7 +144,7 @@ class VerificarMfa:
             raise AuthenticationError("Código de MFA inválido.")
 
         perfil = _perfil_default(persona)
-        tokens = await emitir_tokens(p, persona, perfil)
+        tokens = await emitir_tokens(p, persona, perfil, huella)
         return LoginResultado(
             mfa_requerido=False,
             perfiles=_perfiles_info(persona),

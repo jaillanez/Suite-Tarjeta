@@ -12,7 +12,10 @@ from alembic import context
 from sqlalchemy import create_engine
 
 from tarjeta.config import get_settings
+from tarjeta.modules.ciudadania.infrastructure import models as _ciudadania_models  # noqa: F401
 from tarjeta.modules.identidad.infrastructure import models as _identidad_models  # noqa: F401
+from tarjeta.modules.padron.infrastructure import models as _padron_models  # noqa: F401
+from tarjeta.shared.infrastructure import outbox as _shared_outbox  # noqa: F401
 from tarjeta.shared.infrastructure.database import Base
 
 config = context.config

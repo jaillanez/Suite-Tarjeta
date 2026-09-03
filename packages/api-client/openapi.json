@@ -135,15 +135,33 @@
         ],
         "summary": "Login",
         "operationId": "login_api_v1_auth_login_post",
+        "parameters": [
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/LoginRequest"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -176,15 +194,33 @@
         ],
         "summary": "Mfa Verificar",
         "operationId": "mfa_verificar_api_v1_auth_mfa_verificar_post",
+        "parameters": [
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/MfaVerificarRequest"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -217,15 +253,33 @@
         ],
         "summary": "Refresh",
         "operationId": "refresh_api_v1_auth_refresh_post",
+        "parameters": [
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RefreshRequest"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -356,6 +410,22 @@
               ],
               "title": "Authorization"
             }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
           }
         ],
         "responses": {
@@ -418,6 +488,22 @@
               ],
               "title": "Authorization"
             }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
           }
         ],
         "responses": {
@@ -467,6 +553,22 @@
               ],
               "title": "Authorization"
             }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
           }
         ],
         "responses": {
@@ -513,6 +615,22 @@
                 }
               ],
               "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
             }
           }
         ],
@@ -573,6 +691,22 @@
               ],
               "title": "Authorization"
             }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
           }
         ],
         "responses": {
@@ -623,6 +757,22 @@
                 }
               ],
               "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
             }
           }
         ],
@@ -683,6 +833,22 @@
               ],
               "title": "Authorization"
             }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
           }
         ],
         "requestBody": {
@@ -739,6 +905,22 @@
                 }
               ],
               "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
             }
           }
         ],
@@ -802,6 +984,22 @@
               ],
               "title": "Authorization"
             }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
           }
         ],
         "responses": {
@@ -851,6 +1049,22 @@
               ],
               "title": "Authorization"
             }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
           }
         ],
         "responses": {
@@ -860,6 +1074,341 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MfaActivarResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/padron/mi-estado": {
+      "get": {
+        "tags": [
+          "padron"
+        ],
+        "summary": "Mi Estado",
+        "operationId": "mi_estado_api_v1_padron_mi_estado_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MiEstadoPadronResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ciudadania/mi-estado": {
+      "get": {
+        "tags": [
+          "ciudadania"
+        ],
+        "summary": "Mi Estado",
+        "operationId": "mi_estado_api_v1_ciudadania_mi_estado_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MiEstadoResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ciudadania/actualizar-estado": {
+      "post": {
+        "tags": [
+          "ciudadania"
+        ],
+        "summary": "Actualizar Estado",
+        "operationId": "actualizar_estado_api_v1_ciudadania_actualizar_estado_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ciudadania/tarjeta/bloquear": {
+      "post": {
+        "tags": [
+          "ciudadania"
+        ],
+        "summary": "Bloquear Tarjeta",
+        "operationId": "bloquear_tarjeta_api_v1_ciudadania_tarjeta_bloquear_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ciudadania/excepciones": {
+      "post": {
+        "tags": [
+          "ciudadania"
+        ],
+        "summary": "Crear Excepcion",
+        "operationId": "crear_excepcion_api_v1_ciudadania_excepciones_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-device-huella",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExcepcionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
                 }
               }
             }
@@ -1022,6 +1571,29 @@
         ],
         "title": "DispositivoResponse"
       },
+      "ExcepcionRequest": {
+        "properties": {
+          "id_persona": {
+            "type": "string",
+            "title": "Id Persona"
+          },
+          "motivo": {
+            "type": "string",
+            "title": "Motivo"
+          },
+          "dias_vigencia": {
+            "type": "integer",
+            "title": "Dias Vigencia",
+            "default": 365
+          }
+        },
+        "type": "object",
+        "required": [
+          "id_persona",
+          "motivo"
+        ],
+        "title": "ExcepcionRequest"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1163,6 +1735,80 @@
         ],
         "title": "MfaVerificarRequest"
       },
+      "MiEstadoPadronResponse": {
+        "properties": {
+          "consultado": {
+            "type": "boolean",
+            "title": "Consultado"
+          },
+          "al_dia": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Al Dia"
+          },
+          "fecha_ultima_consulta": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Ultima Consulta"
+          },
+          "horas_desde_consulta": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Horas Desde Consulta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "consultado"
+        ],
+        "title": "MiEstadoPadronResponse"
+      },
+      "MiEstadoResponse": {
+        "properties": {
+          "nivel": {
+            "type": "string",
+            "title": "Nivel"
+          },
+          "numero_tarjeta": {
+            "type": "string",
+            "title": "Numero Tarjeta"
+          },
+          "estado_tarjeta": {
+            "type": "string",
+            "title": "Estado Tarjeta"
+          },
+          "tiene_tarjeta_fisica": {
+            "type": "boolean",
+            "title": "Tiene Tarjeta Fisica"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nivel",
+          "numero_tarjeta",
+          "estado_tarjeta",
+          "tiene_tarjeta_fisica"
+        ],
+        "title": "MiEstadoResponse"
+      },
       "PerfilOut": {
         "properties": {
           "clave": {
@@ -1214,7 +1860,14 @@
             "title": "Dni"
           },
           "cuil": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Cuil"
           },
           "apellido": {
@@ -1226,7 +1879,14 @@
             "title": "Nombre"
           },
           "celular": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Celular"
           },
           "email": {
@@ -1290,14 +1950,14 @@
       },
       "RecuperarRequest": {
         "properties": {
-          "dni": {
+          "email": {
             "type": "string",
-            "title": "Dni"
+            "title": "Email"
           }
         },
         "type": "object",
         "required": [
-          "dni"
+          "email"
         ],
         "title": "RecuperarRequest"
       },
@@ -1333,30 +1993,32 @@
             "type": "string",
             "title": "Dni"
           },
-          "cuil": {
+          "fecha_nacimiento": {
             "type": "string",
-            "title": "Cuil"
-          },
-          "apellido": {
-            "type": "string",
-            "maxLength": 120,
-            "minLength": 1,
-            "title": "Apellido"
-          },
-          "nombre": {
-            "type": "string",
-            "maxLength": 120,
-            "minLength": 1,
-            "title": "Nombre"
-          },
-          "celular": {
-            "type": "string",
-            "title": "Celular"
+            "title": "Fecha Nacimiento"
           },
           "password": {
             "type": "string",
             "minLength": 1,
             "title": "Password"
+          },
+          "consentimientos": {
+            "items": {
+              "$ref": "#/components/schemas/ConsentimientoIn"
+            },
+            "type": "array",
+            "title": "Consentimientos"
+          },
+          "celular": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Celular"
           },
           "email": {
             "anyOf": [
@@ -1368,22 +2030,12 @@
               }
             ],
             "title": "Email"
-          },
-          "consentimientos": {
-            "items": {
-              "$ref": "#/components/schemas/ConsentimientoIn"
-            },
-            "type": "array",
-            "title": "Consentimientos"
           }
         },
         "type": "object",
         "required": [
           "dni",
-          "cuil",
-          "apellido",
-          "nombre",
-          "celular",
+          "fecha_nacimiento",
           "password"
         ],
         "title": "RegistroRequest"

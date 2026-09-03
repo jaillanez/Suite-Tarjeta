@@ -100,6 +100,17 @@
 > Piso de navegador (Tailwind 4): Safari/iOS 16.4+, Chrome/WebView 111+, Firefox 128+, Edge 111+.
 > Ver `docs/arquitectura.md`. La caja debe probarse en gama baja antes del PASO 06.
 
+## Módulos padron y ciudadania (PASO 04)
+| Tema | Definición |
+|---|---|
+| Contrato del padrón | Un booleano por consulta: `?dni → {al_dia}`, `?cuit → {es_comerciante}`. |
+| Cliente padrón | Real (httpx) o simulación, elegido por `padron_modo` (default `simulacion`). |
+| Niveles | Platino / Black (BLACK si al_dia o excepción vigente). |
+| Comunicación entre módulos | Outbox compartido + EventDispatcher (`tarjeta/orquestacion.py`), drenado por middleware. |
+| Batch nocturno | `uv run python -m tarjeta.scripts.sync_padron` (concurrencia acotada). |
+| Gate de cobertura | ≥85% por módulo (identidad, padron, ciudadania) en el CI. |
+| Registro | Mínimo (DNI + fecha nacimiento + contraseña + consentimientos), sin OTP. |
+
 ## CI (actualizado en PASO 02)
 | Tema | Definición |
 |---|---|

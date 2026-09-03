@@ -15,12 +15,15 @@ class JwtGenerador:
         self._secret = secret
         self._ttl = ttl_seg
 
-    def crear(self, *, id_persona: str, perfil: str, permisos: list[str]) -> str:
+    def crear(
+        self, *, id_persona: str, perfil: str, permisos: list[str], huella: str | None = None
+    ) -> str:
         now = int(time.time())
         payload = {
             "sub": id_persona,
             "perfil": perfil,
             "permisos": permisos,
+            "huella": huella,
             "iat": now,
             "exp": now + self._ttl,
         }
@@ -31,8 +34,10 @@ class JwtGenerador:
             data = jwt.decode(token, self._secret, algorithms=["HS256"])
         except jwt.PyJWTError as exc:
             raise AuthenticationError("Token inválido o expirado.") from exc
+        huella = data.get("huella")
         return Claims(
             id_persona=str(data["sub"]),
             perfil=str(data["perfil"]),
             permisos=list(data.get("permisos", [])),
+            huella=str(huella) if huella else None,
         )

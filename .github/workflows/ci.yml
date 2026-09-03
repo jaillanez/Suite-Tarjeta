@@ -101,12 +101,37 @@ jobs:
       - name: Migraciones (alembic upgrade head)
         if: ${{ !cancelled() }}
         run: uv run alembic upgrade head
-      - name: Tests + cobertura (gate identidad >=85%)
+      - name: Tests + cobertura
         if: ${{ !cancelled() }}
         run: >-
           uv run pytest -v
           --cov=src/tarjeta/modules/identidad
-          --cov-report=term-missing --cov-report=json --cov-fail-under=85
+          --cov=src/tarjeta/modules/padron
+          --cov=src/tarjeta/modules/ciudadania
+          --cov-report=term-missing --cov-report=json
+      - name: Gate de cobertura por módulo (>=85%)
+        if: ${{ !cancelled() }}
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          data = json.load(open("coverage.json"))
+          mods = ("identidad", "padron", "ciudadania")
+          agg = {m: [0, 0] for m in mods}
+          for path, info in data["files"].items():
+              for m in mods:
+                  if f"/modules/{m}/" in path.replace("\\", "/"):
+                      s = info["summary"]
+                      agg[m][0] += s["covered_lines"]
+                      agg[m][1] += s["num_statements"]
+          fallo = False
+          for m, (cov, tot) in agg.items():
+              pct = 100.0 * cov / tot if tot else 100.0
+              print(f"{m}: {pct:.1f}%")
+              if pct < 85:
+                  print(f"::error::Cobertura de {m} por debajo de 85% ({pct:.1f}%)")
+                  fallo = True
+          sys.exit(1 if fallo else 0)
+          PY
       - name: El test de integración NO debe saltearse en CI
         if: ${{ !cancelled() }}
         run: |
@@ -122,7 +147,7 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           pct=$(python3 -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
-          echo "### Cobertura módulo identidad: ${pct}%" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Cobertura backend (identidad+padron+ciudadania): ${pct}%" >> "$GITHUB_STEP_SUMMARY"
 
   web:
     needs: changes

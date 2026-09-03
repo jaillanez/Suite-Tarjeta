@@ -45,11 +45,12 @@ def persona_to_model(p: Persona, cipher: FieldCipher, pepper: str) -> PersonaMod
         id=p.id.value,
         dni_hash=search_hash(str(p.dni), pepper),
         dni_cifrado=cipher.encrypt(str(p.dni)),
-        cuil_hash=search_hash(str(p.cuil), pepper),
-        cuil_cifrado=cipher.encrypt(str(p.cuil)),
+        fecha_nacimiento=p.fecha_nacimiento,
+        cuil_hash=search_hash(str(p.cuil), pepper) if p.cuil is not None else None,
+        cuil_cifrado=cipher.encrypt(str(p.cuil)) if p.cuil is not None else None,
         apellido=p.apellido,
         nombre=p.nombre,
-        celular=str(p.celular),
+        celular=str(p.celular) if p.celular is not None else None,
         email=str(p.email) if p.email is not None else None,
         celular_verificado=p.celular_verificado,
         email_verificado=p.email_verificado,
@@ -63,7 +64,7 @@ def persona_to_model(p: Persona, cipher: FieldCipher, pepper: str) -> PersonaMod
 def actualizar_model(model: PersonaModel, p: Persona) -> None:
     model.apellido = p.apellido
     model.nombre = p.nombre
-    model.celular = str(p.celular)
+    model.celular = str(p.celular) if p.celular is not None else None
     model.email = str(p.email) if p.email is not None else None
     model.celular_verificado = p.celular_verificado
     model.email_verificado = p.email_verificado
@@ -76,10 +77,11 @@ def model_to_persona(model: PersonaModel, cipher: FieldCipher) -> Persona:
     return Persona.rehidratar(
         id=EntityId(model.id),
         dni=Dni(cipher.decrypt(model.dni_cifrado)),
-        cuil=Cuil(cipher.decrypt(model.cuil_cifrado)),
+        fecha_nacimiento=model.fecha_nacimiento,
+        cuil=Cuil(cipher.decrypt(model.cuil_cifrado)) if model.cuil_cifrado else None,
         apellido=model.apellido,
         nombre=model.nombre,
-        celular=Celular(model.celular),
+        celular=Celular(model.celular) if model.celular else None,
         email=Email(model.email) if model.email else None,
         estado_identidad=EstadoIdentidad(model.estado_identidad),
         metodo_verificacion=(

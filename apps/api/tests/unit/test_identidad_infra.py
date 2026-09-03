@@ -37,7 +37,7 @@ def test_search_hash_depende_del_pepper() -> None:
 
 
 def test_jwt_roundtrip_y_tamper() -> None:
-    gen = JwtGenerador(secret="secreto-de-test", ttl_seg=900)
+    gen = JwtGenerador(secret="secreto-de-test-con-mas-de-32-bytes-ok", ttl_seg=900)
     token = gen.crear(id_persona="abc", perfil="CIUDADANO", permisos=["x"])
     claims = gen.decodificar(token)
     assert claims.id_persona == "abc"

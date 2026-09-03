@@ -9,13 +9,13 @@ from tarjeta.config import Settings
 from tarjeta.modules.identidad.application.deps import Puertos
 from tarjeta.shared.infrastructure.crypto import FieldCipher
 from tarjeta.shared.infrastructure.database import SqlAlchemyUnitOfWork
+from tarjeta.shared.infrastructure.outbox import SqlAlchemyOutbox
+from tarjeta.shared.infrastructure.redis_stores import RedisAlmacenOtp, RedisRateLimiter
 
 from .adapters import MfaCifrado, TextosLegalesSql
 from .argon2_hasher import Argon2Hasher
 from .jwt_generador import JwtGenerador
 from .otp_consola import OtpConsola
-from .outbox_repo import SqlAlchemyOutbox
-from .redis_stores import RedisAlmacenOtp, RedisRateLimiter
 from .refresh_store import SqlAlchemyAlmacenRefresh
 from .renaper_stub import RenaperStub
 from .repositories import (
@@ -64,4 +64,5 @@ def construir_puertos(session: AsyncSession, settings: Settings, redis: Redis) -
         otp_max_intentos=settings.otp_max_intentos,
         otp_max_solicitudes_hora=settings.otp_max_solicitudes_por_hora,
         rate_limit_login=settings.rate_limit_login_por_minuto,
+        rate_limit_registro=settings.rate_limit_registro_por_hora,
     )

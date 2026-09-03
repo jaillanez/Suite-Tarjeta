@@ -8,9 +8,9 @@ persiste en ninguna columna.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -23,11 +23,14 @@ class PersonaModel(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
     dni_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)
     dni_cifrado: Mapped[str] = mapped_column(Text)
-    cuil_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)
-    cuil_cifrado: Mapped[str] = mapped_column(Text)
-    apellido: Mapped[str] = mapped_column(String(120))
-    nombre: Mapped[str] = mapped_column(String(120))
-    celular: Mapped[str] = mapped_column(String(20))
+    fecha_nacimiento: Mapped[date] = mapped_column(Date)
+    cuil_hash: Mapped[str | None] = mapped_column(
+        String(64), unique=True, index=True, nullable=True
+    )
+    cuil_cifrado: Mapped[str | None] = mapped_column(Text, nullable=True)
+    apellido: Mapped[str] = mapped_column(String(120), default="")
+    nombre: Mapped[str] = mapped_column(String(120), default="")
+    celular: Mapped[str | None] = mapped_column(String(20), nullable=True)
     email: Mapped[str | None] = mapped_column(String(255), nullable=True)
     celular_verificado: Mapped[bool] = mapped_column(Boolean, default=False)
     email_verificado: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -117,11 +120,4 @@ class TextoLegalModel(Base):
     vigente: Mapped[bool] = mapped_column(Boolean, default=True)
 
 
-class OutboxModel(Base):
-    __tablename__ = "outbox"
-
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
-    tipo: Mapped[str] = mapped_column(String(80), index=True)
-    payload: Mapped[dict[str, object]] = mapped_column(JSONB)
-    ocurrido_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    procesado: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+# OutboxModel vive en shared/infrastructure/outbox.py (compartido entre módulos).
