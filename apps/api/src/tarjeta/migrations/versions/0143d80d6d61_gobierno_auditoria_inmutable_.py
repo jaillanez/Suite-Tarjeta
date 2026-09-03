@@ -66,7 +66,18 @@ def upgrade() -> None:
         op.f("ix_registro_auditoria_entidad"), "registro_auditoria", ["entidad"], unique=False
     )
     # Inmutabilidad a nivel motor: el rol de runtime solo INSERTA y LEE auditoría.
-    op.execute(f"REVOKE UPDATE, DELETE, TRUNCATE ON registro_auditoria FROM {_ROL_APP}")
+    # Se revoca solo si el rol existe (entornos con rol de runtime separado); si no existe
+    # (p. ej. una base de un solo rol) la migración no falla.
+    op.execute(
+        f"""
+        DO $$
+        BEGIN
+            IF EXISTS (SELECT FROM pg_roles WHERE rolname = '{_ROL_APP}') THEN
+                REVOKE UPDATE, DELETE, TRUNCATE ON registro_auditoria FROM {_ROL_APP};
+            END IF;
+        END$$;
+        """
+    )
 
     # --- Doble conformidad ---------------------------------------------------
     op.create_table(

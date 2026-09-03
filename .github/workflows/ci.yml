@@ -44,9 +44,10 @@ jobs:
         working-directory: apps/api
     env:
       TARJETA_ENVIRONMENT: dev
-      TARJETA_DATABASE_URL: postgresql+psycopg://tarjeta:tarjeta@localhost:5432/tarjeta_test
+      # runtime = rol tarjeta_app (sin DDL); migrador/dueño = rol tarjeta. Dos roles como en prod.
+      TARJETA_DATABASE_URL: postgresql+psycopg://tarjeta_app:tarjeta_app@localhost:5432/tarjeta_test
       TARJETA_DATABASE_MIGRATOR_URL: postgresql+psycopg://tarjeta:tarjeta@localhost:5432/tarjeta_test
-      TARJETA_INTEGRATION_DATABASE_URL: postgresql+psycopg://tarjeta:tarjeta@localhost:5432/tarjeta_test
+      TARJETA_INTEGRATION_DATABASE_URL: postgresql+psycopg://tarjeta_app:tarjeta_app@localhost:5432/tarjeta_test
       TARJETA_REDIS_URL: redis://localhost:6379/0
       TARJETA_PADRON_BASE_URL: http://localhost:9999/padron
       TARJETA_PADRON_API_KEY: ci-dummy-key
@@ -86,6 +87,8 @@ jobs:
         run: uv sync --group dev --frozen
       - name: Crear extensiones en la base de test
         run: PGPASSWORD=tarjeta psql -h localhost -U tarjeta -d tarjeta_test -f "$GITHUB_WORKSPACE/infra/sql/00-extensions.sql"
+      - name: Crear rol de runtime (tarjeta_app) y default privileges
+        run: PGPASSWORD=tarjeta psql -h localhost -U tarjeta -d tarjeta_test -f "$GITHUB_WORKSPACE/infra/sql/01-roles.sql"
       - name: ruff check
         if: ${{ !cancelled() }}
         run: uv run ruff check .
