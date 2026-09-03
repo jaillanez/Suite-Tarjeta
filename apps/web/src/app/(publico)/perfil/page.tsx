@@ -77,7 +77,7 @@ export default function PerfilPage() {
           <p className="flex items-center gap-2">
             Perfiles:
             {me.perfiles.map((p) =>
-              p.tipo === 'CIUDADANO' ? <NivelBadge key={p.clave} nivel="GENERAL" /> : (
+              p.tipo === 'CIUDADANO' ? <NivelBadge key={p.clave} nivel="PLATINO" /> : (
                 <span key={p.clave} className="rounded bg-secondary px-2 py-0.5 text-xs">
                   {p.tipo}
                 </span>

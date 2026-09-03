@@ -56,7 +56,7 @@ Si `lint-imports` falla, el build falla.
 |---|---|---|
 | `identidad` | Persona, Credencial, Consentimiento | Registro, autenticación, MFA, perfiles, sesiones y dispositivos |
 | `padron` | EstadoPadron | Único punto de contacto con el endpoint municipal. Cachea el veredicto. |
-| `ciudadania` | PerfilCiudadano, GrupoFamiliar, Tarjeta | Nivel General/Black, grupo familiar, tarjeta digital y física |
+| `ciudadania` | PerfilCiudadano, GrupoFamiliar, Tarjeta | Nivel Platino/Black, grupo familiar, tarjeta digital y física |
 | `comercios` | Comercio, Sucursal, UsuarioComercio | Adhesión, sucursales, roles del comercio |
 | `promociones` | Promocion | Ciclo de vida, segmentación, límites, moderación |
 | `canje` | Transaccion | Tokens, validación, idempotencia, anulación, modo offline |

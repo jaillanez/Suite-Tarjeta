@@ -14,7 +14,7 @@ export default function Home() {
       <TarjetaCredencial
         nombre="Vecino de ejemplo"
         numero="4000123456789010"
-        nivel="GENERAL"
+        nivel="PLATINO"
         municipio={municipio}
       />
       <nav className="grid gap-3" aria-label="Accesos">

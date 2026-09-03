@@ -7,7 +7,7 @@ type Estado = 'cargando' | 'ok' | 'error';
 
 const COLOR: Record<Estado, string> = {
   cargando: 'bg-muted text-muted-foreground',
-  ok: 'bg-nivel-general text-nivel-general-foreground',
+  ok: 'bg-nivel-platino text-nivel-platino-foreground',
   error: 'bg-destructive text-white',
 };
 
