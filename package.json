@@ -7,12 +7,15 @@
   "engines": {
     "node": ">=22.18.0"
   },
-  "workspaces": [
-    "apps/web",
-    "apps/mobile",
-    "packages/*"
-  ],
   "scripts": {
-    "//": "Los scripts de web/mobile se agregan en el PASO 02"
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "build": "pnpm -r --if-present build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "generate:api": "pnpm --filter @tarjeta/api-client generate"
+  },
+  "devDependencies": {
+    "prettier": "3.9.6"
   }
 }

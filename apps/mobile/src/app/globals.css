@@ -1,0 +1,9 @@
+@import "../../../../packages/ui/src/styles/theme.css";
+
+/* Tailwind 4 ignora node_modules; incluimos explícitamente la librería de UI. */
+@source "../../../../packages/ui/src";
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}

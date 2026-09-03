@@ -119,6 +119,62 @@ ningún otro módulo. Ver `.env.example`.
    `domain`/`infrastructure`.
 8. Correr `lint-imports`, `mypy`, `ruff` y `pytest` antes de commitear.
 
+## Frontend (PASO 02)
+
+Monorepo pnpm con dos apps Next.js 16 y paquetes compartidos:
+
+- `apps/web` — Next.js con **SSR**. Sitio público (indexable, con Open Graph) + portal
+  comercio + portal municipal. `promo/[id]` genera Open Graph en el servidor
+  (`opengraph-image.tsx` con `next/og`): es la razón de que esta app no sea estática.
+- `apps/mobile` — Next.js con `output: 'export'` (estático), envuelto en Capacitor 8.5.1.
+  Sin middleware, sin route handlers, sin server actions: todo el fetching es del lado del
+  cliente contra la API.
+- `packages/ui` — shadcn/ui + componentes de dominio (`NivelBadge`, `TarjetaCredencial`).
+  El tema vive **solo** en `packages/ui/src/styles/theme.css` (Tailwind 4, directiva
+  `@theme`). **No existe `tailwind.config.js`.**
+- `packages/api-client` — cliente TS generado desde el OpenAPI 3.1 de FastAPI
+  (`openapi-typescript`), con wrapper de fetch (base URL, auth, reintentos, errores).
+- `packages/config` — tsconfig base estricto, ESLint (jsx-a11y en error) y Prettier.
+
+### Piso de navegador soportado
+
+Tailwind CSS 4 usa características modernas de CSS y apunta a navegadores recientes. El piso
+soportado del programa es:
+
+| Navegador | Versión mínima |
+|---|---|
+| Safari / iOS Safari | 16.4+ |
+| Chrome / Android WebView | 111+ |
+| Firefox | 128+ |
+| Edge | 111+ |
+
+Consecuencia operativa: la **pantalla de caja** debe funcionar en el celular viejo del
+mostrador y en la PC vieja del comercio. Antes de cerrar el PASO 06 hay que **probar la caja
+en un dispositivo de gama baja real**. Si el piso no alcanza, el **código de 6 dígitos**
+(que no requiere cámara ni JS moderno de escaneo) es el camino de respaldo que nunca debe
+depender de estas versiones.
+
+### Limitación conocida: modo caja bloqueado en iOS (no simétrico)
+
+La especificación (§4.6) pide que, con el turno abierto, la app quede fijada en la pantalla
+de caja y que salir exija el PIN del encargado.
+
+- **Android:** hay fijado de pantalla a nivel de sistema operativo → se logra el
+  comportamiento pedido.
+- **iOS:** el equivalente es **Acceso Guiado**, que **no se puede activar por programa**; lo
+  activa el usuario a mano desde los ajustes del dispositivo.
+
+En iPhone, entonces, el bloqueo real a nivel de sistema no es posible. Queda solo el bloqueo
+dentro de la app (el cambio de perfil pide PIN), que protege del empleado curioso pero no de
+quien sale de la app y la vuelve a abrir. **Es una decisión de producto pendiente:** instruir
+a los comercios con iPhone a activar Acceso Guiado a mano, o aceptar el bloqueo más débil.
+
+### Modo caja bloqueado y permisos
+
+- Permisos nativos (cámara, ubicación, notificaciones): se piden **en el momento de uso**, no
+  al instalar (§11.2).
+- Escáner QR elegido: **@capacitor-mlkit/barcode-scanning** (MLKit; peer `@capacitor/core >=8`).
+
 ## Walking skeleton (estado actual, PASO 01)
 
 La línea fina que atraviesa todas las capas está implementada y verificada:
