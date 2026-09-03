@@ -1,5 +1,5 @@
 # Tarjeta de Beneficios Municipal — Rivadavia
-## Especificación funcional detallada · v2.0 — para revisión
+## Especificación funcional detallada · v2.1
 
 **Decisiones tomadas:**
 - **Financiamiento:** el comercio absorbe el 100% del descuento. El municipio no aporta caja.
@@ -98,7 +98,7 @@ Una sola credencial de acceso. Al iniciar sesión, si la persona tiene más de u
 ```
 PerfilCiudadano
   id_persona
-  nivel_actual: GENERAL | BLACK
+  nivel_actual: PLATINO | BLACK
   nivel_origen: PROPIO | HEREDADO_GRUPO
   fecha_ultimo_calculo_nivel
   proxima_revision_nivel
@@ -126,16 +126,13 @@ La tarjeta **no replica el padrón**. Solo cachea el veredicto que devuelve el e
 ```
 EstadoPadron           // cache del endpoint, uno por persona
   cuil (clave de cruce con Persona)
-  es_contribuyente: bool
   al_dia: bool
   es_comerciante: bool
-  cuit_comercio (si aplica)
-  fecha_corte              // del dato, informada por el municipio
-  fecha_ultima_consulta    // cuándo lo consultamos nosotros
+  fecha_ultima_consulta    // cuándo lo consultamos nosotros (dato propio)
 
 HistorialEstadoPadron  // append-only — habilita la métrica de recaudación
-  cuil, campo, valor_anterior, valor_nuevo
-  fecha_corte, timestamp
+  dni, campo, valor_anterior, valor_nuevo
+  timestamp
   origen_consulta: BATCH | BOTON_USUARIO | ALTA_PRESENCIAL
 ```
 
@@ -216,12 +213,12 @@ Promocion
   letra_chica / condiciones
   mecanica: PORCENTAJE | MONTO_FIJO | 2X1 | PRECIO_ESPECIAL |
             PUNTOS_MULTIPLICADOR | CUPON_UNICO | COMBO
-  valor_general (%, $ o multiplicador)
+  valor_platino (%, $ o multiplicador)
   valor_black
   aplica_a: TODO_EL_LOCAL | CATEGORIA | PRODUCTO_ESPECIFICO
   reparto_beneficio {pct_descuento_inmediato, pct_en_puntos}
   sucursales[]                // todas o selección
-  segmento: GENERAL | BLACK | AMBOS
+  segmento: PLATINO | BLACK | AMBOS
   vigencia_desde, vigencia_hasta
   dias_semana[], franja_horaria{desde, hasta}
   tope_usos_total, tope_usos_por_usuario, tope_usos_por_dia
@@ -351,15 +348,16 @@ MovimientoBilletera        // append-only, nunca se edita ni borra
 - [ ] Los consentimientos se guardan con versión de TyC, fecha e IP.
 - [ ] Rechazar los consentimientos opcionales no impide usar el programa.
 
-## 3.2 Motor de nivel: General vs Black
+## 3.2 Motor de nivel: Platino vs Black
 
 **Regla base:**
 
 ```
-Es BLACK si:  el endpoint devuelve contribuyente = true  Y  al_dia = true
+Es BLACK si:  el endpoint devuelve al_dia = true
               (o hereda el nivel por pertenecer a un grupo familiar)
+Es PLATINO en cualquier otro caso.
 
-La tarjeta consume el booleano. No conoce cuotas, montos, cuentas ni vencimientos.
+La tarjeta consume un solo booleano. No conoce cuotas, montos, cuentas ni vencimientos.
 No se investiga ni se replica el criterio de Hacienda.
 
 Recálculo: batch nocturno + botón "Actualizar mi estado" (máx. 3/día).
@@ -369,8 +367,7 @@ Recálculo: batch nocturno + botón "Actualizar mi estado" (máx. 3/día).
 
 | Caso | Tratamiento |
 |---|---|
-| No figura en el padrón (inquilino, joven) | GENERAL. Puede subir a Black solo por grupo familiar. |
-| Figura y no está al día | GENERAL. |
+| No está al día, o no figura en el padrón | PLATINO. Puede subir a Black regularizando, o por grupo familiar. |
 | Titular fallecido / sucesión | Congelar nivel 180 días, marcar para revisión manual. |
 | Baja de nivel a mitad de una compra | El nivel se congela al emitir el token de canje. No se le cambia el precio al vecino en la caja. |
 
@@ -378,9 +375,10 @@ Recálculo: batch nocturno + botón "Actualizar mi estado" (máx. 3/día).
 
 | Escenario | Qué muestra |
 |---|---|
-| Contribuyente al día | Nivel Black destacado. "Estás al día con el municipio. Por eso accedés a los mejores beneficios." |
-| Contribuyente no al día | Nivel General. "Regularizando tu situación con el municipio pasás a Black y accedés a X beneficios más." Botón → portal de pagos municipal. |
-| No figura como contribuyente | Nivel General. "No figurás como contribuyente municipal. Si un familiar contribuyente te suma a su grupo, accedés a los beneficios Black." → link a Grupo Familiar. |
+| al_dia = true | Nivel Black destacado. "Estás al día con el municipio. Por eso accedés a los mejores beneficios." |
+| al_dia = false | Nivel Platino. "Si estás al día con el municipio pasás a Black y accedés a X beneficios más." Botón → portal de pagos municipal. Link a Grupo Familiar. |
+
+El texto de Platino **no afirma que la persona tenga deuda**. Con un solo booleano no se distingue al que debe del que no figura en el padrón, así que el mensaje está redactado para ser cierto en ambos casos.
 
 - La app **nunca muestra montos, cuentas ni detalle de deuda.** No los tiene y no los pide.
 - Fecha de corte del dato siempre visible.
@@ -460,7 +458,7 @@ El techo del abuso igual está acotado: 6 miembros como máximo, 4 altas por añ
 Secciones ordenadas por relevancia calculada:
 1. "Cerca tuyo ahora" (si dio permiso de ubicación y está en horario)
 2. "Nuevos esta semana"
-3. "Exclusivos Black" (si es General, se muestran **bloqueados con el % visible** — es el gancho de conversión fiscal)
+3. "Exclusivos Black" (si es Platino, se muestran **bloqueados con el % visible** — es el gancho de conversión fiscal)
 4. "De tus favoritos"
 5. "Vencen pronto"
 6. Campaña municipal vigente (si hay)
@@ -477,7 +475,7 @@ Secciones ordenadas por relevancia calculada:
 **Ordenamiento — regla de transparencia:** en un programa público el ranking no puede ser una caja negra ni venderse. El criterio se publica: relevancia = f(distancia, nivel de descuento, novedad, calificación ciudadana, destaque municipal explícito). Los destaques municipales se marcan visualmente como tales.
 
 **Ficha de promoción:**
-- Imagen, título, % para tu nivel (y el % Black si sos General, tachado y bloqueado)
+- Imagen, título, % para tu nivel (y el % Black si sos Platino, tachado y bloqueado)
 - Condiciones y letra chica completa
 - Vigencia, días y horarios
 - Sucursales adheridas con distancia
@@ -573,7 +571,7 @@ SOLICITADA ─→ EN_REVISION ─→ APROBADA ─→ ACTIVA
 
 **Asistente de creación (5 pasos):**
 1. **Qué ofrecés** — mecánica y valores. Aquí se define el reparto: cuánto va a descuento inmediato y cuánto a Puntos Comercio.
-2. **A quién** — General, Black o ambos, con valores diferenciados. La UI sugiere activamente dar más a Black y explica por qué (atrae al contribuyente al día, y el municipio destaca esas promos).
+2. **A quién** — Platino, Black o ambos, con valores diferenciados. La UI sugiere activamente dar más a Black y explica por qué (atrae al contribuyente al día, y el municipio destaca esas promos).
 3. **Dónde y cuándo** — sucursales, fechas, días, franjas horarias.
 4. **Límites** — topes de uso total/por usuario/por día, monto mínimo, tope de descuento.
 5. **Imagen y texto** — subir foto, generar con IA, o ambas. Vista previa exacta en app y en redes.
@@ -755,7 +753,7 @@ Todo esto se cambia sin desarrollo:
 **Bloque ciudadanía:** registrados, activos (30 días), distribución por nivel, por barrio, por edad, tasa de activación, retención.
 
 **Bloque recaudación — el bloque que justifica el programa:**
-- Contribuyentes que pasaron de GENERAL a BLACK después de registrarse
+- Contribuyentes que pasaron de PLATINO a BLACK después de registrarse
 - Comparativo de morosidad: registrados vs. no registrados
 
 El monto en pesos no se calcula acá — la tarjeta no maneja montos. Hacienda lo cruza por fuera con la lista de CUILs.
@@ -826,36 +824,32 @@ El municipio expone un endpoint mínimo. La tarjeta **no accede a cuotas, montos
 
 ## 7.1 Contrato
 
-```
-GET /padron/estado?cuil={cuil}
-Authorization: servidor a servidor (mTLS o API key rotativa)
+Un booleano por consulta. Nada más.
 
-200 OK
-{
-  "cuil": "20123456789",
-  "es_contribuyente": true,
-  "al_dia": true,
-  "es_comerciante": true,
-  "cuit_comercio": "30712345678",
-  "fecha_corte": "2026-09-02T03:00:00-03:00"
-}
+```
+GET /padron/estado?dni={dni}    → { "al_dia": true }
+GET /padron/estado?cuit={cuit}  → { "es_comerciante": true }
+
+Authorization: servidor a servidor (mTLS o API key rotativa)
 ```
 
 | Campo | Para qué |
 |---|---|
-| `es_contribuyente` | Distingue al que no figura en el padrón del que figura. Sin esto, la app le dice "tenés deuda" a un inquilino. |
-| `al_dia` | Determina GENERAL vs BLACK. Booleano puro. El criterio lo define Hacienda y no se cuestiona. |
+| `al_dia` | Determina PLATINO vs BLACK. El criterio lo define Hacienda y no se cuestiona. |
 | `es_comerciante` | Valida la adhesión de comercios: debe estar inscripto en el municipio (§4.1). |
-| `fecha_corte` | Nunca mostrar el estado sin decir de cuándo es el dato. |
 
-**Fuera de alcance en esta etapa:** montos, cuentas tributarias, cantidad de cuotas, fechas de vencimiento, planes de pago, webhooks de pago. Nada de eso se pide ni se almacena.
+**Fuera de alcance:** montos, cuentas tributarias, cuotas, vencimientos, planes de pago, webhooks, y también `es_contribuyente` y `fecha_corte`. El contrato se mantuvo mínimo a propósito, porque cuanto más se pide al área de Cómputos del municipio, más difícil es conseguirlo.
+
+**Dos cosas que se resuelven de nuestro lado, sin pedir más datos:**
+- **Antigüedad del dato:** guardamos `fecha_ultima_consulta` propia y mostramos "actualizado hace N horas".
+- **No confundir al inquilino con el moroso:** el que no figura en el padrón también devuelve `false`. Por eso el texto de la pantalla Platino nunca afirma que hay deuda (§3.2).
 
 ## 7.2 Sincronización
 
 - Batch nocturno (03:00) sobre los usuarios registrados.
 - Botón "Actualizar mi estado" en la app, máx. 3 usos por día.
 - Caché con TTL de 6 h, invalidado por el botón.
-- `fecha_corte` visible en pantalla.
+- Antigüedad del dato en pantalla: "actualizado hace N horas", con `fecha_ultima_consulta`.
 
 ## 7.3 Degradación
 
@@ -875,7 +869,7 @@ Devuelve situación fiscal por CUIL. Si queda expuesto, cualquiera averigua si s
 
 ## 7.5 Qué se almacena
 
-Solo: `es_contribuyente`, `al_dia`, `es_comerciante`, `cuit_comercio`, `fecha_corte`, y el histórico de cambios de esos valores.
+Solo: `al_dia`, `es_comerciante`, `fecha_ultima_consulta`, y el histórico de cambios de esos valores.
 
 Sin montos, sin cuentas, sin conceptos. La base es mínima.
 
@@ -1102,15 +1096,11 @@ La secuencia es a la inversa de lo habitual: los grandes llevan la delantera y e
 
 ---
 
-# PARTE 13 — Pendientes de definición
+# PARTE 13 — Estado de las definiciones
 
-Queda un solo punto abierto. Todo lo demás está decidido y aplicado en el documento.
+Todo está decidido y aplicado en el documento.
 
-## 13.1 A confirmar con Sistemas del municipio
-
-| Pendiente | Por qué importa |
-|---|---|
-| Que el endpoint devuelva **dos booleanos separados**: `es_contribuyente` y `al_dia` | Si viene uno solo, la app no puede distinguir al inquilino que no figura en el padrón del contribuyente que no está al día, y le termina diciendo "tenés deuda" a alguien que no debe nada. No es una consulta sobre cuotas ni sobre criterios de Hacienda: es una línea en el contrato del endpoint para evitar un mensaje falso en pantalla. |
+No queda ningún pendiente abierto. El contrato del endpoint quedó cerrado en su mínima expresión: un booleano `al_dia` por DNI y un booleano `es_comerciante` por CUIT.
 
 ---
 
@@ -1122,6 +1112,7 @@ Queda un solo punto abierto. Todo lo demás está decidido y aplicado en el docu
 |---|---|
 | Financiamiento del descuento | El comercio absorbe el 100%. El municipio no pone caja. |
 | Porcentaje de descuento | Lo fija libremente el comercio. Sin mínimo ni máximo. |
+| Niveles de tarjeta | **Platino** (no al día) y **Black** (al día). |
 | Estrategia de lanzamiento | Los grandes comercios ya adheridos lideran; el resto se suma después. |
 | Requisito para adherir un comercio | Estar inscripto en el municipio. |
 | Marco normativo | Sin ordenanza. El instrumento es el convenio de adhesión; la baja la decide el administrador municipal. |
@@ -1130,7 +1121,7 @@ Queda un solo punto abierto. Todo lo demás está decidido y aplicado en el docu
 
 | Tema | Definición |
 |---|---|
-| Contrato del endpoint | Contribuyente sí/no, al día sí/no, comercio inscripto sí/no, fecha de corte. |
+| Contrato del endpoint | Un booleano: al día sí/no por DNI, comercio inscripto sí/no por CUIT. Nada más. |
 | Fuera de alcance | Montos, cuentas, cuotas, vencimientos, planes de pago, webhooks. |
 | Criterio de "al día" | Lo define Hacienda. No se investiga ni se replica. |
 
@@ -1173,4 +1164,4 @@ Queda un solo punto abierto. Todo lo demás está decidido y aplicado en el docu
 
 ---
 
-*v2.0 — Versión final para revisión.*
+*v2.1 — Niveles Platino y Black. Endpoint municipal reducido a un booleano.*

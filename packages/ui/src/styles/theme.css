@@ -83,8 +83,8 @@
   --color-brand-900: oklch(0.28 0.09 250);
 
   /* Niveles de ciudadano */
-  --color-nivel-general: oklch(0.62 0.1 200);
-  --color-nivel-general-foreground: oklch(0.985 0 0);
+  --color-nivel-platino: oklch(0.62 0.1 200);
+  --color-nivel-platino-foreground: oklch(0.985 0 0);
   --color-nivel-black: oklch(0.2 0.02 260);
   --color-nivel-black-foreground: oklch(0.98 0.03 90);
 }

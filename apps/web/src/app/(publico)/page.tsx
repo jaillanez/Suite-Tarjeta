@@ -22,7 +22,7 @@ export default function Home() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              Niveles <NivelBadge nivel="GENERAL" /> <NivelBadge nivel="BLACK" />
+              Niveles <NivelBadge nivel="PLATINO" /> <NivelBadge nivel="BLACK" />
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
