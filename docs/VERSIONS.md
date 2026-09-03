@@ -48,6 +48,20 @@
 > binarias** para cp314 — ninguna compila desde fuente. Dev: ruff 0.16.5, mypy 2.3.1,
 > pytest 9.1.1, pytest-asyncio 1.4.0, testcontainers 4.15.0, import-linter 2.14.
 
+## Integración continua (PASO 01-bis)
+| Tema | Definición |
+|---|---|
+| Runner | `ubuntu-latest` (GitHub Actions) |
+| Imagen del service container | **`postgis/postgis:18-3.6`** (verificada en Docker Hub, actualizada 2026-08-31). PostgreSQL 18 + PostGIS 3.6. |
+| Workflow backend | `.github/workflows/api.yml`: ruff, ruff format, mypy `src`, import-linter, alembic, pytest + cobertura. El job **falla si el test de integración se saltea**. |
+| Workflow web | `.github/workflows/web.yml`: placeholder (se completa en PASO 02). |
+| Dependabot | `uv`, `npm`, `github-actions`, semanal. |
+| Rama `main` | Protegida: requiere el check `api`, exige PR, sin force push. |
+| Cobertura backend | ~60% (walking skeleton). |
+
+> Nota: `actions/checkout@v4` y `astral-sh/setup-uv@v6` emiten un warning de Node 20
+> deprecado (corren forzados en Node 24). Dependabot los actualizará.
+
 ## Base de datos de desarrollo (PASO 01)
 | Tema | Definición |
 |---|---|
