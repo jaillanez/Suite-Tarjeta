@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     # Redis
     redis_url: RedisDsn
 
+    # Outbox de eventos (§05.1): cada cuánto drena el worker de segundo plano.
+    outbox_intervalo_seg: float = 5.0
+
     # Endpoint del padrón municipal
     padron_base_url: str
     padron_api_key: SecretStr
@@ -100,6 +103,9 @@ class Settings(BaseSettings):
     ff_canje_contra_tasas: bool = False  # requiere ordenanza, apagado
     ff_generacion_ia: bool = True
     ff_publicacion_redes: bool = True
+    # §05.0.B: puerta de canje explícita. Con la auto-verificación actual todos quedan
+    # VERIFICADA; el día que haya verificación real, se prende este flag.
+    ff_exigir_identidad_verificada: bool = False
 
     model_config = SettingsConfigDict(env_file=".env", env_prefix="TARJETA_", extra="ignore")
 

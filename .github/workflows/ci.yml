@@ -108,6 +108,7 @@ jobs:
           --cov=src/tarjeta/modules/identidad
           --cov=src/tarjeta/modules/padron
           --cov=src/tarjeta/modules/ciudadania
+          --cov=src/tarjeta/modules/gobierno
           --cov-report=term-missing --cov-report=json
       - name: Gate de cobertura por módulo (>=85%)
         if: ${{ !cancelled() }}
@@ -115,7 +116,7 @@ jobs:
           python3 - <<'PY'
           import json, sys
           data = json.load(open("coverage.json"))
-          mods = ("identidad", "padron", "ciudadania")
+          mods = ("identidad", "padron", "ciudadania", "gobierno")
           agg = {m: [0, 0] for m in mods}
           for path, info in data["files"].items():
               for m in mods:
@@ -147,7 +148,7 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           pct=$(python3 -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
-          echo "### Cobertura backend (identidad+padron+ciudadania): ${pct}%" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Cobertura backend (identidad+padron+ciudadania+gobierno): ${pct}%" >> "$GITHUB_STEP_SUMMARY"
 
   web:
     needs: changes

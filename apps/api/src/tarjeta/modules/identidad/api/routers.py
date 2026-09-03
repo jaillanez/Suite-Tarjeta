@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import Annotated
 
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Depends, Request, status
 
 from tarjeta.modules.identidad.application.activar_mfa import ActivarMfa
 from tarjeta.modules.identidad.application.cambiar_perfil import CambiarPerfil, ListarPerfiles
@@ -25,7 +26,7 @@ from tarjeta.modules.identidad.application.verificar_celular import SolicitarOtp
 from tarjeta.shared.domain.errors import NotFoundError
 from tarjeta.shared.domain.types import EntityId
 
-from .deps import ClaimsDep, HuellaDep, PuertosDep, get_ip, get_user_agent
+from .deps import ClaimsDep, HuellaDep, PuertosDep, get_ip, get_user_agent, require_verificada
 from .schemas import (
     DispositivoCrearRequest,
     DispositivoResponse,
@@ -120,6 +121,14 @@ async def recuperar(body: RecuperarRequest, puertos: PuertosDep) -> MensajeRespo
     # (no hay proveedor); el endpoint nunca revela si el email existe.
     _ = body.email
     return MensajeResponse(mensaje="Si la cuenta existe, enviamos instrucciones por email.")
+
+
+@router.get("/canje/puerta", response_model=MensajeResponse)
+async def puerta_canje(
+    id_persona: Annotated[str, Depends(require_verificada)],
+) -> MensajeResponse:
+    # Endpoint testigo de la puerta de canje (§05.0.B). El canje real llega en su módulo.
+    return MensajeResponse(mensaje="Habilitado para canjear.")
 
 
 @router.get("/auth/perfiles", response_model=list[PerfilOut])

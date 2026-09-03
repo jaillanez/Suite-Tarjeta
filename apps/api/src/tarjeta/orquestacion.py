@@ -17,6 +17,7 @@ from tarjeta.modules.ciudadania.infrastructure.repositories import (
     SqlAlchemyHistorialNivelRepository,
     SqlAlchemyPerfilCiudadanoRepository,
 )
+from tarjeta.modules.gobierno.application.auditoria_consumer import consumir_evento
 from tarjeta.modules.padron.application import consultar as padron
 from tarjeta.modules.padron.infrastructure.composition import construir_cliente
 from tarjeta.modules.padron.infrastructure.repositories import SqlAlchemyEstadoPadronRepository
@@ -72,6 +73,8 @@ def build_dispatcher(settings: Settings) -> EventDispatcher:
         )
 
     dispatcher = EventDispatcher()
+    # Auditoría inmutable: consume todos los eventos (§05.4).
+    dispatcher.subscribe_all(consumir_evento)
     dispatcher.subscribe("IdentidadVerificada", on_identidad_verificada)
     dispatcher.subscribe("EstadoPadronActualizado", on_estado_padron_actualizado)
     dispatcher.subscribe("SolicitudActualizarEstado", on_solicitud_actualizar)

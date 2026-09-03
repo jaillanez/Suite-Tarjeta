@@ -66,12 +66,15 @@ Si `lint-imports` falla, el build falla.
 | `notificaciones` | Notificacion | Push, email, SMS, WhatsApp. Reglas de higiene. |
 | `antifraude` | Alerta, Caso | Motor de reglas. Genera casos, no bloquea. |
 | `captacion` | ProspectoComercio, Visita | CRM del embudo de comercios |
-| `gobierno` | Parametro, RegistroAuditoria | Parametría, auditoría inmutable, tablero |
+| `gobierno` | Parametro, RegistroAuditoria, SolicitudAprobacion, AgenteMunicipal | Roles y permisos municipales, parametría, auditoría inmutable, doble conformidad, tablero |
 
 ### Invariantes que quedan imposibles de violar por construcción
 
 - `puntos`: `MovimientoBilletera` no expone métodos de actualización ni borrado.
-- `gobierno`: `RegistroAuditoria` es append-only, incluso para el superadministrador.
+- `gobierno`: `RegistroAuditoria` es append-only **a nivel motor**: la migración hace
+  `REVOKE UPDATE, DELETE, TRUNCATE ON registro_auditoria FROM tarjeta_app`, y como el rol de
+  runtime no es dueño de la tabla no puede volver a otorgárselo. Ni el superadministrador desde
+  la app puede modificar ni borrar auditoría.
 - `ciudadania`: el nivel no tiene setter público; cambia por el motor o por una excepción
   con vigencia y motivo.
 - `padron`: nunca se persisten montos, cuentas, cuotas ni vencimientos.
@@ -231,8 +234,9 @@ argon2, pyotp (TOTP), PyJWT, RENAPER **stub** (resultado configurable), OTP por 
 Los casos de uso escriben eventos (`PersonaRegistrada`, `SesionIniciada`,
 `IntentoDeLoginFallido`, `PerfilCambiado`, `DispositivoRevocado`, `ConsentimientoOtorgado`,
 `ConsentimientoRevocado`) en la tabla `outbox`, en la **misma transacción** que el cambio de
-estado. Un consumidor mínimo los escribe al log estructurado; el consumidor de auditoría
-inmutable llega con el módulo `gobierno`.
+estado. El **consumidor de auditoría inmutable** (`gobierno`) está suscripto a *todos* los
+eventos (`subscribe_all`) y los persiste en `registro_auditoria`, redactando DNI/CUIL antes de
+guardar (§8.3) y de forma idempotente por `id_evento_origen`. Ver el worker de outbox más abajo.
 
 ### Frontend
 
@@ -303,6 +307,72 @@ estado" (máx. 3/día, contador en Redis). En web y móvil.
   reforzado. En esta etapa la identidad se auto-verifica por DNI (el `EnvioOtp` y su adaptador
   de consola quedan para cuando haya proveedor); el reclamo de cuenta por alta presencial
   (PASO 05) es el remedio ante suplantación.
+
+## Módulo `gobierno` y portal municipal (PASO 05)
+
+Convierte al municipio en operador del programa: quién puede hacer qué, con qué controles y
+con qué trazabilidad.
+
+### Roles y matriz de permisos (§2.2)
+
+- Cinco roles: `SUPER_ADMIN`, `ADMINISTRADOR`, `ENCARGADO`, `PERSONAL`, `AUDITOR`, con un
+  **rango** ordenado. `AUDITOR` es estrictamente de solo lectura.
+- La **matriz** rol→permisos vive como **datos** (`domain/roles.py::MATRIZ`), no como `if`
+  dispersos. La dependencia FastAPI `requiere(permiso)` exige perfil municipal activo, resuelve
+  el rol del agente desde la tabla propia de `gobierno` (`agente_municipal`, sin importar
+  `identidad`) y aplica la matriz. Un test verifica **celda por celda**.
+
+### Doble conformidad (§05.5)
+
+- Acciones sensibles (`reglas_nivel:editar`, `ciudadano:reclamo`, `datos:exportar_masivo`) no
+  se ejecutan solas: crean una `SolicitudAprobacion` que **otro** agente debe aprobar.
+- Reglas del agregado: **no autoaprobación**, **rango del aprobador ≥ del solicitante**,
+  **expiración a las 72 h**. Si el ejecutor de la acción falla, la solicitud queda en `ERROR`
+  (no se pierde). Al aprobar `reglas_nivel:editar` se aplica el cambio de parámetro; al aprobar
+  un reclamo (portal) se revoca la sesión anterior y se resetean credenciales.
+
+### Auditoría inmutable (§05.4)
+
+- `RegistroAuditoria` es append-only **a nivel motor** (ver invariantes): `REVOKE UPDATE,
+  DELETE, TRUNCATE … FROM tarjeta_app` en la migración; `tarjeta_app` queda con `ar`
+  (INSERT + SELECT) y, al no ser dueño, no puede re-otorgarse la escritura. Verificado en test
+  de integración (UPDATE/DELETE como rol de runtime → *permission denied*).
+- El consumidor está suscripto a **todos** los eventos, **redacta DNI/CUIL** antes de guardar y
+  es **idempotente** por `id_evento_origen` (índice único).
+
+### Worker de outbox con reintentos (§05.1)
+
+- La tabla `outbox` sumó `intentos`, `proximo_intento`, `muerto`, `error`. El `EventDispatcher`
+  procesa **un evento por transacción**; ante falla hace rollback, incrementa `intentos` con
+  **retroceso exponencial** (`min(300, 2**intentos)` s) y a los `MAX_INTENTOS=5` lo manda a la
+  **cola de muertos** (`muerto=true`). Toma trabajo con `SELECT … FOR UPDATE SKIP LOCKED`
+  (seguro con múltiples workers).
+- Corre como **proceso aparte** del tráfico HTTP: `uv run python -m tarjeta.scripts.outbox_worker`
+  (además del drenado oportunista en el middleware y del worker del `lifespan`). Un test drena
+  el outbox **sin ninguna request** y comprueba que la auditoría no guarda PII.
+
+### Parametría (§5.5)
+
+- Catálogo de parámetros enteros con rango válido (`domain/parametro.py`); editarlos audita el
+  valor anterior y el nuevo. Un valor fuera de rango se rechaza (422). Nada de reglas fijas en
+  el código.
+
+### MFA obligatorio y puerta de canje
+
+- **MFA enrolado obligatorio** para activar el perfil municipal (además de dispositivo
+  autorizado): sin `MfaEstado` activo → 403 (`MfaNoEnrolado`).
+- La **puerta de canje** depende de un parámetro explícito (`ff_exigir_identidad_verificada`),
+  no del stub de verificación: `GET /api/v1/canje/puerta` sólo deja canjear si corresponde.
+
+### Portal municipal (frontend)
+
+Grupo de rutas `apps/web/(municipal)` con layout propio y **cierre de sesión por inactividad a
+los 10 min** (avisa 1 min antes; los formularios guardan **borrador** en `sessionStorage`, así
+no se pierde lo tipeado). Páginas: **Tablero** (recaudación + distribución por nivel),
+**Ciudadanos** (ficha 360 con reautenticación, alta presencial, reclamo de cuenta),
+**Parametría**, **Aprobaciones** (bandeja de doble conformidad), **Auditoría** (tabla con
+filtros) y **Agentes** (asignación de rol). Endpoints cross-módulo en el composition root
+`tarjeta/portal_municipal.py` (no es un módulo; por eso puede importar varios).
 
 ## Walking skeleton (estado actual, PASO 01)
 

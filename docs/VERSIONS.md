@@ -1,6 +1,6 @@
 # Versiones fijadas — suite-tarjeta
 
-Última verificación: **2026-09-02**
+Última verificación: **2026-09-03**
 
 > **Estado del PASO 00: COMPLETO.** Todos los criterios de aceptación cumplidos.
 > Python 3.14.7 gestionado por uv; PostgreSQL 18.6 con `uuidv7()` nativo y las cinco
@@ -110,6 +110,20 @@
 | Batch nocturno | `uv run python -m tarjeta.scripts.sync_padron` (concurrencia acotada). |
 | Gate de cobertura | ≥85% por módulo (identidad, padron, ciudadania) en el CI. |
 | Registro | Mínimo (DNI + fecha nacimiento + contraseña + consentimientos), sin OTP. |
+
+## Módulo gobierno y portal municipal (PASO 05)
+| Tema | Definición |
+|---|---|
+| Roles municipales | `SUPER_ADMIN`, `ADMINISTRADOR`, `ENCARGADO`, `PERSONAL`, `AUDITOR` con rango. Matriz de permisos declarativa (datos, no `if`); test celda por celda. |
+| Rol del agente | Tabla propia `agente_municipal` (gobierno no importa identidad). |
+| Auditoría inmutable | `registro_auditoria` append-only **a nivel motor**: `REVOKE UPDATE, DELETE, TRUNCATE … FROM tarjeta_app` en la migración; verificado en test (UPDATE/DELETE → *permission denied*). Redacta DNI/CUIL; idempotente por `id_evento_origen`. |
+| Doble conformidad | `SolicitudAprobacion`: sin autoaprobación, rango aprobador ≥ solicitante, expira a 72 h; ejecutor fallido deja `ERROR`. |
+| Worker de outbox | Reintentos con backoff exponencial (`min(300, 2**intentos)`), cola de muertos a los 5 intentos, `SELECT … FOR UPDATE SKIP LOCKED`. Proceso aparte: `uv run python -m tarjeta.scripts.outbox_worker`. |
+| Parametría | Catálogo con rango válido; fuera de rango → 422; cambios auditados. |
+| MFA municipal | Enrolamiento MFA obligatorio para activar el perfil municipal (además de dispositivo autorizado). |
+| Puerta de canje | Parámetro explícito `ff_exigir_identidad_verificada` (no depende del stub). `GET /api/v1/canje/puerta`. |
+| Portal (web) | Grupo `(municipal)`: tablero, ciudadanos (ficha 360 + alta presencial + reclamo), parametría, aprobaciones, auditoría, agentes. Cierre por inactividad a 10 min + borradores en `sessionStorage`. |
+| Gate de cobertura | ≥85% por módulo, ahora incluye **gobierno** (medido: **98.2%**). |
 
 ## CI (actualizado en PASO 02)
 | Tema | Definición |
