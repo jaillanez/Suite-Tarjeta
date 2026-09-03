@@ -40,6 +40,16 @@
 | redis | **8.1.0** | ✅ sí | Cliente Python. |
 | httpx | **0.28.1** | ✅ sí | Cliente HTTP (padrón, tests). |
 | greenlet | 3.5.5 | ✅ sí | Requerido por SQLAlchemy async (extra `[asyncio]`). |
+| argon2-cffi | 25.1.0 | ✅ sí | Hash de contraseñas argon2id (PASO 03). |
+| pyotp | 2.10.0 | ✅ sí | TOTP para MFA. |
+| pyjwt | 2.13.0 | ✅ sí | Access tokens JWT HS256. |
+| cryptography | 50.0.1 | ✅ sí | AES-256-GCM para cifrado a nivel de campo. |
+
+> **Parámetros de seguridad (PASO 03), configurables:** argon2id time_cost=3, memory_cost=65536
+> (64 MiB), parallelism=4; access TTL 900 s; refresh TTL 14 días; timeouts por perfil
+> (ciudadano generoso, comercio 30 min, municipal 10 min); OTP 6 dígitos, TTL 300 s.
+> Cifrado de campo: HMAC-SHA256 con pepper + AES-256-GCM con versión de clave (§8.3).
+> Cobertura del módulo `identidad`: **92%** (gate CI `--cov-fail-under=85`).
 
 > Prueba 00.6: `uv pip install` resolvió e instaló 14 paquetes en 44 ms **sin compilar
 > desde fuente** (todas ruedas para cp314). Sin advertencias relacionadas con anotaciones.

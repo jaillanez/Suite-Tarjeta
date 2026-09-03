@@ -47,3 +47,9 @@ class PermissionDeniedError(DomainError):
     """El actor no tiene permiso para esta operación."""
 
     code = "permission_denied"
+
+
+class AuthenticationError(DomainError):
+    """Credenciales o segundo factor inválidos. Nunca revela si el usuario existe."""
+
+    code = "authentication_failed"

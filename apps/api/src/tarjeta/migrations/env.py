@@ -12,6 +12,7 @@ from alembic import context
 from sqlalchemy import create_engine
 
 from tarjeta.config import get_settings
+from tarjeta.modules.identidad.infrastructure import models as _identidad_models  # noqa: F401
 from tarjeta.shared.infrastructure.database import Base
 
 config = context.config

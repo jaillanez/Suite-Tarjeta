@@ -50,7 +50,9 @@ jobs:
       TARJETA_REDIS_URL: redis://localhost:6379/0
       TARJETA_PADRON_BASE_URL: http://localhost:9999/padron
       TARJETA_PADRON_API_KEY: ci-dummy-key
-      TARJETA_JWT_SECRET: ci-insecure-secret-change-me
+      TARJETA_JWT_SECRET: ci-insecure-secret-change-me-32bytes-minimo
+      TARJETA_FIELD_PEPPER: ci-dummy-pepper-para-hmac-de-busqueda
+      TARJETA_FIELD_ENCRYPTION_KEY: AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=
     services:
       postgres:
         image: postgis/postgis:18-3.6
@@ -61,6 +63,14 @@ jobs:
         ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U tarjeta"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:8-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
@@ -91,9 +101,12 @@ jobs:
       - name: Migraciones (alembic upgrade head)
         if: ${{ !cancelled() }}
         run: uv run alembic upgrade head
-      - name: Tests + cobertura
+      - name: Tests + cobertura (gate identidad >=85%)
         if: ${{ !cancelled() }}
-        run: uv run pytest -v --cov=src/tarjeta --cov-report=term-missing --cov-report=json
+        run: >-
+          uv run pytest -v
+          --cov=src/tarjeta/modules/identidad
+          --cov-report=term-missing --cov-report=json --cov-fail-under=85
       - name: El test de integración NO debe saltearse en CI
         if: ${{ !cancelled() }}
         run: |
@@ -109,7 +122,7 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           pct=$(python3 -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
-          echo "### Cobertura backend: ${pct}%" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Cobertura módulo identidad: ${pct}%" >> "$GITHUB_STEP_SUMMARY"
 
   web:
     needs: changes

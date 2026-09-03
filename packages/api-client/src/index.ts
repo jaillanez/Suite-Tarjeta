@@ -90,11 +90,110 @@ export function createApiClient(options: ApiClientOptions) {
     );
   }
 
+  const post = <T>(path: string, data?: unknown): Promise<T> => {
+    const init: RequestInit = { method: 'POST' };
+    if (data !== undefined) {
+      init.headers = { 'content-type': 'application/json' };
+      init.body = JSON.stringify(data);
+    }
+    return request<T>(path, init);
+  };
+
+  const del = <T>(path: string): Promise<T> => request<T>(path, { method: 'DELETE' });
+
   return {
     request,
     health: () => request<HealthResponse>('/health'),
     healthDb: () => request<HealthDbResponse>('/health/db'),
+    // --- auth ---
+    registro: (body: RegistroBody) => post<Mensaje>('/api/v1/auth/registro', body),
+    verificarCelular: (celular: string, codigo: string) =>
+      post<Mensaje>('/api/v1/auth/verificar-celular', { celular, codigo }),
+    reenviarOtp: (celular: string) => post<Mensaje>('/api/v1/auth/reenviar-otp', { celular }),
+    login: (dni: string, password: string) =>
+      post<LoginResult>('/api/v1/auth/login', { dni, password }),
+    mfaVerificar: (mfa_token: string, codigo: string) =>
+      post<LoginResult>('/api/v1/auth/mfa/verificar', { mfa_token, codigo }),
+    refresh: (refresh_token: string) => post<Tokens>('/api/v1/auth/refresh', { refresh_token }),
+    logout: (refresh_token: string) => post<Mensaje>('/api/v1/auth/logout', { refresh_token }),
+    perfiles: () => request<Perfil[]>('/api/v1/auth/perfiles'),
+    activarPerfil: (clave: string) =>
+      post<Tokens>(`/api/v1/auth/perfiles/${encodeURIComponent(clave)}/activar`),
+    // --- personas/me ---
+    me: () => request<PersonaMe>('/api/v1/personas/me'),
+    consentimientos: () => request<Record<string, boolean>>('/api/v1/personas/me/consentimientos'),
+    dispositivos: () => request<Dispositivo[]>('/api/v1/personas/me/dispositivos'),
+    revocarDispositivo: (id: string) => del<Mensaje>(`/api/v1/personas/me/dispositivos/${id}`),
+    activarMfa: () => post<MfaActivacion>('/api/v1/personas/me/mfa/activar'),
   };
+}
+
+export interface Mensaje {
+  mensaje: string;
+}
+
+export interface ConsentimientoBody {
+  tipo: string;
+  otorgado: boolean;
+}
+
+export interface RegistroBody {
+  dni: string;
+  cuil: string;
+  apellido: string;
+  nombre: string;
+  celular: string;
+  password: string;
+  email?: string;
+  consentimientos: ConsentimientoBody[];
+}
+
+export interface Tokens {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+}
+
+export interface Perfil {
+  clave: string;
+  tipo: string;
+  id_comercio?: string | null;
+  rol?: string | null;
+}
+
+export interface LoginResult {
+  mfa_requerido: boolean;
+  perfiles: Perfil[];
+  perfil_activo?: string | null;
+  tokens?: Tokens | null;
+  mfa_token?: string | null;
+}
+
+export interface PersonaMe {
+  id: string;
+  dni: string;
+  cuil: string;
+  apellido: string;
+  nombre: string;
+  celular: string;
+  email: string | null;
+  estado_identidad: string;
+  celular_verificado: boolean;
+  perfiles: Perfil[];
+}
+
+export interface Dispositivo {
+  id: string;
+  nombre_declarado: string;
+  plataforma: string;
+  estado: string;
+  autorizado_para_perfil_municipal: boolean;
+}
+
+export interface MfaActivacion {
+  secreto: string;
+  uri: string;
+  codigos_recuperacion: string[];
 }
 
 export type ApiClient = ReturnType<typeof createApiClient>;
