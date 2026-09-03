@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from tarjeta.config import Settings, get_settings
+from tarjeta.modules.identidad.api.routers import router as identidad_router
 from tarjeta.shared.api.dependencies import SessionDep
 from tarjeta.shared.api.errors import register_error_handlers
 from tarjeta.shared.infrastructure.logging import configure_logging
@@ -38,6 +39,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
 
     register_error_handlers(app)
+    app.include_router(identidad_router)
 
     @app.get("/health", tags=["health"])
     async def health() -> dict[str, str]:

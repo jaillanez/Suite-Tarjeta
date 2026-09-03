@@ -10,6 +10,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from tarjeta.shared.domain.errors import (
+    AuthenticationError,
     BusinessRuleViolation,
     ConflictError,
     DomainError,
@@ -24,6 +25,7 @@ _STATUS_BY_TYPE: dict[type[DomainError], int] = {
     ConflictError: 409,
     BusinessRuleViolation: 409,
     PermissionDeniedError: 403,
+    AuthenticationError: 401,
 }
 
 

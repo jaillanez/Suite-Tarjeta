@@ -1,0 +1,56 @@
+"""Casos de uso: listar perfiles y cambiar de perfil activo (§11.2/§11.3)."""
+
+from __future__ import annotations
+
+from tarjeta.modules.identidad.domain.errors import DispositivoNoRegistrado, PerfilNoAsignado
+from tarjeta.modules.identidad.domain.events import PerfilCambiado
+from tarjeta.modules.identidad.domain.perfil import TipoPerfil
+from tarjeta.shared.domain.errors import NotFoundError
+from tarjeta.shared.domain.types import EntityId
+
+from .deps import Puertos
+from .dto import PerfilInfo, Tokens
+from .iniciar_sesion import _perfil_por_clave, _perfiles_info
+from .permisos import permisos_de
+
+
+class ListarPerfiles:
+    def __init__(self, puertos: Puertos) -> None:
+        self.p = puertos
+
+    async def ejecutar(self, *, id_persona: str) -> list[PerfilInfo]:
+        persona = await self.p.personas.obtener_por_id(EntityId.from_str(id_persona))
+        if persona is None:
+            raise NotFoundError("Persona inexistente.")
+        return _perfiles_info(persona)
+
+
+class CambiarPerfil:
+    def __init__(self, puertos: Puertos) -> None:
+        self.p = puertos
+
+    async def ejecutar(self, *, id_persona: str, clave_destino: str) -> Tokens:
+        p = self.p
+        persona = await p.personas.obtener_por_id(EntityId.from_str(id_persona))
+        if persona is None:
+            raise NotFoundError("Persona inexistente.")
+
+        perfil = _perfil_por_clave(persona, clave_destino)
+        if perfil is None:
+            # §11.3: no se puede "pedir" un perfil no asignado. 403 sin filtrar info.
+            raise PerfilNoAsignado("Perfil no disponible.")
+
+        if perfil.tipo is TipoPerfil.MUNICIPAL:
+            dispositivos = await p.dispositivos.listar_por_persona(persona.id)
+            if not any(d.activo and d.autorizado_para_perfil_municipal for d in dispositivos):
+                raise DispositivoNoRegistrado(
+                    "El perfil municipal exige un dispositivo registrado."
+                )
+
+        access = p.tokens.crear(
+            id_persona=str(persona.id), perfil=perfil.clave(), permisos=permisos_de(perfil)
+        )
+        nuevo_refresh = await p.refresh.emitir(persona.id, perfil.clave())
+        await p.outbox.escribir([PerfilCambiado(id_persona=str(persona.id), perfil=perfil.clave())])
+        await p.uow.commit()
+        return Tokens(access_token=access, refresh_token=nuevo_refresh)

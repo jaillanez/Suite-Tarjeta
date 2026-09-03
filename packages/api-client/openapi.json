@@ -5,6 +5,878 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/api/v1/auth/registro": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Registro",
+        "operationId": "registro_api_v1_auth_registro_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistroRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/verificar-celular": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Verificar Celular",
+        "operationId": "verificar_celular_api_v1_auth_verificar_celular_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificarCelularRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/reenviar-otp": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Reenviar Otp",
+        "operationId": "reenviar_otp_api_v1_auth_reenviar_otp_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReenviarOtpRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Login",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/mfa/verificar": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Mfa Verificar",
+        "operationId": "mfa_verificar_api_v1_auth_mfa_verificar_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaVerificarRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Refresh",
+        "operationId": "refresh_api_v1_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokensResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/recuperar": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Recuperar",
+        "operationId": "recuperar_api_v1_auth_recuperar_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecuperarRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/perfiles": {
+      "get": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Perfiles",
+        "operationId": "perfiles_api_v1_auth_perfiles_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PerfilOut"
+                  },
+                  "title": "Response Perfiles Api V1 Auth Perfiles Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/perfiles/{clave}/activar": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Activar Perfil",
+        "operationId": "activar_perfil_api_v1_auth_perfiles__clave__activar_post",
+        "parameters": [
+          {
+            "name": "clave",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Clave"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokensResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/personas/me": {
+      "get": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Personas Me",
+        "operationId": "personas_me_api_v1_personas_me_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonaMeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Personas Me Patch",
+        "operationId": "personas_me_patch_api_v1_personas_me_patch",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonaPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/personas/me/consentimientos": {
+      "get": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Consentimientos Get",
+        "operationId": "consentimientos_get_api_v1_personas_me_consentimientos_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "title": "Response Consentimientos Get Api V1 Personas Me Consentimientos Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Consentimientos Post",
+        "operationId": "consentimientos_post_api_v1_personas_me_consentimientos_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentimientoInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/personas/me/dispositivos": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Dispositivos Post",
+        "operationId": "dispositivos_post_api_v1_personas_me_dispositivos_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispositivoCrearRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DispositivoResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Dispositivos Get",
+        "operationId": "dispositivos_get_api_v1_personas_me_dispositivos_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DispositivoResponse"
+                  },
+                  "title": "Response Dispositivos Get Api V1 Personas Me Dispositivos Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/personas/me/dispositivos/{id_dispositivo}": {
+      "delete": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Dispositivos Delete",
+        "operationId": "dispositivos_delete_api_v1_personas_me_dispositivos__id_dispositivo__delete",
+        "parameters": [
+          {
+            "name": "id_dispositivo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id Dispositivo"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/personas/me/mfa/activar": {
+      "post": {
+        "tags": [
+          "identidad"
+        ],
+        "summary": "Mfa Activar",
+        "operationId": "mfa_activar_api_v1_personas_me_mfa_activar_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaActivarResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -53,6 +925,549 @@
             }
           }
         }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ConsentimientoIn": {
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "title": "Tipo"
+          },
+          "otorgado": {
+            "type": "boolean",
+            "title": "Otorgado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tipo",
+          "otorgado"
+        ],
+        "title": "ConsentimientoIn"
+      },
+      "ConsentimientoInput": {
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "title": "Tipo"
+          },
+          "otorgado": {
+            "type": "boolean",
+            "title": "Otorgado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tipo",
+          "otorgado"
+        ],
+        "title": "ConsentimientoInput"
+      },
+      "DispositivoCrearRequest": {
+        "properties": {
+          "nombre_declarado": {
+            "type": "string",
+            "title": "Nombre Declarado"
+          },
+          "plataforma": {
+            "type": "string",
+            "title": "Plataforma"
+          },
+          "huella": {
+            "type": "string",
+            "title": "Huella"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre_declarado",
+          "plataforma",
+          "huella"
+        ],
+        "title": "DispositivoCrearRequest"
+      },
+      "DispositivoResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "nombre_declarado": {
+            "type": "string",
+            "title": "Nombre Declarado"
+          },
+          "plataforma": {
+            "type": "string",
+            "title": "Plataforma"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "autorizado_para_perfil_municipal": {
+            "type": "boolean",
+            "title": "Autorizado Para Perfil Municipal"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre_declarado",
+          "plataforma",
+          "estado",
+          "autorizado_para_perfil_municipal"
+        ],
+        "title": "DispositivoResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LoginRequest": {
+        "properties": {
+          "dni": {
+            "type": "string",
+            "title": "Dni"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dni",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "LoginResponse": {
+        "properties": {
+          "mfa_requerido": {
+            "type": "boolean",
+            "title": "Mfa Requerido"
+          },
+          "perfiles": {
+            "items": {
+              "$ref": "#/components/schemas/PerfilOut"
+            },
+            "type": "array",
+            "title": "Perfiles"
+          },
+          "perfil_activo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perfil Activo"
+          },
+          "tokens": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TokensResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mfa_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mfa Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mfa_requerido",
+          "perfiles"
+        ],
+        "title": "LoginResponse"
+      },
+      "MensajeResponse": {
+        "properties": {
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mensaje"
+        ],
+        "title": "MensajeResponse"
+      },
+      "MfaActivarResponse": {
+        "properties": {
+          "secreto": {
+            "type": "string",
+            "title": "Secreto"
+          },
+          "uri": {
+            "type": "string",
+            "title": "Uri"
+          },
+          "codigos_recuperacion": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Codigos Recuperacion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "secreto",
+          "uri",
+          "codigos_recuperacion"
+        ],
+        "title": "MfaActivarResponse"
+      },
+      "MfaVerificarRequest": {
+        "properties": {
+          "mfa_token": {
+            "type": "string",
+            "title": "Mfa Token"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mfa_token",
+          "codigo"
+        ],
+        "title": "MfaVerificarRequest"
+      },
+      "PerfilOut": {
+        "properties": {
+          "clave": {
+            "type": "string",
+            "title": "Clave"
+          },
+          "tipo": {
+            "type": "string",
+            "title": "Tipo"
+          },
+          "id_comercio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Comercio"
+          },
+          "rol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rol"
+          }
+        },
+        "type": "object",
+        "required": [
+          "clave",
+          "tipo"
+        ],
+        "title": "PerfilOut"
+      },
+      "PersonaMeResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "dni": {
+            "type": "string",
+            "title": "Dni"
+          },
+          "cuil": {
+            "type": "string",
+            "title": "Cuil"
+          },
+          "apellido": {
+            "type": "string",
+            "title": "Apellido"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "celular": {
+            "type": "string",
+            "title": "Celular"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "estado_identidad": {
+            "type": "string",
+            "title": "Estado Identidad"
+          },
+          "celular_verificado": {
+            "type": "boolean",
+            "title": "Celular Verificado"
+          },
+          "perfiles": {
+            "items": {
+              "$ref": "#/components/schemas/PerfilOut"
+            },
+            "type": "array",
+            "title": "Perfiles"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "dni",
+          "cuil",
+          "apellido",
+          "nombre",
+          "celular",
+          "email",
+          "estado_identidad",
+          "celular_verificado",
+          "perfiles"
+        ],
+        "title": "PersonaMeResponse"
+      },
+      "PersonaPatchRequest": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "title": "PersonaPatchRequest"
+      },
+      "RecuperarRequest": {
+        "properties": {
+          "dni": {
+            "type": "string",
+            "title": "Dni"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dni"
+        ],
+        "title": "RecuperarRequest"
+      },
+      "ReenviarOtpRequest": {
+        "properties": {
+          "celular": {
+            "type": "string",
+            "title": "Celular"
+          }
+        },
+        "type": "object",
+        "required": [
+          "celular"
+        ],
+        "title": "ReenviarOtpRequest"
+      },
+      "RefreshRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshRequest"
+      },
+      "RegistroRequest": {
+        "properties": {
+          "dni": {
+            "type": "string",
+            "title": "Dni"
+          },
+          "cuil": {
+            "type": "string",
+            "title": "Cuil"
+          },
+          "apellido": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Apellido"
+          },
+          "nombre": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Nombre"
+          },
+          "celular": {
+            "type": "string",
+            "title": "Celular"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Password"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "consentimientos": {
+            "items": {
+              "$ref": "#/components/schemas/ConsentimientoIn"
+            },
+            "type": "array",
+            "title": "Consentimientos"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dni",
+          "cuil",
+          "apellido",
+          "nombre",
+          "celular",
+          "password"
+        ],
+        "title": "RegistroRequest"
+      },
+      "TokensResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token"
+        ],
+        "title": "TokensResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VerificarCelularRequest": {
+        "properties": {
+          "celular": {
+            "type": "string",
+            "title": "Celular"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "celular",
+          "codigo"
+        ],
+        "title": "VerificarCelularRequest"
       }
     }
   }

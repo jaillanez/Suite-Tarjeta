@@ -49,6 +49,39 @@ class Settings(BaseSettings):
     qr_token_rotation_seconds: int = 45
     qr_token_validity_seconds: int = 90
 
+    # Cifrado a nivel de campo (§8.3)
+    # pepper: clave secreta del HMAC de búsqueda (dni_hash, cuil_hash). Nunca en la base.
+    field_pepper: SecretStr
+    # clave de cifrado simétrico (base64 urlsafe de 32 bytes) y su versión (rotación).
+    field_encryption_key: SecretStr
+    field_encryption_key_version: str = "v1"
+
+    # Contraseñas (argon2id)
+    argon2_time_cost: int = 3
+    argon2_memory_cost: int = 65536  # 64 MiB
+    argon2_parallelism: int = 4
+    password_min_length: int = 10
+
+    # Sesiones
+    refresh_ttl_seconds: int = 1209600  # 14 días
+    sesion_ciudadano_timeout_minutos: int = 43200  # 30 días (generoso)
+    sesion_comercio_timeout_minutos: int = 30
+
+    # OTP
+    otp_length: int = 6
+    otp_ttl_seconds: int = 300
+    otp_max_intentos: int = 5
+    otp_max_solicitudes_por_hora: int = 5
+
+    # MFA
+    mfa_issuer: str = "Tarjeta de Beneficios"
+
+    # Rate limiting (login/registro/recuperación)
+    rate_limit_login_por_minuto: int = 10
+
+    # Verificador de identidad de prueba (RENAPER stub)
+    renaper_stub_resultado: Literal["aprobado", "rechazado", "revision"] = "aprobado"
+
     # Parámetros del programa (§13 de la especificación)
     puntos_vencimiento_meses: int = 24
     grupo_max_miembros: int = 6

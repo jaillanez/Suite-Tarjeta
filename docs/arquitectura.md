@@ -175,6 +175,74 @@ a los comercios con iPhone a activar Acceso Guiado a mano, o aceptar el bloqueo 
   al instalar (§11.2).
 - Escáner QR elegido: **@capacitor-mlkit/barcode-scanning** (MLKit; peer `@capacitor/core >=8`).
 
+## Módulo `identidad` (PASO 03)
+
+Primer módulo con lógica de negocio: registro, verificación de celular, login, MFA,
+perfiles y dispositivos.
+
+### Cifrado de datos personales (§8.3)
+
+Patrón de **dos columnas por dato sensible** (DNI y CUIL):
+
+| Columna | Contenido | Uso |
+|---|---|---|
+| `dni_hash` / `cuil_hash` | HMAC-SHA256 del valor **normalizado** (solo dígitos), con un *pepper* de aplicación | Índice **único** y búsqueda por igualdad |
+| `dni_cifrado` / `cuil_cifrado` | Valor cifrado con AES-256-GCM, con prefijo de versión de clave | Recuperar el valor cuando hay que mostrarlo |
+
+- El **pepper** (HMAC) y la **clave de cifrado** viven en configuración
+  (`TARJETA_FIELD_PEPPER`, `TARJETA_FIELD_ENCRYPTION_KEY`), **nunca en la base**.
+- Normalización antes de hashear: el mismo DNI con o sin puntos produce el mismo hash
+  (garantiza unicidad). Verificado por test.
+- Rotación de clave: el texto cifrado lleva `vN:` como prefijo (`field_encryption_key_version`).
+- El valor en claro **no existe en ninguna columna**.
+- **Redacción en logs**: el logging estructurado del shared kernel redacta por patrón los
+  DNI (7-8 dígitos) y CUIL (11 dígitos). El domicilio no se loguea nunca (disciplina).
+  Verificado por test.
+
+### Contraseñas
+
+argon2id (`argon2-cffi`), parámetros en configuración (`argon2_*`); rehash automático al
+iniciar sesión si cambian los parámetros; comparación en tiempo constante; login que **no
+revela si el usuario existe** (mismo error y se hashea igual cuando el usuario no existe).
+
+### Sesiones y tokens
+
+- **Access token**: JWT HS256 corto (`jwt_access_ttl_seconds`, 900 s) con `sub`, `perfil` y
+  `permisos`. Sin datos personales.
+- **Refresh token**: opaco, guardado con hash (SHA-256) en `refresh_token`, **rotado en cada
+  uso**. Familia por sesión (`family_id`).
+- **Detección de reuso**: si llega un refresh ya usado, se **revoca toda la familia** y el
+  intento falla (401). Convierte un token robado en un incidente detectado.
+- **Timeouts por perfil activo** (§11.3): ciudadano generoso, comercio 30 min, municipal 10 min.
+- **MFA (TOTP)** para perfiles municipales y Admin de Comercio, con códigos de recuperación
+  de un solo uso (guardados con hash). El perfil municipal exige además un **dispositivo
+  registrado y autorizado**.
+
+### Puertos y adaptadores
+
+Puertos en `domain/ports.py` (repositorios, `HashDeContrasena`, `EnvioOtp`, `AlmacenOtp`,
+`RateLimiter`, `VerificadorIdentidad`, `GeneradorTotp`, `GeneradorTokenAcceso`,
+`AlmacenRefresh`, `AlmacenMfa`, `TextosLegales`, `Outbox`). Adaptadores en `infrastructure/`:
+argon2, pyotp (TOTP), PyJWT, RENAPER **stub** (resultado configurable), OTP por **consola**
+(deshabilitado fuera de `dev`), Redis (OTP + rate limiting), refresh sobre SQLAlchemy.
+
+### Eventos (outbox)
+
+Los casos de uso escriben eventos (`PersonaRegistrada`, `SesionIniciada`,
+`IntentoDeLoginFallido`, `PerfilCambiado`, `DispositivoRevocado`, `ConsentimientoOtorgado`,
+`ConsentimientoRevocado`) en la tabla `outbox`, en la **misma transacción** que el cambio de
+estado. Un consumidor mínimo los escribe al log estructurado; el consumidor de auditoría
+inmutable llega con el módulo `gobierno`.
+
+### Frontend
+
+- `apps/web`: registro (con consentimientos separados), login con MFA, selector de perfil,
+  perfil con dispositivos y cierre remoto. **Middleware real** que protege las rutas de
+  comercio y municipio (cookie de presencia de sesión; la validez la valida la API).
+- `apps/mobile`: login y selector de perfil; el perfil activo y los tokens se persisten con
+  el plugin **Preferences** de Capacitor. Sin middleware (protección del lado del cliente +
+  validación en la API).
+
 ## Walking skeleton (estado actual, PASO 01)
 
 La línea fina que atraviesa todas las capas está implementada y verificada:
