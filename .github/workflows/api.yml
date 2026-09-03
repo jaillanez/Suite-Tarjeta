@@ -1,0 +1,106 @@
+name: api
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - ".github/workflows/api.yml"
+  pull_request:
+    paths:
+      - "apps/api/**"
+      - ".github/workflows/api.yml"
+
+concurrency:
+  group: api-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    env:
+      TARJETA_ENVIRONMENT: dev
+      TARJETA_DATABASE_URL: postgresql+psycopg://tarjeta:tarjeta@localhost:5432/tarjeta_test
+      TARJETA_DATABASE_MIGRATOR_URL: postgresql+psycopg://tarjeta:tarjeta@localhost:5432/tarjeta_test
+      TARJETA_INTEGRATION_DATABASE_URL: postgresql+psycopg://tarjeta:tarjeta@localhost:5432/tarjeta_test
+      TARJETA_REDIS_URL: redis://localhost:6379/0
+      TARJETA_PADRON_BASE_URL: http://localhost:9999/padron
+      TARJETA_PADRON_API_KEY: ci-dummy-key
+      TARJETA_JWT_SECRET: ci-insecure-secret-change-me
+    services:
+      postgres:
+        # PostgreSQL 18 + PostGIS 3.6 (verificado en Docker Hub, ver docs/VERSIONS.md)
+        image: postgis/postgis:18-3.6
+        env:
+          POSTGRES_USER: tarjeta
+          POSTGRES_PASSWORD: tarjeta
+          POSTGRES_DB: tarjeta_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U tarjeta"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Instalar Python 3.14.7
+        run: uv python install 3.14.7
+
+      - name: Instalar dependencias (lock congelado)
+        run: uv sync --group dev --frozen
+
+      - name: Crear extensiones en la base de test
+        run: PGPASSWORD=tarjeta psql -h localhost -U tarjeta -d tarjeta_test -f "$GITHUB_WORKSPACE/infra/sql/00-extensions.sql"
+
+      # Los cuatro chequeos de calidad corren por separado; con !cancelled() se ejecutan
+      # todos aunque uno falle, para ver exactamente qué se rompió. El job igual falla.
+      - name: ruff check
+        if: ${{ !cancelled() }}
+        run: uv run ruff check .
+
+      - name: ruff format --check
+        if: ${{ !cancelled() }}
+        run: uv run ruff format --check .
+
+      - name: mypy
+        if: ${{ !cancelled() }}
+        run: uv run mypy src
+
+      - name: import-linter
+        if: ${{ !cancelled() }}
+        run: uv run lint-imports
+
+      - name: Migraciones (alembic upgrade head)
+        if: ${{ !cancelled() }}
+        run: uv run alembic upgrade head
+
+      - name: Tests + cobertura
+        if: ${{ !cancelled() }}
+        run: uv run pytest -v --cov=src/tarjeta --cov-report=term-missing --cov-report=json
+
+      - name: El test de integración NO debe saltearse en CI
+        if: ${{ !cancelled() }}
+        run: |
+          out=$(uv run pytest -m integration -rs -q 2>&1) || { echo "$out"; exit 1; }
+          echo "$out"
+          if echo "$out" | grep -qiE "skipped"; then
+            echo "::error::El test de integración se salteó en CI"; exit 1
+          fi
+          if ! echo "$out" | grep -qE "[0-9]+ passed"; then
+            echo "::error::No corrió ningún test de integración"; exit 1
+          fi
+
+      - name: Publicar cobertura en el resumen
+        if: ${{ !cancelled() }}
+        run: |
+          pct=$(python3 -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
+          echo "### Cobertura backend: ${pct}%" >> "$GITHUB_STEP_SUMMARY"

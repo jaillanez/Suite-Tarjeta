@@ -21,7 +21,7 @@ dev = [
     "mypy",
     "pytest",
     "pytest-asyncio",
-    "testcontainers[postgres]",
+    "pytest-cov",
     "import-linter",
 ]
 
@@ -52,15 +52,14 @@ explicit_package_bases = true
 namespace_packages = true
 plugins = []
 
-[[tool.mypy.overrides]]
-module = ["testcontainers.*"]
-ignore_missing_imports = true
-
 # ------------------------------------------------------------------ pytest
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
 pythonpath = ["src"]
+markers = [
+    "integration: requiere una base PostgreSQL real (service container en CI)",
+]
 
 # ------------------------------------------------------------------ import-linter
 [tool.importlinter]

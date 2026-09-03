@@ -1,0 +1,22 @@
+version: 2
+updates:
+  # Backend Python (uv)
+  - package-ecosystem: "uv"
+    directory: "/apps/api"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+
+  # Frontend JS (pnpm workspace)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+
+  # Acciones de GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10

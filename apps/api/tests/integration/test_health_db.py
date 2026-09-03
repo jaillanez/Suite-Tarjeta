@@ -1,7 +1,8 @@
-"""Integración: /health/db contra un PostgreSQL 18.6 real (testcontainers).
+"""Integración: /health/db contra un PostgreSQL 18 real.
 
-Verifica que la línea api → sesión async → base funcione y que el servidor sea 18
-(uuidv7() es nativo desde PG 18).
+En CI usa el *service container* (via `TARJETA_INTEGRATION_DATABASE_URL`). En local,
+si hay una base alcanzable la corre; si no, se saltea con un mensaje claro.
+Verifica la línea api → sesión async → base y que `uuidv7()` (nativo en PG 18) funcione.
 """
 
 from __future__ import annotations
@@ -11,43 +12,41 @@ import uuid
 from collections.abc import AsyncIterator
 
 import pytest
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-_IMAGE = "postgres:18.6"
+from tarjeta.config import get_settings
+from tarjeta.main import create_app
+from tarjeta.shared.infrastructure.database import session_scope
 
-# Ryuk (el reaper de testcontainers) también requiere bajar su imagen; se desactiva
-# para que el test dependa solo de la imagen de postgres.
-os.environ.setdefault("TESTCONTAINERS_RYUK_DISABLED", "true")
-
-# Se saltea limpiamente si Docker no está o la imagen no está disponible localmente.
-# Para habilitarlo, pre-descargar una vez:  docker pull postgres:18.6
-docker = pytest.importorskip("docker")
-try:  # pragma: no cover - control de entorno
-    _client = docker.from_env()
-    _client.ping()
-    _client.images.get(_IMAGE)
-except Exception:  # noqa: BLE001
-    pytest.skip(
-        f"Docker o imagen {_IMAGE} no disponible localmente (pre-pull: docker pull {_IMAGE})",
-        allow_module_level=True,
-    )
-
-from httpx import ASGITransport, AsyncClient  # noqa: E402
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine  # noqa: E402
-from testcontainers.postgres import PostgresContainer  # noqa: E402
-
-from tarjeta.main import create_app  # noqa: E402
-from tarjeta.shared.infrastructure.database import session_scope  # noqa: E402
+pytestmark = pytest.mark.integration
 
 
-@pytest.fixture(scope="module")
-def pg_url() -> AsyncIterator[str]:
-    with PostgresContainer(_IMAGE, driver="psycopg") as pg:
-        yield pg.get_connection_url()
+def _integration_db_url() -> str | None:
+    explicit = os.getenv("TARJETA_INTEGRATION_DATABASE_URL")
+    if explicit:
+        return explicit
+    try:
+        return str(get_settings().database_url)
+    except Exception:  # noqa: BLE001 - config incompleta en local
+        return None
 
 
 @pytest.fixture
-async def client(pg_url: str) -> AsyncIterator[AsyncClient]:
-    engine = create_async_engine(pg_url)
+async def client() -> AsyncIterator[AsyncClient]:
+    url = _integration_db_url()
+    if not url:
+        pytest.skip("Sin URL de base para integración (TARJETA_INTEGRATION_DATABASE_URL)")
+
+    engine = create_async_engine(url)
+    try:
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+    except Exception as exc:  # noqa: BLE001 - base no disponible en local
+        await engine.dispose()
+        pytest.skip(f"Base no disponible para integración: {exc}")
+
     sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
 
     async def _override_session() -> AsyncIterator[object]:
@@ -72,7 +71,5 @@ async def test_health_db(client: AsyncClient) -> None:
     resp = await client.get("/health/db")
     assert resp.status_code == 200
     body = resp.json()
-    # uuidv7() devuelve un UUID válido
-    uuid.UUID(body["uuid"])
-    # el servidor es PostgreSQL 18
+    uuid.UUID(body["uuid"])  # uuidv7() devuelve un UUID válido
     assert "PostgreSQL 18" in body["server_version"]
