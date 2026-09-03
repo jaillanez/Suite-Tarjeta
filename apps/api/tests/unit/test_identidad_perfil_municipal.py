@@ -11,9 +11,14 @@ from tarjeta.config import Settings
 from tarjeta.modules.identidad.application.cambiar_perfil import CambiarPerfil
 from tarjeta.modules.identidad.application.deps import Puertos
 from tarjeta.modules.identidad.domain.dispositivo import Dispositivo
-from tarjeta.modules.identidad.domain.errors import DispositivoNoRegistrado, PerfilNoAsignado
+from tarjeta.modules.identidad.domain.errors import (
+    DispositivoNoRegistrado,
+    MfaNoEnrolado,
+    PerfilNoAsignado,
+)
 from tarjeta.modules.identidad.domain.perfil import Perfil, TipoPerfil
 from tarjeta.modules.identidad.domain.persona import MetodoVerificacion, Persona
+from tarjeta.modules.identidad.domain.ports import MfaEstado
 from tarjeta.modules.identidad.domain.value_objects import Celular
 from tarjeta.shared.domain.types import Dni, EntityId
 
@@ -70,14 +75,30 @@ class _FakeUow:
         return None
 
 
-def _puertos(persona: Persona, dispositivos: list[Dispositivo]) -> Puertos:
+class _FakeMfa:
+    def __init__(self, estado: MfaEstado | None) -> None:
+        self._estado = estado
+
+    async def obtener(self, id_persona: EntityId) -> MfaEstado | None:
+        return self._estado
+
+
+_MFA_ACTIVO = MfaEstado(secreto="s", activo=True, codigos_recuperacion=[])
+
+
+def _puertos(
+    persona: Persona,
+    dispositivos: list[Dispositivo],
+    *,
+    mfa: MfaEstado | None = _MFA_ACTIVO,
+) -> Puertos:
     return Puertos(
         uow=_FakeUow(),  # type: ignore[arg-type]
         personas=_FakePersonas(persona),  # type: ignore[arg-type]
         credenciales=None,  # type: ignore[arg-type]
         dispositivos=_FakeDispositivos(dispositivos),  # type: ignore[arg-type]
         consentimientos=None,  # type: ignore[arg-type]
-        mfa=None,  # type: ignore[arg-type]
+        mfa=_FakeMfa(mfa),  # type: ignore[arg-type]
         textos=None,  # type: ignore[arg-type]
         outbox=_FakeOutbox(),  # type: ignore[arg-type]
         hasher=None,  # type: ignore[arg-type]
@@ -109,6 +130,20 @@ async def test_municipal_con_dispositivo_autorizado_ok() -> None:
         id_persona=str(persona.id), clave_destino="MUNICIPAL", huella="h"
     )
     assert tokens.access_token == "access"
+
+
+async def test_municipal_sin_mfa_enrolado_falla() -> None:
+    # §05.3: con dispositivo autorizado pero sin MFA enrolado, no puede operar como municipal.
+    persona = _persona_municipal()
+    disp = Dispositivo.registrar(
+        id_persona=persona.id, nombre_declarado="tel", plataforma="android", huella="h"
+    )
+    disp.autorizar_para_municipal()
+    puertos = _puertos(persona, [disp], mfa=None)
+    with pytest.raises(MfaNoEnrolado):
+        await CambiarPerfil(puertos).ejecutar(
+            id_persona=str(persona.id), clave_destino="MUNICIPAL", huella="h"
+        )
 
 
 async def test_municipal_con_dispositivo_pero_otra_huella_falla() -> None:

@@ -44,9 +44,10 @@ jobs:
         working-directory: apps/api
     env:
       TARJETA_ENVIRONMENT: dev
-      TARJETA_DATABASE_URL: postgresql+psycopg://tarjeta:tarjeta@localhost:5432/tarjeta_test
+      # runtime = rol tarjeta_app (sin DDL); migrador/dueño = rol tarjeta. Dos roles como en prod.
+      TARJETA_DATABASE_URL: postgresql+psycopg://tarjeta_app:tarjeta_app@localhost:5432/tarjeta_test
       TARJETA_DATABASE_MIGRATOR_URL: postgresql+psycopg://tarjeta:tarjeta@localhost:5432/tarjeta_test
-      TARJETA_INTEGRATION_DATABASE_URL: postgresql+psycopg://tarjeta:tarjeta@localhost:5432/tarjeta_test
+      TARJETA_INTEGRATION_DATABASE_URL: postgresql+psycopg://tarjeta_app:tarjeta_app@localhost:5432/tarjeta_test
       TARJETA_REDIS_URL: redis://localhost:6379/0
       TARJETA_PADRON_BASE_URL: http://localhost:9999/padron
       TARJETA_PADRON_API_KEY: ci-dummy-key
@@ -86,6 +87,8 @@ jobs:
         run: uv sync --group dev --frozen
       - name: Crear extensiones en la base de test
         run: PGPASSWORD=tarjeta psql -h localhost -U tarjeta -d tarjeta_test -f "$GITHUB_WORKSPACE/infra/sql/00-extensions.sql"
+      - name: Crear rol de runtime (tarjeta_app) y default privileges
+        run: PGPASSWORD=tarjeta psql -h localhost -U tarjeta -d tarjeta_test -f "$GITHUB_WORKSPACE/infra/sql/01-roles.sql"
       - name: ruff check
         if: ${{ !cancelled() }}
         run: uv run ruff check .
@@ -108,6 +111,7 @@ jobs:
           --cov=src/tarjeta/modules/identidad
           --cov=src/tarjeta/modules/padron
           --cov=src/tarjeta/modules/ciudadania
+          --cov=src/tarjeta/modules/gobierno
           --cov-report=term-missing --cov-report=json
       - name: Gate de cobertura por módulo (>=85%)
         if: ${{ !cancelled() }}
@@ -115,7 +119,7 @@ jobs:
           python3 - <<'PY'
           import json, sys
           data = json.load(open("coverage.json"))
-          mods = ("identidad", "padron", "ciudadania")
+          mods = ("identidad", "padron", "ciudadania", "gobierno")
           agg = {m: [0, 0] for m in mods}
           for path, info in data["files"].items():
               for m in mods:
@@ -147,7 +151,7 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           pct=$(python3 -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
-          echo "### Cobertura backend (identidad+padron+ciudadania): ${pct}%" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Cobertura backend (identidad+padron+ciudadania+gobierno): ${pct}%" >> "$GITHUB_STEP_SUMMARY"
 
   web:
     needs: changes

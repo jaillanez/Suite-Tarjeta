@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
-from collections.abc import Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,13 +13,16 @@ from sqlalchemy import text
 
 from tarjeta.config import Settings, get_settings
 from tarjeta.modules.ciudadania.api.routers import router as ciudadania_router
+from tarjeta.modules.gobierno.api.routers import router as gobierno_router
 from tarjeta.modules.identidad.api.routers import router as identidad_router
 from tarjeta.modules.padron.api.routers import router as padron_router
 from tarjeta.orquestacion import build_dispatcher
+from tarjeta.portal_municipal import router as portal_router
 from tarjeta.shared.api.dependencies import SessionDep
 from tarjeta.shared.api.errors import register_error_handlers
 from tarjeta.shared.infrastructure.database import get_sessionmaker
 from tarjeta.shared.infrastructure.logging import configure_logging
+from tarjeta.shared.infrastructure.outbox import run_worker
 
 _log = logging.getLogger("app")
 
@@ -25,6 +30,22 @@ _log = logging.getLogger("app")
 def create_app(settings: Settings | None = None) -> FastAPI:
     cfg = settings or get_settings()
     configure_logging(cfg.debug)
+    dispatcher = build_dispatcher(cfg)
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        # Worker de segundo plano: drena el outbox aunque no haya tráfico HTTP.
+        stop = asyncio.Event()
+        tarea = asyncio.create_task(
+            run_worker(
+                get_sessionmaker(), dispatcher, intervalo_seg=cfg.outbox_intervalo_seg, stop=stop
+            )
+        )
+        try:
+            yield
+        finally:
+            stop.set()
+            await tarea
 
     expose_docs = cfg.environment != "prod"
     app = FastAPI(
@@ -33,6 +54,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         docs_url="/docs" if expose_docs else None,
         redoc_url=None,
         openapi_url="/openapi.json" if expose_docs else None,
+        lifespan=lifespan,
     )
 
     app.add_middleware(
@@ -47,8 +69,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(identidad_router)
     app.include_router(padron_router)
     app.include_router(ciudadania_router)
-
-    dispatcher = build_dispatcher(cfg)
+    app.include_router(gobierno_router)
+    app.include_router(portal_router)
 
     @app.middleware("http")
     async def _drenar_eventos(

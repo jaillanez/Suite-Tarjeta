@@ -39,6 +39,10 @@ class DispositivoNoRegistrado(PermissionDeniedError):
     code = "dispositivo_no_registrado"
 
 
+class MfaNoEnrolado(PermissionDeniedError):
+    code = "mfa_no_enrolado"
+
+
 class OtpInvalido(ValidationError):
     code = "otp_invalido"
 

@@ -130,6 +130,46 @@ export function createApiClient(options: ApiClientOptions) {
     estadoPadron: () => request<EstadoPadron>('/api/v1/padron/mi-estado'),
     actualizarEstado: () => post<Mensaje>('/api/v1/ciudadania/actualizar-estado'),
     bloquearTarjeta: () => post<Mensaje>('/api/v1/ciudadania/tarjeta/bloquear'),
+    // --- gobierno / portal municipal (PASO 05) ---
+    parametros: () => request<Record<string, number>>('/api/v1/gobierno/parametros'),
+    cambiarParametro: (clave: string, valor: number, motivo = '') =>
+      request<Mensaje>(`/api/v1/gobierno/parametros/${encodeURIComponent(clave)}`, {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ valor, motivo }),
+      }),
+    auditoria: (q: AuditoriaQuery = {}) => {
+      const p = new URLSearchParams();
+      if (q.actor) p.set('actor', q.actor);
+      if (q.accion) p.set('accion', q.accion);
+      if (q.entidad) p.set('entidad', q.entidad);
+      if (q.limite) p.set('limite', String(q.limite));
+      const qs = p.toString();
+      return request<RegistroAuditoria[]>(`/api/v1/gobierno/auditoria${qs ? `?${qs}` : ''}`);
+    },
+    recaudacion: () => request<Recaudacion>('/api/v1/gobierno/recaudacion'),
+    agentes: () => request<AgenteMunicipal[]>('/api/v1/gobierno/agentes'),
+    solicitarAprobacion: (accion: string, payload: Record<string, unknown> = {}) =>
+      post<{ id: string }>('/api/v1/gobierno/aprobaciones', { accion, payload }),
+    bandejaAprobaciones: () =>
+      request<SolicitudAprobacion[]>('/api/v1/gobierno/aprobaciones'),
+    aprobarSolicitud: (id: string, motivo = '') =>
+      post<Mensaje>(`/api/v1/gobierno/aprobaciones/${encodeURIComponent(id)}/aprobar`, { motivo }),
+    rechazarSolicitud: (id: string, motivo = '') =>
+      post<Mensaje>(`/api/v1/gobierno/aprobaciones/${encodeURIComponent(id)}/rechazar`, { motivo }),
+    // portal (cross-módulo)
+    ficha360: (idPersona: string, reauth: string) =>
+      request<Ficha360>(`/api/v1/portal/ficha360/${encodeURIComponent(idPersona)}`, {
+        headers: { 'x-reauth': reauth },
+      }),
+    altaPresencial: (dni: string, fecha_nacimiento: string) =>
+      post<AltaPresencialResult>('/api/v1/portal/alta-presencial', { dni, fecha_nacimiento }),
+    crearReclamo: (dni: string, motivo: string) =>
+      post<{ id: string }>('/api/v1/portal/reclamos', { dni, motivo }),
+    aprobarReclamo: (id: string, motivo = '') =>
+      post<Mensaje>(`/api/v1/portal/reclamos/${encodeURIComponent(id)}/aprobar`, { motivo }),
+    asignarAgente: (id_persona: string, rol: string) =>
+      post<Mensaje>('/api/v1/portal/agentes', { id_persona, rol }),
   };
 }
 
@@ -213,6 +253,61 @@ export interface MfaActivacion {
   secreto: string;
   uri: string;
   codigos_recuperacion: string[];
+}
+
+// --- gobierno / portal municipal (PASO 05) ---
+
+export interface AuditoriaQuery {
+  actor?: string | undefined;
+  accion?: string | undefined;
+  entidad?: string | undefined;
+  limite?: number | undefined;
+}
+
+export interface RegistroAuditoria {
+  id: string;
+  timestamp: string;
+  accion: string;
+  entidad: string;
+  id_entidad: string;
+  actor: string | null;
+  motivo: string;
+}
+
+export interface Recaudacion {
+  transiciones_a_black_post_registro: number;
+  distribucion_por_nivel: Record<string, number>;
+}
+
+export interface AgenteMunicipal {
+  id_persona: string;
+  rol: string;
+}
+
+export interface SolicitudAprobacion {
+  id: string;
+  accion: string;
+  solicitante: string;
+  fecha_expiracion: string;
+}
+
+export interface Ficha360 {
+  id: string;
+  dni: string;
+  apellido: string;
+  nombre: string;
+  estado_identidad: string;
+  nivel: string | null;
+  tarjeta: string | null;
+  estado_tarjeta: string | null;
+  padron_al_dia: boolean | null;
+  padron_actualizado: string | null;
+  dispositivos: { id: string; nombre: string; estado: string }[];
+}
+
+export interface AltaPresencialResult {
+  id_persona: string;
+  password_temporal: string;
 }
 
 export type ApiClient = ReturnType<typeof createApiClient>;

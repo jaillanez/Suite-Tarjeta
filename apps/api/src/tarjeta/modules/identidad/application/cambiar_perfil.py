@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from tarjeta.modules.identidad.domain.errors import DispositivoNoRegistrado, PerfilNoAsignado
+from tarjeta.modules.identidad.domain.errors import (
+    DispositivoNoRegistrado,
+    MfaNoEnrolado,
+    PerfilNoAsignado,
+)
 from tarjeta.modules.identidad.domain.events import PerfilCambiado
 from tarjeta.modules.identidad.domain.perfil import TipoPerfil
 from tarjeta.shared.domain.errors import NotFoundError
@@ -57,6 +61,10 @@ class CambiarPerfil:
                 raise DispositivoNoRegistrado(
                     "El perfil municipal exige activarse desde un dispositivo autorizado."
                 )
+            # §05.3: MFA obligatorio enrolado para operar como municipal.
+            mfa = await p.mfa.obtener(persona.id)
+            if mfa is None or not mfa.activo:
+                raise MfaNoEnrolado("El perfil municipal exige MFA enrolado.")
 
         access = p.tokens.crear(
             id_persona=str(persona.id),

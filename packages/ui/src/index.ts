@@ -10,6 +10,8 @@ export * from './components/ui/skeleton';
 export * from './components/ui/alert';
 export * from './components/ui/tabs';
 export * from './components/ui/avatar';
+export * from './components/ui/table';
+export * from './components/ui/select';
 
 // Componentes del dominio
 export * from './components/NivelBadge';
