@@ -13,6 +13,7 @@
   "dependencies": {
     "@tarjeta/api-client": "workspace:*",
     "@tarjeta/ui": "workspace:*",
+    "leaflet": "1.9.4",
     "lucide-react": "1.40.0",
     "next": "16.3.4",
     "react": "19.2.8",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
     "@tarjeta/config": "workspace:*",
+    "@types/leaflet": "1.9.20",
     "@types/node": "26.4.1",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.6",

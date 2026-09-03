@@ -1,7 +1,12 @@
 // Cliente TypeScript de la API. Los tipos se generan desde el OpenAPI 3.1 de FastAPI
 // (`pnpm generate:api` -> src/schema.generated.ts, commiteado).
 
+import type { components } from './schema.generated';
+
 export type { components, paths } from './schema.generated';
+
+/** Atajo a los esquemas generados desde el OpenAPI del backend (§06.0.A). */
+type S = components['schemas'];
 
 export interface ApiClientOptions {
   baseUrl: string;
@@ -170,7 +175,94 @@ export function createApiClient(options: ApiClientOptions) {
       post<Mensaje>(`/api/v1/portal/reclamos/${encodeURIComponent(id)}/aprobar`, { motivo }),
     asignarAgente: (id_persona: string, rol: string) =>
       post<Mensaje>('/api/v1/portal/agentes', { id_persona, rol }),
+    revocarAgente: (id_persona: string, motivo = '') =>
+      post<Mensaje>(`/api/v1/portal/agentes/${encodeURIComponent(id_persona)}/revocar`, { motivo }),
+    // --- comercios (PASO 06) ---
+    adhesion: (body: S['AdhesionIn']) =>
+      post<{ id_comercio: string }>('/api/v1/portal-comercio/adhesion', body),
+    miComercio: () => request<ComercioOut>('/api/v1/comercios/mi-comercio'),
+    crearSucursal: (body: SucursalIn) => post<Mensaje>('/api/v1/comercios/sucursales', body),
+    listarSucursales: () => request<SucursalOut[]>('/api/v1/comercios/sucursales'),
+    cerrarSucursal: (id: string, motivo: string, reapertura_estimada: string | null = null) =>
+      post<Mensaje>(`/api/v1/comercios/sucursales/${encodeURIComponent(id)}/cerrar-temporal`, {
+        motivo,
+        reapertura_estimada,
+      }),
+    reabrirSucursal: (id: string) =>
+      post<Mensaje>(`/api/v1/comercios/sucursales/${encodeURIComponent(id)}/reabrir`),
+    cercanas: (lat: number, lon: number, radio_m = 5000) => {
+      const p = new URLSearchParams({
+        lat: String(lat),
+        lon: String(lon),
+        radio_m: String(radio_m),
+      });
+      return request<SucursalCercanaOut[]>(`/api/v1/comercios/cercanas?${p.toString()}`);
+    },
+    abiertoAhora: (id: string) =>
+      request<S['AbiertoOut']>(
+        `/api/v1/comercios/sucursales/${encodeURIComponent(id)}/abierto-ahora`,
+      ),
+    invitarUsuario: (rol: string, destino: string, sucursales: string[] = []) =>
+      post<InvitacionOut>('/api/v1/comercios/usuarios/invitar', { rol, destino, sucursales }),
+    listarUsuarios: () => request<UsuarioComercioOut[]>('/api/v1/comercios/usuarios'),
+    aceptarInvitacion: (token: string) =>
+      post<Mensaje>(`/api/v1/portal-comercio/invitaciones/${encodeURIComponent(token)}/aceptar`),
+    establecerPinCajero: (id_usuario: string, pin: string, huella: string) =>
+      request<Mensaje>(`/api/v1/comercios/cajeros/${encodeURIComponent(id_usuario)}/pin`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'X-Device-Huella': huella },
+        body: JSON.stringify({ pin }),
+      }),
+    cajeroLogin: (id_usuario: string, pin: string, huella: string) =>
+      request<Tokens>('/api/v1/portal-comercio/cajero/login', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'X-Device-Huella': huella },
+        body: JSON.stringify({ id_usuario, pin }),
+      }),
+    abrirTurno: (id_sucursal: string) =>
+      post<{ id: string }>('/api/v1/comercios/turnos/abrir', { id_sucursal }),
+    cerrarTurno: () =>
+      post<S['CierreTurnoOut']>('/api/v1/comercios/turnos/cerrar'),
+    bajaCajero: (id_usuario: string) =>
+      post<Mensaje>(`/api/v1/portal-comercio/cajeros/${encodeURIComponent(id_usuario)}/baja`),
+    // bandeja municipal de comercios
+    bandejaComercios: () => request<ComercioBandejaOut[]>('/api/v1/portal-comercio/bandeja'),
+    fichaComercio: (id: string) =>
+      request<FichaComercioOut>(
+        `/api/v1/portal-comercio/comercios/${encodeURIComponent(id)}/ficha`,
+      ),
+    comercioAccion: (
+      id: string,
+      accion: 'tomar' | 'aprobar' | 'rechazar' | 'pedir-documentacion' | 'suspender',
+      motivo = '',
+    ) => post<Mensaje>(`/api/v1/portal-comercio/comercios/${encodeURIComponent(id)}/${accion}`, {
+      motivo,
+    }),
+    comercioBajaSolicitar: (id: string, motivo = '') =>
+      post<{ id: string }>(
+        `/api/v1/portal-comercio/comercios/${encodeURIComponent(id)}/baja-solicitar`,
+        { motivo },
+      ),
+    comercioBajaAprobar: (id_solicitud: string, motivo = '') =>
+      post<Mensaje>(`/api/v1/portal-comercio/baja/${encodeURIComponent(id_solicitud)}/aprobar`, {
+        motivo,
+      }),
+    cargaMasivaComercios: (contenido: string, confirmar: boolean) =>
+      post<CargaMasivaResultado>('/api/v1/portal-comercio/carga-masiva', { contenido, confirmar }),
   };
+}
+
+export interface CargaMasivaFila {
+  fila: number;
+  cuit: string;
+  ok: boolean;
+  error: string | null;
+}
+
+export interface CargaMasivaResultado {
+  filas: CargaMasivaFila[];
+  validas: number;
+  creados: number;
 }
 
 export interface EstadoCiudadano {
@@ -264,50 +356,26 @@ export interface AuditoriaQuery {
   limite?: number | undefined;
 }
 
-export interface RegistroAuditoria {
-  id: string;
-  timestamp: string;
-  accion: string;
-  entidad: string;
-  id_entidad: string;
-  actor: string | null;
-  motivo: string;
-}
-
-export interface Recaudacion {
-  transiciones_a_black_post_registro: number;
-  distribucion_por_nivel: Record<string, number>;
-}
-
-export interface AgenteMunicipal {
-  id_persona: string;
-  rol: string;
-}
-
-export interface SolicitudAprobacion {
-  id: string;
-  accion: string;
-  solicitante: string;
-  fecha_expiracion: string;
-}
-
-export interface Ficha360 {
-  id: string;
-  dni: string;
-  apellido: string;
-  nombre: string;
-  estado_identidad: string;
-  nivel: string | null;
-  tarjeta: string | null;
-  estado_tarjeta: string | null;
-  padron_al_dia: boolean | null;
-  padron_actualizado: string | null;
-  dispositivos: { id: string; nombre: string; estado: string }[];
-}
-
+// Tipos de gobierno/portal/comercios: alias a los esquemas generados desde el OpenAPI.
+// Así el cliente no puede divergir del backend (el CI regenera y falla si cambia).
+export type RegistroAuditoria = S['RegistroAuditoriaOut'];
+export type Recaudacion = S['RecaudacionOut'];
+export type AgenteMunicipal = S['AgenteOut'];
+export type SolicitudAprobacion = S['SolicitudPendienteOut'];
+export type Ficha360 = S['Ficha360Out'];
 export interface AltaPresencialResult {
   id_persona: string;
   password_temporal: string;
 }
+
+// comercios (PASO 06)
+export type ComercioOut = S['ComercioOut'];
+export type SucursalOut = S['SucursalOut'];
+export type SucursalCercanaOut = S['SucursalCercanaOut'];
+export type UsuarioComercioOut = S['UsuarioComercioOut'];
+export type ComercioBandejaOut = S['ComercioBandejaOut'];
+export type FichaComercioOut = S['FichaComercioOut'];
+export type SucursalIn = S['SucursalIn'];
+export type InvitacionOut = S['InvitacionOut'];
 
 export type ApiClient = ReturnType<typeof createApiClient>;

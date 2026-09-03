@@ -191,9 +191,11 @@ class SqlAlchemyAgenteRepository:
         self._session = session
 
     async def rol_de(self, id_persona: EntityId) -> RolMunicipal | None:
+        # Solo agentes activos: si identidad revocó el perfil municipal, no hay acceso.
         rol = await self._session.scalar(
             select(AgenteMunicipalModel.rol).where(
-                AgenteMunicipalModel.id_persona == id_persona.value
+                AgenteMunicipalModel.id_persona == id_persona.value,
+                AgenteMunicipalModel.activo.is_(True),
             )
         )
         return RolMunicipal(rol) if rol else None
@@ -201,36 +203,48 @@ class SqlAlchemyAgenteRepository:
     async def asignar(self, id_persona: EntityId, rol: RolMunicipal) -> None:
         stmt = (
             pg_insert(AgenteMunicipalModel)
-            .values(id_persona=id_persona.value, rol=rol.value)
-            .on_conflict_do_update(index_elements=["id_persona"], set_={"rol": rol.value})
+            .values(id_persona=id_persona.value, rol=rol.value, activo=True)
+            .on_conflict_do_update(
+                index_elements=["id_persona"], set_={"rol": rol.value, "activo": True}
+            )
         )
         await self._session.execute(stmt)
 
+    async def desactivar(self, id_persona: EntityId) -> None:
+        await self._session.execute(
+            update(AgenteMunicipalModel)
+            .where(AgenteMunicipalModel.id_persona == id_persona.value)
+            .values(activo=False)
+        )
+
     async def listar(self) -> list[tuple[str, RolMunicipal]]:
-        rows = (await self._session.execute(select(AgenteMunicipalModel))).scalars()
+        rows = (
+            await self._session.execute(
+                select(AgenteMunicipalModel).where(AgenteMunicipalModel.activo.is_(True))
+            )
+        ).scalars()
         return [(str(m.id_persona), RolMunicipal(m.rol)) for m in rows]
 
 
 class SqlAlchemyRecaudacionRepository:
-    """Lectura de solo lectura para la métrica de recaudación (§5.6)."""
+    """Métrica de recaudación (§5.6), de **solo lectura**.
+
+    Lee vistas creadas por migración (`vista_recaudacion_*`) en vez de cruzar tablas de
+    otros módulos con SQL directo. Es la excepción declarada en docs/arquitectura.md: solo
+    lectura y reportes; si otro módulo cambia su esquema, la vista rompe de forma ruidosa.
+    """
 
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
     async def transiciones_a_black_post_registro(self) -> int:
-        # Transiciones de al_dia false->true registradas en el histórico del padrón.
-        val = await self._session.scalar(
-            text(
-                "SELECT count(*) FROM historial_estado_padron "
-                "WHERE campo = 'al_dia' AND valor_nuevo = 'True'"
-            )
-        )
+        val = await self._session.scalar(text("SELECT total FROM vista_recaudacion_transiciones"))
         return int(val or 0)
 
     async def distribucion_por_nivel(self) -> dict[str, int]:
         rows = (
             await self._session.execute(
-                text("SELECT nivel, count(*) FROM perfil_ciudadano GROUP BY nivel")
+                text("SELECT nivel, total FROM vista_recaudacion_por_nivel")
             )
         ).all()
         return {str(nivel): int(cnt) for nivel, cnt in rows}

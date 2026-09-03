@@ -38,6 +38,33 @@ class DecisionIn(BaseModel):
     motivo: str = ""
 
 
+class RegistroAuditoriaOut(BaseModel):
+    id: str
+    timestamp: str
+    accion: str
+    entidad: str
+    id_entidad: str
+    actor: str | None
+    motivo: str
+
+
+class RecaudacionOut(BaseModel):
+    transiciones_a_black_post_registro: int
+    distribucion_por_nivel: dict[str, int]
+
+
+class AgenteOut(BaseModel):
+    id_persona: str
+    rol: str
+
+
+class SolicitudPendienteOut(BaseModel):
+    id: str
+    accion: str
+    solicitante: str
+    fecha_expiracion: str
+
+
 @router.get("/parametros", response_model=dict[str, int])
 async def parametros(
     puertos: GobiernoPuertosDep,
@@ -63,7 +90,7 @@ async def cambiar_parametro(
     return Mensaje(mensaje="Parámetro actualizado.")
 
 
-@router.get("/auditoria")
+@router.get("/auditoria", response_model=list[RegistroAuditoriaOut])
 async def auditoria(
     puertos: GobiernoPuertosDep,
     _: Annotated[Actor, Depends(requiere(Permiso.AUDITORIA_VER))],
@@ -105,7 +132,7 @@ async def solicitar(
     return {"id": id_solicitud}
 
 
-@router.get("/aprobaciones")
+@router.get("/aprobaciones", response_model=list[SolicitudPendienteOut])
 async def bandeja(
     puertos: GobiernoPuertosDep,
     _: Annotated[Actor, Depends(requiere(Permiso.APROBAR_DOBLE_CONF))],
@@ -165,7 +192,7 @@ async def rechazar(
     return Mensaje(mensaje="Solicitud rechazada.")
 
 
-@router.get("/recaudacion")
+@router.get("/recaudacion", response_model=RecaudacionOut)
 async def recaudacion(
     puertos: GobiernoPuertosDep,
     _: Annotated[Actor, Depends(requiere(Permiso.TABLERO_VER))],
@@ -178,7 +205,7 @@ async def recaudacion(
     }
 
 
-@router.get("/agentes")
+@router.get("/agentes", response_model=list[AgenteOut])
 async def agentes(
     puertos: GobiernoPuertosDep,
     _: Annotated[Actor, Depends(requiere(Permiso.ROLES_GESTIONAR))],

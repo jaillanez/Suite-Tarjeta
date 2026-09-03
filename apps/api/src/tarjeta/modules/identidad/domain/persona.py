@@ -8,11 +8,13 @@ from enum import StrEnum
 from tarjeta.shared.domain.entity import AggregateRoot
 from tarjeta.shared.domain.types import Cuil, Dni, EntityId
 
-from .errors import PerfilDuplicado, TransicionIdentidadInvalida
+from .errors import PerfilDuplicado, PerfilNoAsignado, TransicionIdentidadInvalida
 from .events import (
     CelularVerificado,
     IdentidadRechazada,
     IdentidadVerificada,
+    PerfilMunicipalOtorgado,
+    PerfilMunicipalRevocado,
     PersonaRegistrada,
     PersonaSuspendida,
 )
@@ -168,3 +170,16 @@ class Persona(AggregateRoot):
 
     def tiene_perfil(self, clave: str) -> bool:
         return any(p.clave() == clave for p in self._perfiles)
+
+    def otorgar_perfil_municipal(self, rol: str) -> None:
+        """Otorga (o reasigna el rol de) el perfil municipal. Fuente de verdad del hecho."""
+        self._perfiles = [p for p in self._perfiles if p.tipo is not TipoPerfil.MUNICIPAL]
+        self._perfiles.append(Perfil(tipo=TipoPerfil.MUNICIPAL, rol=rol))
+        self.record_event(PerfilMunicipalOtorgado(id_persona=str(self.id), rol=rol))
+
+    def revocar_perfil_municipal(self) -> None:
+        """Quita el perfil municipal. gobierno desactiva al agente al consumir el evento."""
+        if not any(p.tipo is TipoPerfil.MUNICIPAL for p in self._perfiles):
+            raise PerfilNoAsignado("La persona no tiene perfil municipal.")
+        self._perfiles = [p for p in self._perfiles if p.tipo is not TipoPerfil.MUNICIPAL]
+        self.record_event(PerfilMunicipalRevocado(id_persona=str(self.id)))

@@ -374,6 +374,55 @@ no se pierde lo tipeado). Páginas: **Tablero** (recaudación + distribución po
 filtros) y **Agentes** (asignación de rol). Endpoints cross-módulo en el composition root
 `tarjeta/portal_municipal.py` (no es un módulo; por eso puede importar varios).
 
+## Módulo `comercios` y portal del comercio (PASO 06)
+
+Habilita el otro lado del programa: un comercio se adhiere, carga sus sucursales en el mapa y
+da de alta a sus encargados y cajeros; el municipio lo aprueba, suspende o da de baja.
+
+### Adhesión y máquina de estados (§06.2)
+
+- `SOLICITADA → EN_REVISION → APROBADA → ACTIVA`, con ramas `DOCUMENTACION_PENDIENTE` y
+  `RECHAZADA`, `ACTIVA ⇄ SUSPENDIDA` y `→ BAJA`. Transiciones inválidas lanzan error; cada
+  cambio lleva motivo y evento (auditado por el consumidor de gobierno).
+- **Verificación por CUIT** contra el padrón: `comercios` no contacta el endpoint (lo hace solo
+  `padron`). El `VerificadorComerciante` es un puerto que el composition root
+  `tarjeta/portal_comercio.py` implementa delegando en el cliente de `padron`.
+- **Convenio de adhesión** versionado, con evidencia (versión, fecha, IP). Sin convenio no hay
+  alta. La **baja definitiva** usa la doble conformidad del PASO 05 (no se reimplementó).
+
+### Sucursales con PostGIS (§06.3)
+
+- Columna `geography(Point, 4326)` con **índice GiST**; consulta de cercanía con `ST_DWithin`
+  + orden por `ST_Distance` (metros). El **pin en el mapa es obligatorio**.
+- Horarios con **doble turno** por día y consulta "¿abierto ahora?" que respeta la zona horaria
+  de configuración. **QR de establecimiento**: token firmado (HMAC) permanente por sucursal, con
+  PDF imprimible (reportlab).
+
+### Usuarios, cajero y turnos (§06.4-06.5)
+
+- Cuatro roles (`ADMIN_COMERCIO`, `ADMIN_SUCURSALES`, `ENCARGADO`, `CAJERO`) con **matriz
+  declarativa** (mismo mecanismo que gobierno) y alcance por sucursal. `ADMIN_COMERCIO` exige
+  MFA (se aplica en `cambiar_perfil` por el rol del perfil de comercio). Invitación con
+  vencimiento a 72 h.
+- **Cajero por PIN** atado a un dispositivo registrado (reusa la huella del PASO 04), con límite
+  de intentos y bloqueo temporal. Dar de baja a un cajero **revoca sus sesiones al instante**.
+- **Ningún rol de comercio ve datos de contacto, domicilio ni estado fiscal del ciudadano**
+  (test que recorre los endpoints del módulo).
+
+### Deuda del PASO 05 saldada (§06.0)
+
+- **A — Cliente de API generado:** `schema.generated.ts` se genera desde el OpenAPI del backend
+  (`uv run python -m tarjeta.scripts.dump_openapi` → `pnpm generate:api`). El CI regenera ambos
+  y **falla si quedaron desactualizados**, para que backend y frontend no diverjan en silencio.
+- **B — `agente_municipal` sincronizado por evento:** `identidad` es dueña del hecho "tiene
+  perfil municipal"; `gobierno` del rol. Al revocarse el perfil (evento
+  `PerfilMunicipalRevocado`), `gobierno` **desactiva** al agente (`activo=false`), que pierde el
+  acceso sin intervención manual (test).
+- **C — Excepción del SQL de reportes:** la métrica de recaudación de `gobierno` lee tablas de
+  otros módulos. Se acepta **solo para lectura/reportes** y se encapsula en **vistas de base**
+  (`vista_recaudacion_*`, creadas por migración): si otro módulo cambia su esquema, la vista
+  rompe de forma ruidosa. **Ninguna escritura cruza módulos por SQL.**
+
 ## Walking skeleton (estado actual, PASO 01)
 
 La línea fina que atraviesa todas las capas está implementada y verificada:

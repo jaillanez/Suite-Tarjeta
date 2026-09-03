@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -60,3 +60,6 @@ class AgenteMunicipalModel(Base):
 
     id_persona: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
     rol: Mapped[str] = mapped_column(String(30))
+    # §06.0.B: identidad es dueña del hecho "tiene perfil municipal". Al revocarlo, este
+    # agente se desactiva por evento y pierde el acceso, sin borrar su historial de rol.
+    activo: Mapped[bool] = mapped_column(Boolean, default=True)

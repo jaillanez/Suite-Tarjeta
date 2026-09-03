@@ -72,6 +72,11 @@ class Settings(BaseSettings):
     sesion_ciudadano_timeout_minutos: int = 43200  # 30 días (generoso)
     sesion_comercio_timeout_minutos: int = 30
 
+    # Cajero (§06.5): PIN atado a dispositivo, con límite de intentos y bloqueo temporal.
+    cajero_pin_max_intentos: int = 5
+    cajero_pin_bloqueo_seg: int = 300
+    sesion_cajero_timeout_minutos: int = 30
+
     # OTP
     otp_length: int = 6
     otp_ttl_seconds: int = 300

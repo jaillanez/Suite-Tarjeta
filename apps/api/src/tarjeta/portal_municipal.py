@@ -29,19 +29,37 @@ from tarjeta.modules.identidad.application.registrar_persona import RegistrarPer
 from tarjeta.modules.identidad.infrastructure.composition import construir_puertos
 from tarjeta.modules.identidad.infrastructure.repositories import (
     SqlAlchemyDispositivoRepository,
-    SqlAlchemyPersonaRepository,
 )
 from tarjeta.modules.padron.infrastructure.composition import construir_puertos_padron
 from tarjeta.shared.api.dependencies import RedisDep, SessionDep, SettingsDep
 from tarjeta.shared.domain.errors import NotFoundError, PermissionDeniedError
 from tarjeta.shared.domain.types import EntityId
-from tarjeta.shared.infrastructure.crypto import FieldCipher
 
 router = APIRouter(prefix="/api/v1/portal", tags=["portal-municipal"])
 
 
 class Mensaje(BaseModel):
     mensaje: str
+
+
+class DispositivoFicha(BaseModel):
+    id: str
+    nombre: str
+    estado: str
+
+
+class Ficha360Out(BaseModel):
+    id: str
+    dni: str
+    apellido: str
+    nombre: str
+    estado_identidad: str
+    nivel: str | None
+    tarjeta: str | None
+    estado_tarjeta: str | None
+    padron_al_dia: bool | None
+    padron_actualizado: str | None
+    dispositivos: list[DispositivoFicha]
 
 
 class AltaPresencialIn(BaseModel):
@@ -63,14 +81,7 @@ class AsignarAgenteIn(BaseModel):
     rol: str
 
 
-def _cipher(settings: SettingsDep) -> FieldCipher:
-    return FieldCipher(
-        settings.field_encryption_key.get_secret_value(),
-        settings.field_encryption_key_version,
-    )
-
-
-@router.get("/ficha360/{id_persona}")
+@router.get("/ficha360/{id_persona}", response_model=Ficha360Out)
 async def ficha360(
     id_persona: str,
     session: SessionDep,
@@ -207,22 +218,18 @@ async def asignar_agente(
     redis: RedisDep,
     actor: Annotated[Actor, Depends(requiere(Permiso.ROLES_GESTIONAR))],
 ) -> Mensaje:
-    from tarjeta.modules.identidad.domain.perfil import Perfil, TipoPerfil
-
     pid = EntityId.from_str(body.id_persona)
     rol = RolMunicipal(body.rol)
-    # Rol municipal en gobierno + perfil municipal en identidad para que pueda activarlo.
+    # Rol municipal en gobierno + perfil municipal en identidad (dueña del hecho, §06.0.B).
     gob = construir_puertos_gobierno(session)
     await gob.agentes.asignar(pid, rol)
-    personas = SqlAlchemyPersonaRepository(
-        session, cipher=_cipher(settings), pepper=settings.field_pepper.get_secret_value()
-    )
-    persona = await personas.obtener_por_id(pid)
+    id_puertos = construir_puertos(session, settings, redis)
+    persona = await id_puertos.personas.obtener_por_id(pid)
     if persona is None:
         raise NotFoundError("Persona inexistente.")
-    if not persona.tiene_perfil(str(TipoPerfil.MUNICIPAL)):
-        persona.agregar_perfil(Perfil(tipo=TipoPerfil.MUNICIPAL, rol=rol.value))
-        await personas.guardar(persona)
+    persona.otorgar_perfil_municipal(rol.value)
+    await id_puertos.personas.guardar(persona)
+    await id_puertos.outbox.escribir(persona.pull_events())
     await gob.auditoria.agregar(
         RegistroAuditoria.crear(
             accion="roles:asignar",
@@ -235,3 +242,37 @@ async def asignar_agente(
     )
     await session.commit()
     return Mensaje(mensaje="Agente asignado.")
+
+
+@router.post("/agentes/{id_persona}/revocar", response_model=Mensaje)
+async def revocar_agente(
+    id_persona: str,
+    body: DecisionIn,
+    session: SessionDep,
+    settings: SettingsDep,
+    redis: RedisDep,
+    actor: Annotated[Actor, Depends(requiere(Permiso.ROLES_GESTIONAR))],
+) -> Mensaje:
+    # identidad revoca el perfil municipal y emite el evento; gobierno desactiva al agente
+    # al consumirlo (§06.0.B). También se revocan las sesiones de la persona.
+    pid = EntityId.from_str(id_persona)
+    id_puertos = construir_puertos(session, settings, redis)
+    persona = await id_puertos.personas.obtener_por_id(pid)
+    if persona is None:
+        raise NotFoundError("Persona inexistente.")
+    persona.revocar_perfil_municipal()
+    await id_puertos.personas.guardar(persona)
+    await id_puertos.refresh.revocar_todo_de(pid)
+    await id_puertos.outbox.escribir(persona.pull_events())
+    await construir_puertos_gobierno(session).auditoria.agregar(
+        RegistroAuditoria.crear(
+            accion="roles:revocar",
+            entidad="agente",
+            id_entidad=id_persona,
+            id_persona_actor=actor.id_persona,
+            rol_actor=actor.rol.value,
+            motivo=body.motivo,
+        )
+    )
+    await session.commit()
+    return Mensaje(mensaje="Perfil municipal revocado.")
