@@ -11,14 +11,13 @@ class ConsentimientoIn(BaseModel):
 
 
 class RegistroRequest(BaseModel):
+    # §04.0.B: registro mínimo.
     dni: str
-    cuil: str
-    apellido: str = Field(min_length=1, max_length=120)
-    nombre: str = Field(min_length=1, max_length=120)
-    celular: str
+    fecha_nacimiento: str  # YYYY-MM-DD
     password: str = Field(min_length=1)
-    email: str | None = None
     consentimientos: list[ConsentimientoIn] = Field(default_factory=list)
+    celular: str | None = None
+    email: str | None = None
 
 
 class VerificarCelularRequest(BaseModel):
@@ -45,7 +44,7 @@ class RefreshRequest(BaseModel):
 
 
 class RecuperarRequest(BaseModel):
-    dni: str
+    email: str
 
 
 class TokensResponse(BaseModel):
@@ -72,10 +71,10 @@ class LoginResponse(BaseModel):
 class PersonaMeResponse(BaseModel):
     id: str
     dni: str
-    cuil: str
+    cuil: str | None
     apellido: str
     nombre: str
-    celular: str
+    celular: str | None
     email: str | None
     estado_identidad: str
     celular_verificado: bool

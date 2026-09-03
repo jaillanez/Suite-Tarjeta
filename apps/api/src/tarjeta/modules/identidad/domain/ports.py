@@ -32,10 +32,13 @@ class Claims:
     id_persona: str
     perfil: str
     permisos: list[str]
+    huella: str | None = None
 
 
 class GeneradorTokenAcceso(Protocol):
-    def crear(self, *, id_persona: str, perfil: str, permisos: list[str]) -> str: ...
+    def crear(
+        self, *, id_persona: str, perfil: str, permisos: list[str], huella: str | None = None
+    ) -> str: ...
     def decodificar(self, token: str) -> Claims: ...
 
 

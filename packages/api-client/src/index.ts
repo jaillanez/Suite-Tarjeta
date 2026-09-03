@@ -125,7 +125,26 @@ export function createApiClient(options: ApiClientOptions) {
     dispositivos: () => request<Dispositivo[]>('/api/v1/personas/me/dispositivos'),
     revocarDispositivo: (id: string) => del<Mensaje>(`/api/v1/personas/me/dispositivos/${id}`),
     activarMfa: () => post<MfaActivacion>('/api/v1/personas/me/mfa/activar'),
+    // --- ciudadania / padron (PASO 04) ---
+    miEstado: () => request<EstadoCiudadano>('/api/v1/ciudadania/mi-estado'),
+    estadoPadron: () => request<EstadoPadron>('/api/v1/padron/mi-estado'),
+    actualizarEstado: () => post<Mensaje>('/api/v1/ciudadania/actualizar-estado'),
+    bloquearTarjeta: () => post<Mensaje>('/api/v1/ciudadania/tarjeta/bloquear'),
   };
+}
+
+export interface EstadoCiudadano {
+  nivel: string;
+  numero_tarjeta: string;
+  estado_tarjeta: string;
+  tiene_tarjeta_fisica: boolean;
+}
+
+export interface EstadoPadron {
+  consultado: boolean;
+  al_dia?: boolean | null;
+  fecha_ultima_consulta?: string | null;
+  horas_desde_consulta?: number | null;
 }
 
 export interface Mensaje {

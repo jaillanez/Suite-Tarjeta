@@ -13,13 +13,12 @@ class ConsentimientoInput:
 
 @dataclass(frozen=True, slots=True)
 class RegistroInput:
+    # §04.0.B: registro mínimo. Sin OTP; el celular se pide pero no se verifica.
     dni: str
-    cuil: str
-    apellido: str
-    nombre: str
-    celular: str
+    fecha_nacimiento: str  # ISO (YYYY-MM-DD)
     password: str
     consentimientos: list[ConsentimientoInput]
+    celular: str | None = None
     email: str | None = None
     ip: str = ""
     user_agent: str = ""

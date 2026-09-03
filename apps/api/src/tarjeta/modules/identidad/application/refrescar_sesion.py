@@ -15,7 +15,7 @@ class RefrescarSesion:
     def __init__(self, puertos: Puertos) -> None:
         self.p = puertos
 
-    async def ejecutar(self, *, refresh_token: str) -> Tokens:
+    async def ejecutar(self, *, refresh_token: str, huella: str | None = None) -> Tokens:
         p = self.p
         try:
             rot = await p.refresh.rotar(refresh_token)
@@ -30,7 +30,10 @@ class RefrescarSesion:
 
         perfil = _perfil_por_clave(persona, rot.perfil) or _perfil_default(persona)
         access = p.tokens.crear(
-            id_persona=str(persona.id), perfil=perfil.clave(), permisos=permisos_de(perfil)
+            id_persona=str(persona.id),
+            perfil=perfil.clave(),
+            permisos=permisos_de(perfil),
+            huella=huella,
         )
         await p.uow.commit()
         return Tokens(access_token=access, refresh_token=rot.nuevo_token)

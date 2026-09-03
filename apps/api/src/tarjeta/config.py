@@ -42,6 +42,8 @@ class Settings(BaseSettings):
     padron_api_key: SecretStr
     padron_timeout_seconds: float = 5.0
     padron_cache_ttl_seconds: int = 21600  # 6 h
+    padron_modo: Literal["real", "simulacion"] = "simulacion"
+    padron_sim_archivo: str = ""  # JSON con respuestas por DNI/CUIT (opcional)
 
     # Seguridad
     jwt_secret: SecretStr
@@ -78,6 +80,7 @@ class Settings(BaseSettings):
 
     # Rate limiting (login/registro/recuperación)
     rate_limit_login_por_minuto: int = 10
+    rate_limit_registro_por_hora: int = 5  # reforzado: única contención sin OTP (§04.0.B)
 
     # Verificador de identidad de prueba (RENAPER stub)
     renaper_stub_resultado: Literal["aprobado", "rechazado", "revision"] = "aprobado"

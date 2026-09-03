@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from enum import StrEnum
 
 from tarjeta.shared.domain.entity import AggregateRoot
@@ -39,20 +39,22 @@ class Persona(AggregateRoot):
         *,
         id: EntityId,
         dni: Dni,
-        cuil: Cuil,
-        apellido: str,
-        nombre: str,
-        celular: Celular,
-        email: Email | None,
+        fecha_nacimiento: date,
         estado_identidad: EstadoIdentidad,
         metodo_verificacion: MetodoVerificacion | None,
         celular_verificado: bool,
         email_verificado: bool,
         fecha_alta: datetime,
         perfiles: list[Perfil],
+        cuil: Cuil | None = None,
+        apellido: str = "",
+        nombre: str = "",
+        celular: Celular | None = None,
+        email: Email | None = None,
     ) -> None:
         super().__init__(id)
         self.dni = dni
+        self.fecha_nacimiento = fecha_nacimiento
         self.cuil = cuil
         self.apellido = apellido
         self.nombre = nombre
@@ -71,15 +73,19 @@ class Persona(AggregateRoot):
         cls,
         *,
         dni: Dni,
-        cuil: Cuil,
-        apellido: str,
-        nombre: str,
-        celular: Celular,
+        fecha_nacimiento: date,
+        celular: Celular | None = None,
         email: Email | None = None,
+        cuil: Cuil | None = None,
+        apellido: str = "",
+        nombre: str = "",
     ) -> Persona:
+        # §04.0.B: registro mínimo (DNI + fecha de nacimiento). Nombre/CUIL se completan
+        # más adelante (RENAPER o alta presencial); el celular se pide pero no se verifica.
         persona = cls(
             id=EntityId.new(),
             dni=dni,
+            fecha_nacimiento=fecha_nacimiento,
             cuil=cuil,
             apellido=apellido,
             nombre=nombre,
@@ -120,7 +126,9 @@ class Persona(AggregateRoot):
     def verificar_identidad(self, metodo: MetodoVerificacion) -> None:
         self._transicionar(EstadoIdentidad.VERIFICADA, {EstadoIdentidad.PENDIENTE})
         self.metodo_verificacion = metodo
-        self.record_event(IdentidadVerificada(id_persona=str(self.id), metodo=str(metodo)))
+        self.record_event(
+            IdentidadVerificada(id_persona=str(self.id), dni=str(self.dni), metodo=str(metodo))
+        )
 
     def rechazar_identidad(self, motivo: str) -> None:
         self._transicionar(EstadoIdentidad.RECHAZADA, {EstadoIdentidad.PENDIENTE})

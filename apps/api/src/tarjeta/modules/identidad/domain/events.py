@@ -20,6 +20,7 @@ class CelularVerificado(DomainEvent):
 @dataclass(frozen=True, slots=True, kw_only=True)
 class IdentidadVerificada(DomainEvent):
     id_persona: str
+    dni: str
     metodo: str
 
 

@@ -243,6 +243,67 @@ inmutable llega con el módulo `gobierno`.
   el plugin **Preferences** de Capacitor. Sin middleware (protección del lado del cliente +
   validación en la API).
 
+## Módulos `padron` y `ciudadania` (PASO 04)
+
+Convierten el programa en política fiscal: el nivel se calcula a partir del veredicto
+municipal y se comunica al vecino.
+
+### Comunicación por eventos (sin importar módulos)
+
+Los módulos no se importan entre sí (verificado por import-linter). Se comunican por el
+**outbox compartido** (`shared/infrastructure/outbox.py`) y un **EventDispatcher** cableado
+en el composition root `tarjeta/orquestacion.py`. Un middleware de la app drena el outbox
+después de cada request y entrega los eventos a los handlers (procesa cadenas).
+
+| Evento | Emite | Consume | Efecto |
+|---|---|---|---|
+| `IdentidadVerificada` | identidad | padron + ciudadania | padron consulta el veredicto; ciudadania crea `PerfilCiudadano` (Platino) y emite la tarjeta |
+| `EstadoPadronActualizado` | padron | ciudadania | recalcula el nivel |
+| `SolicitudActualizarEstado` | ciudadania | padron | reconsulta (botón "Actualizar mi estado") |
+| `NivelCambiado` | ciudadania | (futuro notificaciones) | avisar a la persona |
+
+### `padron` — único contacto con el municipio
+
+- Contrato mínimo (§7.1): `?dni → {al_dia}`, `?cuit → {es_comerciante}`. **Un booleano por
+  consulta.** Puerto `ClientePadron` con adaptador **real** (httpx) y **simulación**
+  (respuestas configurables por archivo + regla determinística), elegidos por configuración
+  (`padron_modo`). Test de contrato con `httpx.MockTransport`.
+- `EstadoPadron` cachea solo `al_dia`, `es_comerciante`, `fecha_ultima_consulta` (dato
+  propio) + histórico append-only. **No existe ninguna columna de monto/cuenta/cuota/
+  vencimiento** (test lo verifica). El DNI se guarda cifrado (AES-GCM).
+- **Degradación (§7.3):** si el endpoint no responde, se conserva el último estado y **nadie
+  baja de nivel**. Batch nocturno: `uv run python -m tarjeta.scripts.sync_padron` (concurrencia
+  acotada, tolerante a fallas individuales).
+
+### `ciudadania` — motor de nivel y tarjeta
+
+- Niveles **Platino/Black**: `BLACK` si `al_dia` (o excepción vigente), `PLATINO` en otro caso.
+- `PerfilCiudadano`: el nivel **no tiene setter público** (cambia por `recalcular` o excepción).
+  `HistorialNivel` es append-only y guarda un **snapshot textual de la regla**.
+- **Excepciones de nivel** con vigencia y motivo, que **expiran solas** (el motor las consulta;
+  no editan el nivel).
+- **Tarjeta**: número de 16 dígitos con dígito verificador (Luhn), estados
+  ACTIVA/BLOQUEADA/SUSPENDIDA/BAJA, bloqueo por robo/pérdida. Se emite al verificarse la
+  identidad.
+
+### Pantalla "Mi estado" (§3.2)
+
+`al_dia=true` → **Black** ("estás al día…"). `al_dia=false` → **Platino** con texto
+**condicional que nunca afirma deuda** (el inquilino que no figura también cae en Platino).
+Muestra "actualizado hace N horas" (con `fecha_ultima_consulta`) y el botón "Actualizar mi
+estado" (máx. 3/día, contador en Redis). En web y móvil.
+
+### Ajustes del PASO 03 saldados
+
+- **Huella de dispositivo**: el cliente la envía en `X-Device-Huella`; entra en el access
+  token y se valida en cada request. Activar el perfil municipal exige que la huella de la
+  petición corresponda a un dispositivo autorizado (no basta con tener uno).
+- **Registro sin OTP** (§04.0.B): DNI + fecha de nacimiento + contraseña + consentimientos.
+  El nivel se determina consultando el padrón por DNI. Recuperación por email. Rate limiting
+  reforzado. En esta etapa la identidad se auto-verifica por DNI (el `EnvioOtp` y su adaptador
+  de consola quedan para cuando haya proveedor); el reclamo de cuenta por alta presencial
+  (PASO 05) es el remedio ante suplantación.
+
 ## Walking skeleton (estado actual, PASO 01)
 
 La línea fina que atraviesa todas las capas está implementada y verificada:

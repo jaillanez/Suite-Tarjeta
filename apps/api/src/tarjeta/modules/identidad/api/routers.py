@@ -25,7 +25,7 @@ from tarjeta.modules.identidad.application.verificar_celular import SolicitarOtp
 from tarjeta.shared.domain.errors import NotFoundError
 from tarjeta.shared.domain.types import EntityId
 
-from .deps import ClaimsDep, PuertosDep, get_ip, get_user_agent
+from .deps import ClaimsDep, HuellaDep, PuertosDep, get_ip, get_user_agent
 from .schemas import (
     DispositivoCrearRequest,
     DispositivoResponse,
@@ -53,18 +53,16 @@ router = APIRouter(prefix="/api/v1", tags=["identidad"])
 async def registro(body: RegistroRequest, request: Request, puertos: PuertosDep) -> MensajeResponse:
     entrada = RegistroInput(
         dni=body.dni,
-        cuil=body.cuil,
-        apellido=body.apellido,
-        nombre=body.nombre,
-        celular=body.celular,
+        fecha_nacimiento=body.fecha_nacimiento,
         password=body.password,
-        email=body.email,
         consentimientos=[ConsentimientoInput(c.tipo, c.otorgado) for c in body.consentimientos],
+        celular=body.celular,
+        email=body.email,
         ip=get_ip(request),
         user_agent=get_user_agent(request),
     )
     await RegistrarPersona(puertos).ejecutar(entrada)
-    return MensajeResponse(mensaje="Registro exitoso. Verificá tu celular con el código enviado.")
+    return MensajeResponse(mensaje="Registro exitoso.")
 
 
 @router.post("/auth/verificar-celular", response_model=MensajeResponse)
@@ -82,22 +80,28 @@ async def reenviar_otp(
 
 
 @router.post("/auth/login", response_model=LoginResponse)
-async def login(body: LoginRequest, request: Request, puertos: PuertosDep) -> LoginResponse:
+async def login(
+    body: LoginRequest, request: Request, puertos: PuertosDep, huella: HuellaDep
+) -> LoginResponse:
     r = await IniciarSesion(puertos).ejecutar(
-        dni=body.dni, password=body.password, ip=get_ip(request)
+        dni=body.dni, password=body.password, ip=get_ip(request), huella=huella
     )
     return _login_response(r)
 
 
 @router.post("/auth/mfa/verificar", response_model=LoginResponse)
-async def mfa_verificar(body: MfaVerificarRequest, puertos: PuertosDep) -> LoginResponse:
-    r = await VerificarMfa(puertos).ejecutar(mfa_token=body.mfa_token, codigo=body.codigo)
+async def mfa_verificar(
+    body: MfaVerificarRequest, puertos: PuertosDep, huella: HuellaDep
+) -> LoginResponse:
+    r = await VerificarMfa(puertos).ejecutar(
+        mfa_token=body.mfa_token, codigo=body.codigo, huella=huella
+    )
     return _login_response(r)
 
 
 @router.post("/auth/refresh", response_model=TokensResponse)
-async def refresh(body: RefreshRequest, puertos: PuertosDep) -> TokensResponse:
-    t = await RefrescarSesion(puertos).ejecutar(refresh_token=body.refresh_token)
+async def refresh(body: RefreshRequest, puertos: PuertosDep, huella: HuellaDep) -> TokensResponse:
+    t = await RefrescarSesion(puertos).ejecutar(refresh_token=body.refresh_token, huella=huella)
     return TokensResponse(access_token=t.access_token, refresh_token=t.refresh_token)
 
 
@@ -111,14 +115,11 @@ async def logout(body: RefreshRequest, puertos: PuertosDep) -> MensajeResponse:
 @router.post(
     "/auth/recuperar", status_code=status.HTTP_202_ACCEPTED, response_model=MensajeResponse
 )
-async def recuperar(
-    body: RecuperarRequest, request: Request, puertos: PuertosDep
-) -> MensajeResponse:
-    # Nunca revela si el DNI existe: respuesta idéntica en todos los casos.
-    persona = await puertos.personas.obtener_por_dni(body.dni)
-    if persona is not None:
-        await SolicitarOtp(puertos).ejecutar(celular=str(persona.celular), ip=get_ip(request))
-    return MensajeResponse(mensaje="Si la cuenta existe, enviamos instrucciones.")
+async def recuperar(body: RecuperarRequest, puertos: PuertosDep) -> MensajeResponse:
+    # §04.0.B: recuperación por email (sin SMS). El envío de email todavía no está cableado
+    # (no hay proveedor); el endpoint nunca revela si el email existe.
+    _ = body.email
+    return MensajeResponse(mensaje="Si la cuenta existe, enviamos instrucciones por email.")
 
 
 @router.get("/auth/perfiles", response_model=list[PerfilOut])
@@ -128,8 +129,12 @@ async def perfiles(claims: ClaimsDep, puertos: PuertosDep) -> list[PerfilOut]:
 
 
 @router.post("/auth/perfiles/{clave}/activar", response_model=TokensResponse)
-async def activar_perfil(clave: str, claims: ClaimsDep, puertos: PuertosDep) -> TokensResponse:
-    t = await CambiarPerfil(puertos).ejecutar(id_persona=claims.id_persona, clave_destino=clave)
+async def activar_perfil(
+    clave: str, claims: ClaimsDep, puertos: PuertosDep, huella: HuellaDep
+) -> TokensResponse:
+    t = await CambiarPerfil(puertos).ejecutar(
+        id_persona=claims.id_persona, clave_destino=clave, huella=huella
+    )
     return TokensResponse(access_token=t.access_token, refresh_token=t.refresh_token)
 
 
@@ -142,10 +147,10 @@ async def personas_me(claims: ClaimsDep, puertos: PuertosDep) -> PersonaMeRespon
     return PersonaMeResponse(
         id=str(persona.id),
         dni=str(persona.dni),
-        cuil=str(persona.cuil),
+        cuil=str(persona.cuil) if persona.cuil else None,
         apellido=persona.apellido,
         nombre=persona.nombre,
-        celular=str(persona.celular),
+        celular=str(persona.celular) if persona.celular else None,
         email=str(persona.email) if persona.email else None,
         estado_identidad=str(persona.estado_identidad),
         celular_verificado=persona.celular_verificado,
@@ -233,7 +238,7 @@ async def mfa_activar(claims: ClaimsDep, puertos: PuertosDep) -> MfaActivarRespo
     persona = await puertos.personas.obtener_por_id(EntityId.from_str(claims.id_persona))
     if persona is None:
         raise NotFoundError("Persona inexistente.")
-    cuenta = str(persona.cuil)
+    cuenta = str(persona.dni)
     a = await ActivarMfa(puertos).ejecutar(id_persona=claims.id_persona, cuenta=cuenta)
     return MfaActivarResponse(
         secreto=a.secreto, uri=a.uri, codigos_recuperacion=a.codigos_recuperacion

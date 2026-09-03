@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Any
 
 import pytest
@@ -14,15 +15,13 @@ from tarjeta.modules.identidad.domain.errors import DispositivoNoRegistrado, Per
 from tarjeta.modules.identidad.domain.perfil import Perfil, TipoPerfil
 from tarjeta.modules.identidad.domain.persona import MetodoVerificacion, Persona
 from tarjeta.modules.identidad.domain.value_objects import Celular
-from tarjeta.shared.domain.types import Cuil, Dni, EntityId
+from tarjeta.shared.domain.types import Dni, EntityId
 
 
 def _persona_municipal() -> Persona:
     p = Persona.registrar(
         dni=Dni("12345678"),
-        cuil=Cuil("20123456786"),
-        apellido="Gómez",
-        nombre="Ana",
+        fecha_nacimiento=date(1990, 1, 1),
         celular=Celular("2644123456"),
     )
     p.verificar_identidad(MetodoVerificacion.PRESENCIAL)
@@ -47,7 +46,9 @@ class _FakeDispositivos:
 
 
 class _FakeTokens:
-    def crear(self, *, id_persona: str, perfil: str, permisos: list[str]) -> str:
+    def crear(
+        self, *, id_persona: str, perfil: str, permisos: list[str], huella: str | None = None
+    ) -> str:
         return "access"
 
 
@@ -105,17 +106,29 @@ async def test_municipal_con_dispositivo_autorizado_ok() -> None:
     disp.autorizar_para_municipal()
     puertos = _puertos(persona, [disp])
     tokens = await CambiarPerfil(puertos).ejecutar(
-        id_persona=str(persona.id), clave_destino="MUNICIPAL"
+        id_persona=str(persona.id), clave_destino="MUNICIPAL", huella="h"
     )
     assert tokens.access_token == "access"
+
+
+async def test_municipal_con_dispositivo_pero_otra_huella_falla() -> None:
+    # §11.3: no basta con tener un dispositivo autorizado; la petición debe venir de él.
+    persona = _persona_municipal()
+    disp = Dispositivo.registrar(
+        id_persona=persona.id, nombre_declarado="tel", plataforma="android", huella="h"
+    )
+    disp.autorizar_para_municipal()
+    puertos = _puertos(persona, [disp])
+    with pytest.raises(DispositivoNoRegistrado):
+        await CambiarPerfil(puertos).ejecutar(
+            id_persona=str(persona.id), clave_destino="MUNICIPAL", huella="OTRA"
+        )
 
 
 async def test_perfil_no_asignado_lanza_403() -> None:
     persona = Persona.registrar(
         dni=Dni("12345678"),
-        cuil=Cuil("20123456786"),
-        apellido="Gómez",
-        nombre="Ana",
+        fecha_nacimiento=date(1990, 1, 1),
         celular=Celular("2644123456"),
     )
     puertos = _puertos(persona, [])

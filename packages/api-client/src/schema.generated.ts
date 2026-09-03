@@ -262,6 +262,91 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/padron/mi-estado": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mi Estado */
+    get: operations["mi_estado_api_v1_padron_mi_estado_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/ciudadania/mi-estado": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mi Estado */
+    get: operations["mi_estado_api_v1_ciudadania_mi_estado_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/ciudadania/actualizar-estado": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Actualizar Estado */
+    post: operations["actualizar_estado_api_v1_ciudadania_actualizar_estado_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/ciudadania/tarjeta/bloquear": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Bloquear Tarjeta */
+    post: operations["bloquear_tarjeta_api_v1_ciudadania_tarjeta_bloquear_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/ciudadania/excepciones": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Crear Excepcion */
+    post: operations["crear_excepcion_api_v1_ciudadania_excepciones_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/health": {
     parameters: {
       query?: never;
@@ -336,6 +421,18 @@ export interface components {
       /** Autorizado Para Perfil Municipal */
       autorizado_para_perfil_municipal: boolean;
     };
+    /** ExcepcionRequest */
+    ExcepcionRequest: {
+      /** Id Persona */
+      id_persona: string;
+      /** Motivo */
+      motivo: string;
+      /**
+       * Dias Vigencia
+       * @default 365
+       */
+      dias_vigencia: number;
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -381,6 +478,28 @@ export interface components {
       /** Codigo */
       codigo: string;
     };
+    /** MiEstadoPadronResponse */
+    MiEstadoPadronResponse: {
+      /** Consultado */
+      consultado: boolean;
+      /** Al Dia */
+      al_dia?: boolean | null;
+      /** Fecha Ultima Consulta */
+      fecha_ultima_consulta?: string | null;
+      /** Horas Desde Consulta */
+      horas_desde_consulta?: number | null;
+    };
+    /** MiEstadoResponse */
+    MiEstadoResponse: {
+      /** Nivel */
+      nivel: string;
+      /** Numero Tarjeta */
+      numero_tarjeta: string;
+      /** Estado Tarjeta */
+      estado_tarjeta: string;
+      /** Tiene Tarjeta Fisica */
+      tiene_tarjeta_fisica: boolean;
+    };
     /** PerfilOut */
     PerfilOut: {
       /** Clave */
@@ -399,13 +518,13 @@ export interface components {
       /** Dni */
       dni: string;
       /** Cuil */
-      cuil: string;
+      cuil: string | null;
       /** Apellido */
       apellido: string;
       /** Nombre */
       nombre: string;
       /** Celular */
-      celular: string;
+      celular: string | null;
       /** Email */
       email: string | null;
       /** Estado Identidad */
@@ -422,8 +541,8 @@ export interface components {
     };
     /** RecuperarRequest */
     RecuperarRequest: {
-      /** Dni */
-      dni: string;
+      /** Email */
+      email: string;
     };
     /** ReenviarOtpRequest */
     ReenviarOtpRequest: {
@@ -439,20 +558,16 @@ export interface components {
     RegistroRequest: {
       /** Dni */
       dni: string;
-      /** Cuil */
-      cuil: string;
-      /** Apellido */
-      apellido: string;
-      /** Nombre */
-      nombre: string;
-      /** Celular */
-      celular: string;
+      /** Fecha Nacimiento */
+      fecha_nacimiento: string;
       /** Password */
       password: string;
-      /** Email */
-      email?: string | null;
       /** Consentimientos */
       consentimientos?: components["schemas"]["ConsentimientoIn"][];
+      /** Celular */
+      celular?: string | null;
+      /** Email */
+      email?: string | null;
     };
     /** TokensResponse */
     TokensResponse: {
@@ -597,7 +712,9 @@ export interface operations {
   login_api_v1_auth_login_post: {
     parameters: {
       query?: never;
-      header?: never;
+      header?: {
+        "x-device-huella"?: string | null;
+      };
       path?: never;
       cookie?: never;
     };
@@ -630,7 +747,9 @@ export interface operations {
   mfa_verificar_api_v1_auth_mfa_verificar_post: {
     parameters: {
       query?: never;
-      header?: never;
+      header?: {
+        "x-device-huella"?: string | null;
+      };
       path?: never;
       cookie?: never;
     };
@@ -663,7 +782,9 @@ export interface operations {
   refresh_api_v1_auth_refresh_post: {
     parameters: {
       query?: never;
-      header?: never;
+      header?: {
+        "x-device-huella"?: string | null;
+      };
       path?: never;
       cookie?: never;
     };
@@ -764,6 +885,7 @@ export interface operations {
       query?: never;
       header?: {
         authorization?: string | null;
+        "x-device-huella"?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -795,6 +917,7 @@ export interface operations {
       query?: never;
       header?: {
         authorization?: string | null;
+        "x-device-huella"?: string | null;
       };
       path: {
         clave: string;
@@ -828,6 +951,7 @@ export interface operations {
       query?: never;
       header?: {
         authorization?: string | null;
+        "x-device-huella"?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -859,6 +983,7 @@ export interface operations {
       query?: never;
       header?: {
         authorization?: string | null;
+        "x-device-huella"?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -894,6 +1019,7 @@ export interface operations {
       query?: never;
       header?: {
         authorization?: string | null;
+        "x-device-huella"?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -927,6 +1053,7 @@ export interface operations {
       query?: never;
       header?: {
         authorization?: string | null;
+        "x-device-huella"?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -962,6 +1089,7 @@ export interface operations {
       query?: never;
       header?: {
         authorization?: string | null;
+        "x-device-huella"?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -993,6 +1121,7 @@ export interface operations {
       query?: never;
       header?: {
         authorization?: string | null;
+        "x-device-huella"?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -1028,6 +1157,7 @@ export interface operations {
       query?: never;
       header?: {
         authorization?: string | null;
+        "x-device-huella"?: string | null;
       };
       path: {
         id_dispositivo: string;
@@ -1061,6 +1191,7 @@ export interface operations {
       query?: never;
       header?: {
         authorization?: string | null;
+        "x-device-huella"?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -1074,6 +1205,170 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["MfaActivarResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mi_estado_api_v1_padron_mi_estado_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MiEstadoPadronResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mi_estado_api_v1_ciudadania_mi_estado_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MiEstadoResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  actualizar_estado_api_v1_ciudadania_actualizar_estado_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  bloquear_tarjeta_api_v1_ciudadania_tarjeta_bloquear_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  crear_excepcion_api_v1_ciudadania_excepciones_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ExcepcionRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
         };
       };
       /** @description Validation Error */

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import dataclasses
+from datetime import date
 
 import pytest
 
@@ -20,15 +21,13 @@ from tarjeta.modules.identidad.domain.persona import (
 )
 from tarjeta.modules.identidad.domain.value_objects import Celular, Email
 from tarjeta.shared.domain.errors import ValidationError
-from tarjeta.shared.domain.types import Cuil, Dni, EntityId
+from tarjeta.shared.domain.types import Dni, EntityId
 
 
 def _persona() -> Persona:
     return Persona.registrar(
         dni=Dni("12345678"),
-        cuil=Cuil("20123456786"),
-        apellido="Gómez",
-        nombre="Ana",
+        fecha_nacimiento=date(1990, 1, 1),
         celular=Celular("2644123456"),
     )
 

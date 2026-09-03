@@ -49,3 +49,4 @@ class Puertos:
     otp_max_intentos: int = 5
     otp_max_solicitudes_hora: int = 5
     rate_limit_login: int = 10
+    rate_limit_registro: int = 5

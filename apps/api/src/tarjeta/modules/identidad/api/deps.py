@@ -5,16 +5,20 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Annotated
 
-from fastapi import Depends, Header, Request
+from fastapi import Depends, Request
 from redis.asyncio import Redis
 
 from tarjeta.modules.identidad.application.deps import Puertos
-from tarjeta.modules.identidad.domain.ports import Claims
 from tarjeta.modules.identidad.infrastructure.composition import construir_puertos
-from tarjeta.modules.identidad.infrastructure.jwt_generador import JwtGenerador
+from tarjeta.shared.api.auth import HuellaDep, SesionDep
 from tarjeta.shared.api.dependencies import SessionDep, SettingsDep
-from tarjeta.shared.domain.errors import AuthenticationError, PermissionDeniedError
+from tarjeta.shared.domain.errors import PermissionDeniedError
 from tarjeta.shared.domain.types import EntityId
+
+# Alias para los routers de identidad (la sesión vive en el shared kernel).
+ClaimsDep = SesionDep
+
+__all__ = ["ClaimsDep", "HuellaDep", "PuertosDep", "get_ip", "get_user_agent", "require_verificada"]
 
 
 @lru_cache
@@ -34,27 +38,6 @@ def get_puertos(session: SessionDep, settings: SettingsDep, redis: RedisDep) -> 
 
 
 PuertosDep = Annotated[Puertos, Depends(get_puertos)]
-
-
-def get_claims(
-    settings: SettingsDep,
-    authorization: Annotated[str | None, Header()] = None,
-) -> Claims:
-    if not authorization or not authorization.lower().startswith("bearer "):
-        raise AuthenticationError("Falta el token de acceso.")
-    token = authorization.split(" ", 1)[1]
-    gen = JwtGenerador(
-        secret=settings.jwt_secret.get_secret_value(),
-        ttl_seg=settings.jwt_access_ttl_seconds,
-    )
-    claims = gen.decodificar(token)
-    # El token de reto MFA no habilita endpoints normales.
-    if claims.perfil == "mfa_challenge":
-        raise AuthenticationError("Token de acceso inválido.")
-    return claims
-
-
-ClaimsDep = Annotated[Claims, Depends(get_claims)]
 
 
 async def require_verificada(claims: ClaimsDep, puertos: PuertosDep) -> str:

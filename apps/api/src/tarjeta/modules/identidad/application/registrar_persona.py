@@ -1,6 +1,8 @@
-"""Caso de uso: registrar una persona (§3.1)."""
+"""Caso de uso: registrar una persona (§3.1 + §04.0.B: registro mínimo sin OTP)."""
 
 from __future__ import annotations
+
+from datetime import date
 
 from tarjeta.modules.identidad.domain.consentimiento import (
     OBLIGATORIOS,
@@ -10,18 +12,19 @@ from tarjeta.modules.identidad.domain.consentimiento import (
 from tarjeta.modules.identidad.domain.credencial import Credencial
 from tarjeta.modules.identidad.domain.errors import (
     ConsentimientoObligatorioFaltante,
+    OtpInvalido,
     PersonaYaRegistrada,
 )
 from tarjeta.modules.identidad.domain.events import ConsentimientoOtorgado
-from tarjeta.modules.identidad.domain.persona import Persona
+from tarjeta.modules.identidad.domain.persona import MetodoVerificacion, Persona
 from tarjeta.modules.identidad.domain.value_objects import Celular, Email
+from tarjeta.shared.domain.errors import ValidationError
 from tarjeta.shared.domain.events import DomainEvent
-from tarjeta.shared.domain.types import Cuil, Dni
+from tarjeta.shared.domain.types import Dni
 
 from .deps import Puertos
 from .dto import RegistroInput
 from .password_policy import validar_password
-from .verificar_celular import SolicitarOtp
 
 
 class RegistrarPersona:
@@ -30,11 +33,20 @@ class RegistrarPersona:
 
     async def ejecutar(self, entrada: RegistroInput) -> str:
         p = self.p
+        # Rate limiting reforzado: sin OTP es la única contención contra el alta masiva.
+        if entrada.ip and not await p.rate_limiter.permitido(
+            f"registro:ip:{entrada.ip}", p.rate_limit_registro, 3600
+        ):
+            raise OtpInvalido("Demasiados registros desde esta conexión. Probá más tarde.")
+
         validar_password(entrada.password, min_length=p.password_min_length)
 
         dni = Dni(entrada.dni)
-        cuil = Cuil(entrada.cuil)
-        celular = Celular(entrada.celular)
+        try:
+            fecha_nacimiento = date.fromisoformat(entrada.fecha_nacimiento)
+        except ValueError as exc:
+            raise ValidationError("Fecha de nacimiento inválida (formato YYYY-MM-DD).") from exc
+        celular = Celular(entrada.celular) if entrada.celular else None
         email = Email(entrada.email) if entrada.email else None
 
         otorgados = {c.tipo: c.otorgado for c in entrada.consentimientos}
@@ -44,22 +56,25 @@ class RegistrarPersona:
                     "Falta el consentimiento obligatorio de tratamiento de datos."
                 )
 
-        # §3.1: un DNI/CUIL ya registrado no puede registrarse de nuevo.
-        if await p.personas.existe_dni(str(dni)) or await p.personas.existe_cuil(str(cuil)):
-            raise PersonaYaRegistrada("Ya existe una cuenta asociada. Recuperá tu cuenta.")
+        # §3.1: un DNI ya registrado no puede registrarse de nuevo (ofrece recuperar cuenta).
+        if await p.personas.existe_dni(str(dni)):
+            raise PersonaYaRegistrada("Ya existe una cuenta con ese DNI. Recuperá tu cuenta.")
 
         persona = Persona.registrar(
-            dni=dni,
-            cuil=cuil,
-            apellido=entrada.apellido,
-            nombre=entrada.nombre,
-            celular=celular,
-            email=email,
+            dni=dni, fecha_nacimiento=fecha_nacimiento, celular=celular, email=email
         )
         await p.personas.agregar(persona)
         await p.credenciales.agregar(
             Credencial.crear(id_persona=persona.id, hash=p.hasher.hash(entrada.password))
         )
+
+        # §04.0.B: sin OTP ni RENAPER real, la identidad se acepta por auto-declaración de DNI
+        # en esta etapa (masa crítica). El stub decide el resultado por configuración; el
+        # reclamo de cuenta por alta presencial es el remedio ante suplantación (PASO 05).
+        resultado = await p.verificador.verificar(dni=str(dni), cuil="")
+        if resultado.aprobado:
+            persona.verificar_identidad(MetodoVerificacion.RENAPER)
+            await p.personas.guardar(persona)  # persistir el cambio de estado
 
         eventos: list[DomainEvent] = list(persona.pull_events())
         for c in entrada.consentimientos:
@@ -84,7 +99,4 @@ class RegistrarPersona:
 
         await p.outbox.escribir(eventos)
         await p.uow.commit()
-
-        # Envío del OTP de verificación de celular (fuera de la transacción anterior).
-        await SolicitarOtp(p).ejecutar(celular=str(celular), ip=entrada.ip)
         return str(persona.id)
