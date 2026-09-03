@@ -17,6 +17,8 @@ dependencies = [
     "pyotp==2.10.0",
     "pyjwt==2.13.0",
     "cryptography==50.0.1",
+    "reportlab==5.0.1",
+    "geoalchemy2==0.19.0",
 ]
 
 [dependency-groups]
@@ -55,6 +57,11 @@ mypy_path = "src"
 explicit_package_bases = true
 namespace_packages = true
 plugins = []
+
+# reportlab no publica type stubs; se usa solo para generar el PDF del QR (§06.3).
+[[tool.mypy.overrides]]
+module = ["reportlab.*"]
+ignore_missing_imports = true
 
 # ------------------------------------------------------------------ pytest
 [tool.pytest.ini_options]
@@ -99,6 +106,7 @@ containers = [
     "tarjeta.modules.antifraude",
     "tarjeta.modules.captacion",
     "tarjeta.modules.gobierno",
+    "tarjeta.modules.comercios",
 ]
 
 [[tool.importlinter.contracts]]
@@ -118,4 +126,5 @@ modules = [
     "tarjeta.modules.antifraude",
     "tarjeta.modules.captacion",
     "tarjeta.modules.gobierno",
+    "tarjeta.modules.comercios",
 ]

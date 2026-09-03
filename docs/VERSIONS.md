@@ -1,6 +1,6 @@
 # Versiones fijadas — suite-tarjeta
 
-Última verificación: **2026-09-03**
+Última verificación: **2026-09-03** (PASO 06)
 
 > **Estado del PASO 00: COMPLETO.** Todos los criterios de aceptación cumplidos.
 > Python 3.14.7 gestionado por uv; PostgreSQL 18.6 con `uuidv7()` nativo y las cinco
@@ -44,6 +44,8 @@
 | pyotp | 2.10.0 | ✅ sí | TOTP para MFA. |
 | pyjwt | 2.13.0 | ✅ sí | Access tokens JWT HS256. |
 | cryptography | 50.0.1 | ✅ sí | AES-256-GCM para cifrado a nivel de campo. |
+| geoalchemy2 | 0.19.0 | ✅ sí | Tipo `geography(Point,4326)` para sucursales (PASO 06). |
+| reportlab | 5.0.1 | ✅ sí | PDF imprimible del QR de establecimiento (PASO 06). Trae pillow 12.3.0. |
 
 > **Parámetros de seguridad (PASO 03), configurables:** argon2id time_cost=3, memory_cost=65536
 > (64 MiB), parallelism=4; access TTL 900 s; refresh TTL 14 días; timeouts por perfil
@@ -124,6 +126,33 @@
 | Puerta de canje | Parámetro explícito `ff_exigir_identidad_verificada` (no depende del stub). `GET /api/v1/canje/puerta`. |
 | Portal (web) | Grupo `(municipal)`: tablero, ciudadanos (ficha 360 + alta presencial + reclamo), parametría, aprobaciones, auditoría, agentes. Cierre por inactividad a 10 min + borradores en `sessionStorage`. |
 | Gate de cobertura | ≥85% por módulo, ahora incluye **gobierno** (medido: **98.2%**). |
+
+## Módulo comercios y portal del comercio (PASO 06)
+| Tema | Definición |
+|---|---|
+| Adhesión | Verificación por CUIT contra el padrón (padron es el único que lo contacta; comercios usa un puerto que el composition root implementa). Convenio versionado con evidencia. |
+| Máquina de estados | SOLICITADA→EN_REVISION→APROBADA→ACTIVA, +DOCUMENTACION_PENDIENTE/RECHAZADA, ACTIVA⇄SUSPENDIDA, →BAJA (baja definitiva con doble conformidad). |
+| Sucursales | PostGIS `geography(Point,4326)` + índice GiST; cercanía con ST_DWithin/ST_Distance; doble turno + "abierto ahora" con zona horaria; QR firmado por sucursal con PDF (reportlab). |
+| Roles del comercio | ADMIN_COMERCIO, ADMIN_SUCURSALES, ENCARGADO, CAJERO. Matriz declarativa; alcance por sucursal; ADMIN_COMERCIO exige MFA. |
+| Cajero | Login por PIN atado a dispositivo registrado (huella), límite de intentos + bloqueo; baja revoca sesiones al instante. |
+| Privacidad | Ningún endpoint del módulo expone contacto/domicilio/estado fiscal del ciudadano (test que recorre endpoints). |
+| Deuda 05 | (A) `schema.generated.ts` regenerado + CI que falla si queda desactualizado; (B) `agente_municipal` sincronizado por evento; (C) SQL de recaudación encapsulado en vistas. |
+| Cobertura | ≥85% por módulo, incluye **comercios** (medido: 90.9%). |
+
+### Librería de mapa (decisión, §06.7)
+| Componente | Elección | Licencia | Costo |
+|---|---|---|---|
+| Librería de mapa | **Leaflet 1.9.4** | BSD-2-Clause | Gratis (open source) |
+| Tiles | **OpenStreetMap** (`tile.openstreetmap.org`) | ODbL (datos) | **Sin costo por carga** |
+| Types | `@types/leaflet` 1.9.20 | — | — |
+
+> **Por qué:** un municipio con presupuesto acotado no debe pagar por carga de mapa. Leaflet es
+> liviano y de licencia permisiva; OSM no cobra por render. **Advertencia operativa:** el tile
+> server público de OSM tiene una *usage policy* (no apto para alto volumen productivo); antes de
+> producción, self-hostear tiles o usar un proveedor con capa gratuita (p. ej. tiles propios con
+> el stack de OSM). Alternativa evaluada: **MapLibre GL JS** (BSD-3, vectorial) — más potente
+> pero más pesada y requiere un proveedor de tiles vectoriales; se puede migrar sin cambiar el
+> backend. Se descartaron Google Maps y Mapbox por costo por carga.
 
 ## CI (actualizado en PASO 02)
 | Tema | Definición |

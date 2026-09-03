@@ -13,10 +13,12 @@ from sqlalchemy import text
 
 from tarjeta.config import Settings, get_settings
 from tarjeta.modules.ciudadania.api.routers import router as ciudadania_router
+from tarjeta.modules.comercios.api.routers import router as comercios_router
 from tarjeta.modules.gobierno.api.routers import router as gobierno_router
 from tarjeta.modules.identidad.api.routers import router as identidad_router
 from tarjeta.modules.padron.api.routers import router as padron_router
 from tarjeta.orquestacion import build_dispatcher
+from tarjeta.portal_comercio import router as portal_comercio_router
 from tarjeta.portal_municipal import router as portal_router
 from tarjeta.shared.api.dependencies import SessionDep
 from tarjeta.shared.api.errors import register_error_handlers
@@ -70,7 +72,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(padron_router)
     app.include_router(ciudadania_router)
     app.include_router(gobierno_router)
+    app.include_router(comercios_router)
     app.include_router(portal_router)
+    app.include_router(portal_comercio_router)
 
     @app.middleware("http")
     async def _drenar_eventos(

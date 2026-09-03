@@ -112,6 +112,7 @@ jobs:
           --cov=src/tarjeta/modules/padron
           --cov=src/tarjeta/modules/ciudadania
           --cov=src/tarjeta/modules/gobierno
+          --cov=src/tarjeta/modules/comercios
           --cov-report=term-missing --cov-report=json
       - name: Gate de cobertura por módulo (>=85%)
         if: ${{ !cancelled() }}
@@ -119,7 +120,7 @@ jobs:
           python3 - <<'PY'
           import json, sys
           data = json.load(open("coverage.json"))
-          mods = ("identidad", "padron", "ciudadania", "gobierno")
+          mods = ("identidad", "padron", "ciudadania", "gobierno", "comercios")
           agg = {m: [0, 0] for m in mods}
           for path, info in data["files"].items():
               for m in mods:
@@ -151,7 +152,16 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           pct=$(python3 -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
-          echo "### Cobertura backend (identidad+padron+ciudadania+gobierno): ${pct}%" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Cobertura backend (identidad+padron+ciudadania+gobierno+comercios): ${pct}%" >> "$GITHUB_STEP_SUMMARY"
+      - name: Cliente de API — openapi.json al día (§06.0.A)
+        if: ${{ !cancelled() }}
+        run: |
+          uv run python -m tarjeta.scripts.dump_openapi
+          if ! git -C "$GITHUB_WORKSPACE" diff --quiet -- packages/api-client/openapi.json; then
+            echo "::error::openapi.json desactualizado: corré 'uv run python -m tarjeta.scripts.dump_openapi' y commiteá."
+            git -C "$GITHUB_WORKSPACE" --no-pager diff -- packages/api-client/openapi.json | head -80
+            exit 1
+          fi
 
   web:
     needs: changes
@@ -168,6 +178,14 @@ jobs:
           cache: pnpm
       - name: Instalar dependencias (lock congelado)
         run: pnpm install --frozen-lockfile
+      - name: Cliente de API — schema.generated.ts al día (§06.0.A)
+        run: |
+          pnpm --filter @tarjeta/api-client generate
+          if ! git diff --quiet -- packages/api-client/src/schema.generated.ts; then
+            echo "::error::schema.generated.ts desactualizado: corré 'pnpm generate:api' y commiteá."
+            git --no-pager diff -- packages/api-client/src/schema.generated.ts | head -80
+            exit 1
+          fi
       - name: Lint
         run: pnpm lint
       - name: Build web

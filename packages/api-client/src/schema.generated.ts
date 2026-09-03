@@ -4,57 +4,6 @@
  */
 
 export interface paths {
-  "/api/v1/auth/registro": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Registro */
-    post: operations["registro_api_v1_auth_registro_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/auth/verificar-celular": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Verificar Celular */
-    post: operations["verificar_celular_api_v1_auth_verificar_celular_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/auth/reenviar-otp": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Reenviar Otp */
-    post: operations["reenviar_otp_api_v1_auth_reenviar_otp_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   "/api/v1/auth/login": {
     parameters: {
       query?: never;
@@ -66,40 +15,6 @@ export interface paths {
     put?: never;
     /** Login */
     post: operations["login_api_v1_auth_login_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/auth/mfa/verificar": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Mfa Verificar */
-    post: operations["mfa_verificar_api_v1_auth_mfa_verificar_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/auth/refresh": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Refresh */
-    post: operations["refresh_api_v1_auth_refresh_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -123,7 +38,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/auth/recuperar": {
+  "/api/v1/auth/mfa/verificar": {
     parameters: {
       query?: never;
       header?: never;
@@ -132,8 +47,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Recuperar */
-    post: operations["recuperar_api_v1_auth_recuperar_post"];
+    /** Mfa Verificar */
+    post: operations["mfa_verificar_api_v1_auth_mfa_verificar_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -168,6 +83,535 @@ export interface paths {
     put?: never;
     /** Activar Perfil */
     post: operations["activar_perfil_api_v1_auth_perfiles__clave__activar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/recuperar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Recuperar */
+    post: operations["recuperar_api_v1_auth_recuperar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/reenviar-otp": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Reenviar Otp */
+    post: operations["reenviar_otp_api_v1_auth_reenviar_otp_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/refresh": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Refresh */
+    post: operations["refresh_api_v1_auth_refresh_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/registro": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Registro */
+    post: operations["registro_api_v1_auth_registro_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/verificar-celular": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Verificar Celular */
+    post: operations["verificar_celular_api_v1_auth_verificar_celular_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/canje/puerta": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Puerta Canje */
+    get: operations["puerta_canje_api_v1_canje_puerta_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/ciudadania/actualizar-estado": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Actualizar Estado */
+    post: operations["actualizar_estado_api_v1_ciudadania_actualizar_estado_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/ciudadania/excepciones": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Crear Excepcion */
+    post: operations["crear_excepcion_api_v1_ciudadania_excepciones_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/ciudadania/mi-estado": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mi Estado */
+    get: operations["mi_estado_api_v1_ciudadania_mi_estado_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/ciudadania/tarjeta/bloquear": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Bloquear Tarjeta */
+    post: operations["bloquear_tarjeta_api_v1_ciudadania_tarjeta_bloquear_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/cajeros/{id_usuario}/pin": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Establecer Pin */
+    post: operations["establecer_pin_api_v1_comercios_cajeros__id_usuario__pin_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/cercanas": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Cercanas */
+    get: operations["cercanas_api_v1_comercios_cercanas_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/mi-comercio": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mi Comercio */
+    get: operations["mi_comercio_api_v1_comercios_mi_comercio_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/sucursales": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Listar Sucursales */
+    get: operations["listar_sucursales_api_v1_comercios_sucursales_get"];
+    put?: never;
+    /** Crear Sucursal */
+    post: operations["crear_sucursal_api_v1_comercios_sucursales_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/sucursales/{id_sucursal}/abierto-ahora": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Abierto Ahora */
+    get: operations["abierto_ahora_api_v1_comercios_sucursales__id_sucursal__abierto_ahora_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/sucursales/{id_sucursal}/cerrar-temporal": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Cerrar Temporal */
+    post: operations["cerrar_temporal_api_v1_comercios_sucursales__id_sucursal__cerrar_temporal_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/sucursales/{id_sucursal}/qr.pdf": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Qr Pdf */
+    get: operations["qr_pdf_api_v1_comercios_sucursales__id_sucursal__qr_pdf_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/sucursales/{id_sucursal}/reabrir": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Reabrir */
+    post: operations["reabrir_api_v1_comercios_sucursales__id_sucursal__reabrir_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/turnos/abrir": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Abrir Turno */
+    post: operations["abrir_turno_api_v1_comercios_turnos_abrir_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/turnos/cerrar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Cerrar Turno */
+    post: operations["cerrar_turno_api_v1_comercios_turnos_cerrar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/usuarios": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Listar Usuarios */
+    get: operations["listar_usuarios_api_v1_comercios_usuarios_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/comercios/usuarios/invitar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Invitar Usuario */
+    post: operations["invitar_usuario_api_v1_comercios_usuarios_invitar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/gobierno/agentes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Agentes */
+    get: operations["agentes_api_v1_gobierno_agentes_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/gobierno/aprobaciones": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Bandeja */
+    get: operations["bandeja_api_v1_gobierno_aprobaciones_get"];
+    put?: never;
+    /** Solicitar */
+    post: operations["solicitar_api_v1_gobierno_aprobaciones_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/gobierno/aprobaciones/{id_solicitud}/aprobar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Aprobar */
+    post: operations["aprobar_api_v1_gobierno_aprobaciones__id_solicitud__aprobar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/gobierno/aprobaciones/{id_solicitud}/rechazar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Rechazar */
+    post: operations["rechazar_api_v1_gobierno_aprobaciones__id_solicitud__rechazar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/gobierno/auditoria": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Auditoria */
+    get: operations["auditoria_api_v1_gobierno_auditoria_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/gobierno/parametros": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Parametros */
+    get: operations["parametros_api_v1_gobierno_parametros_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/gobierno/parametros/{clave}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Cambiar Parametro */
+    put: operations["cambiar_parametro_api_v1_gobierno_parametros__clave__put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/gobierno/recaudacion": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Recaudacion */
+    get: operations["recaudacion_api_v1_gobierno_recaudacion_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/padron/mi-estado": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mi Estado */
+    get: operations["mi_estado_api_v1_padron_mi_estado_get"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -262,15 +706,49 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/padron/mi-estado": {
+  "/api/v1/portal-comercio/adhesion": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Mi Estado */
-    get: operations["mi_estado_api_v1_padron_mi_estado_get"];
+    get?: never;
+    put?: never;
+    /** Adhesion */
+    post: operations["adhesion_api_v1_portal_comercio_adhesion_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/baja/{id_solicitud}/aprobar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Baja Aprobar */
+    post: operations["baja_aprobar_api_v1_portal_comercio_baja__id_solicitud__aprobar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/bandeja": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Bandeja */
+    get: operations["bandeja_api_v1_portal_comercio_bandeja_get"];
     put?: never;
     post?: never;
     delete?: never;
@@ -279,15 +757,100 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/ciudadania/mi-estado": {
+  "/api/v1/portal-comercio/cajero/login": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Mi Estado */
-    get: operations["mi_estado_api_v1_ciudadania_mi_estado_get"];
+    get?: never;
+    put?: never;
+    /** Cajero Login */
+    post: operations["cajero_login_api_v1_portal_comercio_cajero_login_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/cajeros/{id_usuario}/baja": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Dar De Baja Cajero */
+    post: operations["dar_de_baja_cajero_api_v1_portal_comercio_cajeros__id_usuario__baja_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/carga-masiva": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Carga Masiva */
+    post: operations["carga_masiva_api_v1_portal_comercio_carga_masiva_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/comercios/{id_comercio}/aprobar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Aprobar */
+    post: operations["aprobar_api_v1_portal_comercio_comercios__id_comercio__aprobar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/comercios/{id_comercio}/baja-solicitar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Baja Solicitar */
+    post: operations["baja_solicitar_api_v1_portal_comercio_comercios__id_comercio__baja_solicitar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/comercios/{id_comercio}/ficha": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Ficha Comercio */
+    get: operations["ficha_comercio_api_v1_portal_comercio_comercios__id_comercio__ficha_get"];
     put?: never;
     post?: never;
     delete?: never;
@@ -296,7 +859,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/ciudadania/actualizar-estado": {
+  "/api/v1/portal-comercio/comercios/{id_comercio}/pedir-documentacion": {
     parameters: {
       query?: never;
       header?: never;
@@ -305,15 +868,15 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Actualizar Estado */
-    post: operations["actualizar_estado_api_v1_ciudadania_actualizar_estado_post"];
+    /** Pedir Documentacion */
+    post: operations["pedir_documentacion_api_v1_portal_comercio_comercios__id_comercio__pedir_documentacion_post"];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/api/v1/ciudadania/tarjeta/bloquear": {
+  "/api/v1/portal-comercio/comercios/{id_comercio}/rechazar": {
     parameters: {
       query?: never;
       header?: never;
@@ -322,15 +885,15 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Bloquear Tarjeta */
-    post: operations["bloquear_tarjeta_api_v1_ciudadania_tarjeta_bloquear_post"];
+    /** Rechazar */
+    post: operations["rechazar_api_v1_portal_comercio_comercios__id_comercio__rechazar_post"];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/api/v1/ciudadania/excepciones": {
+  "/api/v1/portal-comercio/comercios/{id_comercio}/suspender": {
     parameters: {
       query?: never;
       header?: never;
@@ -339,8 +902,144 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Crear Excepcion */
-    post: operations["crear_excepcion_api_v1_ciudadania_excepciones_post"];
+    /** Suspender */
+    post: operations["suspender_api_v1_portal_comercio_comercios__id_comercio__suspender_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/comercios/{id_comercio}/tomar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Tomar */
+    post: operations["tomar_api_v1_portal_comercio_comercios__id_comercio__tomar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/invitaciones/{token}/aceptar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Aceptar Invitacion */
+    post: operations["aceptar_invitacion_api_v1_portal_comercio_invitaciones__token__aceptar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal/agentes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Asignar Agente */
+    post: operations["asignar_agente_api_v1_portal_agentes_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal/agentes/{id_persona}/revocar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Revocar Agente */
+    post: operations["revocar_agente_api_v1_portal_agentes__id_persona__revocar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal/alta-presencial": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Alta Presencial */
+    post: operations["alta_presencial_api_v1_portal_alta_presencial_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal/ficha360/{id_persona}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Ficha360 */
+    get: operations["ficha360_api_v1_portal_ficha360__id_persona__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal/reclamos": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Crear Reclamo */
+    post: operations["crear_reclamo_api_v1_portal_reclamos_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal/reclamos/{id_solicitud}/aprobar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Aprobar Reclamo */
+    post: operations["aprobar_reclamo_api_v1_portal_reclamos__id_solicitud__aprobar_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -385,58 +1084,293 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    /** AbiertoOut */
+    AbiertoOut: {
+      /** Abierto */
+      abierto: boolean;
+    };
+    /** AbrirTurnoIn */
+    AbrirTurnoIn: {
+      /** Id Sucursal */
+      id_sucursal: string;
+    };
+    /** AdhesionIn */
+    AdhesionIn: {
+      /** Convenio Version */
+      convenio_version: string;
+      /** Cuit */
+      cuit: string;
+      /**
+       * Logo Url
+       * @default
+       */
+      logo_url: string;
+      /**
+       * Nombre Fantasia
+       * @default
+       */
+      nombre_fantasia: string;
+      /** Razon Social */
+      razon_social: string;
+      /**
+       * Rubro
+       * @default
+       */
+      rubro: string;
+      sucursal: components["schemas"]["SucursalAdhesionIn"];
+    };
+    /** AgenteOut */
+    AgenteOut: {
+      /** Id Persona */
+      id_persona: string;
+      /** Rol */
+      rol: string;
+    };
+    /** AltaPresencialIn */
+    AltaPresencialIn: {
+      /** Dni */
+      dni: string;
+      /** Fecha Nacimiento */
+      fecha_nacimiento: string;
+    };
+    /** AsignarAgenteIn */
+    AsignarAgenteIn: {
+      /** Id Persona */
+      id_persona: string;
+      /** Rol */
+      rol: string;
+    };
+    /** CajeroLoginIn */
+    CajeroLoginIn: {
+      /** Id Usuario */
+      id_usuario: string;
+      /** Pin */
+      pin: string;
+    };
+    /** CambioParametro */
+    CambioParametro: {
+      /**
+       * Motivo
+       * @default
+       */
+      motivo: string;
+      /** Valor */
+      valor: number;
+    };
+    /** CargaMasivaIn */
+    CargaMasivaIn: {
+      /**
+       * Confirmar
+       * @default false
+       */
+      confirmar: boolean;
+      /** Contenido */
+      contenido: string;
+    };
+    /** CierreTemporalIn */
+    CierreTemporalIn: {
+      /** Motivo */
+      motivo: string;
+      /** Reapertura Estimada */
+      reapertura_estimada?: string | null;
+    };
+    /** CierreTurnoOut */
+    CierreTurnoOut: {
+      /** Id */
+      id: string;
+      /** Resumen */
+      resumen: {
+        [key: string]: unknown;
+      };
+    };
+    /** ComercioBandejaOut */
+    ComercioBandejaOut: {
+      /** Creado En */
+      creado_en: string;
+      /** Cuit */
+      cuit: string;
+      /** Estado */
+      estado: string;
+      /** Id */
+      id: string;
+      /** Razon Social */
+      razon_social: string;
+    };
+    /** ComercioOut */
+    ComercioOut: {
+      /** Cuit */
+      cuit: string;
+      /** Estado */
+      estado: string;
+      /** Id */
+      id: string;
+      /** Logo Url */
+      logo_url: string;
+      /** Nombre Fantasia */
+      nombre_fantasia: string;
+      /** Razon Social */
+      razon_social: string;
+      /** Rubro */
+      rubro: string;
+    };
     /** ConsentimientoIn */
     ConsentimientoIn: {
-      /** Tipo */
-      tipo: string;
       /** Otorgado */
       otorgado: boolean;
+      /** Tipo */
+      tipo: string;
     };
     /** ConsentimientoInput */
     ConsentimientoInput: {
-      /** Tipo */
-      tipo: string;
       /** Otorgado */
       otorgado: boolean;
+      /** Tipo */
+      tipo: string;
+    };
+    /** DecisionIn */
+    DecisionIn: {
+      /**
+       * Motivo
+       * @default
+       */
+      motivo: string;
     };
     /** DispositivoCrearRequest */
     DispositivoCrearRequest: {
+      /** Huella */
+      huella: string;
       /** Nombre Declarado */
       nombre_declarado: string;
       /** Plataforma */
       plataforma: string;
-      /** Huella */
-      huella: string;
+    };
+    /** DispositivoFicha */
+    DispositivoFicha: {
+      /** Estado */
+      estado: string;
+      /** Id */
+      id: string;
+      /** Nombre */
+      nombre: string;
     };
     /** DispositivoResponse */
     DispositivoResponse: {
+      /** Autorizado Para Perfil Municipal */
+      autorizado_para_perfil_municipal: boolean;
+      /** Estado */
+      estado: string;
       /** Id */
       id: string;
       /** Nombre Declarado */
       nombre_declarado: string;
       /** Plataforma */
       plataforma: string;
-      /** Estado */
-      estado: string;
-      /** Autorizado Para Perfil Municipal */
-      autorizado_para_perfil_municipal: boolean;
     };
     /** ExcepcionRequest */
     ExcepcionRequest: {
-      /** Id Persona */
-      id_persona: string;
-      /** Motivo */
-      motivo: string;
       /**
        * Dias Vigencia
        * @default 365
        */
       dias_vigencia: number;
+      /** Id Persona */
+      id_persona: string;
+      /** Motivo */
+      motivo: string;
+    };
+    /** Ficha360Out */
+    Ficha360Out: {
+      /** Apellido */
+      apellido: string;
+      /** Dispositivos */
+      dispositivos: components["schemas"]["DispositivoFicha"][];
+      /** Dni */
+      dni: string;
+      /** Estado Identidad */
+      estado_identidad: string;
+      /** Estado Tarjeta */
+      estado_tarjeta: string | null;
+      /** Id */
+      id: string;
+      /** Nivel */
+      nivel: string | null;
+      /** Nombre */
+      nombre: string;
+      /** Padron Actualizado */
+      padron_actualizado: string | null;
+      /** Padron Al Dia */
+      padron_al_dia: boolean | null;
+      /** Tarjeta */
+      tarjeta: string | null;
+    };
+    /** FichaComercioOut */
+    FichaComercioOut: {
+      /** Cuit */
+      cuit: string;
+      /** Estado */
+      estado: string;
+      /** Id */
+      id: string;
+      /** Nombre Fantasia */
+      nombre_fantasia: string;
+      /** Razon Social */
+      razon_social: string;
+      /** Rubro */
+      rubro: string;
+      /** Sucursales */
+      sucursales: components["schemas"]["SucursalFichaOut"][];
+      /** Usuarios */
+      usuarios: components["schemas"]["UsuarioFichaOut"][];
+    };
+    /** FranjaIn */
+    FranjaIn: {
+      /**
+       * Desde
+       * @example 09:00
+       */
+      desde: string;
+      /**
+       * Hasta
+       * @example 13:00
+       */
+      hasta: string;
     };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
       detail?: components["schemas"]["ValidationError"][];
+    };
+    /** HorarioIn */
+    HorarioIn: {
+      /**
+       * Dia
+       * @description 0=lunes .. 6=domingo
+       */
+      dia: number;
+      /**
+       * Franjas
+       * @default []
+       */
+      franjas: components["schemas"]["FranjaIn"][];
+    };
+    /** InvitacionOut */
+    InvitacionOut: {
+      /** Id */
+      id: string;
+      /** Token */
+      token: string;
+    };
+    /** InvitarIn */
+    InvitarIn: {
+      /** Destino */
+      destino: string;
+      /** Rol */
+      rol: string;
+      /**
+       * Sucursales
+       * @default []
+       */
+      sucursales: string[];
     };
     /** LoginRequest */
     LoginRequest: {
@@ -449,13 +1383,18 @@ export interface components {
     LoginResponse: {
       /** Mfa Requerido */
       mfa_requerido: boolean;
-      /** Perfiles */
-      perfiles: components["schemas"]["PerfilOut"][];
-      /** Perfil Activo */
-      perfil_activo?: string | null;
-      tokens?: components["schemas"]["TokensResponse"] | null;
       /** Mfa Token */
       mfa_token?: string | null;
+      /** Perfil Activo */
+      perfil_activo?: string | null;
+      /** Perfiles */
+      perfiles: components["schemas"]["PerfilOut"][];
+      tokens?: components["schemas"]["TokensResponse"] | null;
+    };
+    /** Mensaje */
+    Mensaje: {
+      /** Mensaje */
+      mensaje: string;
     };
     /** MensajeResponse */
     MensajeResponse: {
@@ -464,26 +1403,26 @@ export interface components {
     };
     /** MfaActivarResponse */
     MfaActivarResponse: {
+      /** Codigos Recuperacion */
+      codigos_recuperacion: string[];
       /** Secreto */
       secreto: string;
       /** Uri */
       uri: string;
-      /** Codigos Recuperacion */
-      codigos_recuperacion: string[];
     };
     /** MfaVerificarRequest */
     MfaVerificarRequest: {
-      /** Mfa Token */
-      mfa_token: string;
       /** Codigo */
       codigo: string;
+      /** Mfa Token */
+      mfa_token: string;
     };
     /** MiEstadoPadronResponse */
     MiEstadoPadronResponse: {
-      /** Consultado */
-      consultado: boolean;
       /** Al Dia */
       al_dia?: boolean | null;
+      /** Consultado */
+      consultado: boolean;
       /** Fecha Ultima Consulta */
       fecha_ultima_consulta?: string | null;
       /** Horas Desde Consulta */
@@ -491,12 +1430,12 @@ export interface components {
     };
     /** MiEstadoResponse */
     MiEstadoResponse: {
+      /** Estado Tarjeta */
+      estado_tarjeta: string;
       /** Nivel */
       nivel: string;
       /** Numero Tarjeta */
       numero_tarjeta: string;
-      /** Estado Tarjeta */
-      estado_tarjeta: string;
       /** Tiene Tarjeta Fisica */
       tiene_tarjeta_fisica: boolean;
     };
@@ -504,33 +1443,33 @@ export interface components {
     PerfilOut: {
       /** Clave */
       clave: string;
-      /** Tipo */
-      tipo: string;
       /** Id Comercio */
       id_comercio?: string | null;
       /** Rol */
       rol?: string | null;
+      /** Tipo */
+      tipo: string;
     };
     /** PersonaMeResponse */
     PersonaMeResponse: {
-      /** Id */
-      id: string;
-      /** Dni */
-      dni: string;
-      /** Cuil */
-      cuil: string | null;
       /** Apellido */
       apellido: string;
-      /** Nombre */
-      nombre: string;
       /** Celular */
       celular: string | null;
+      /** Celular Verificado */
+      celular_verificado: boolean;
+      /** Cuil */
+      cuil: string | null;
+      /** Dni */
+      dni: string;
       /** Email */
       email: string | null;
       /** Estado Identidad */
       estado_identidad: string;
-      /** Celular Verificado */
-      celular_verificado: boolean;
+      /** Id */
+      id: string;
+      /** Nombre */
+      nombre: string;
       /** Perfiles */
       perfiles: components["schemas"]["PerfilOut"][];
     };
@@ -538,6 +1477,27 @@ export interface components {
     PersonaPatchRequest: {
       /** Email */
       email?: string | null;
+    };
+    /** PinIn */
+    PinIn: {
+      /** Pin */
+      pin: string;
+    };
+    /** RecaudacionOut */
+    RecaudacionOut: {
+      /** Distribucion Por Nivel */
+      distribucion_por_nivel: {
+        [key: string]: number;
+      };
+      /** Transiciones A Black Post Registro */
+      transiciones_a_black_post_registro: number;
+    };
+    /** ReclamoIn */
+    ReclamoIn: {
+      /** Dni */
+      dni: string;
+      /** Motivo */
+      motivo: string;
     };
     /** RecuperarRequest */
     RecuperarRequest: {
@@ -554,20 +1514,169 @@ export interface components {
       /** Refresh Token */
       refresh_token: string;
     };
+    /** RegistroAuditoriaOut */
+    RegistroAuditoriaOut: {
+      /** Accion */
+      accion: string;
+      /** Actor */
+      actor: string | null;
+      /** Entidad */
+      entidad: string;
+      /** Id */
+      id: string;
+      /** Id Entidad */
+      id_entidad: string;
+      /** Motivo */
+      motivo: string;
+      /** Timestamp */
+      timestamp: string;
+    };
     /** RegistroRequest */
     RegistroRequest: {
+      /** Celular */
+      celular?: string | null;
+      /** Consentimientos */
+      consentimientos?: components["schemas"]["ConsentimientoIn"][];
       /** Dni */
       dni: string;
+      /** Email */
+      email?: string | null;
       /** Fecha Nacimiento */
       fecha_nacimiento: string;
       /** Password */
       password: string;
-      /** Consentimientos */
-      consentimientos?: components["schemas"]["ConsentimientoIn"][];
-      /** Celular */
-      celular?: string | null;
-      /** Email */
-      email?: string | null;
+    };
+    /** SolicitudIn */
+    SolicitudIn: {
+      /** Accion */
+      accion: string;
+      /**
+       * Payload
+       * @default {}
+       */
+      payload: {
+        [key: string]: unknown;
+      };
+    };
+    /** SolicitudPendienteOut */
+    SolicitudPendienteOut: {
+      /** Accion */
+      accion: string;
+      /** Fecha Expiracion */
+      fecha_expiracion: string;
+      /** Id */
+      id: string;
+      /** Solicitante */
+      solicitante: string;
+    };
+    /** SucursalAdhesionIn */
+    SucursalAdhesionIn: {
+      /**
+       * Direccion
+       * @default
+       */
+      direccion: string;
+      /** Lat */
+      lat: number;
+      /** Lon */
+      lon: number;
+      /** Nombre */
+      nombre: string;
+      /**
+       * Telefono
+       * @default
+       */
+      telefono: string;
+    };
+    /** SucursalCercanaOut */
+    SucursalCercanaOut: {
+      /** Distancia M */
+      distancia_m: number;
+      /** Id */
+      id: string;
+      /** Lat */
+      lat: number;
+      /** Lon */
+      lon: number;
+      /** Nombre */
+      nombre: string;
+    };
+    /** SucursalFichaOut */
+    SucursalFichaOut: {
+      /** Estado */
+      estado: string;
+      /** Id */
+      id: string;
+      /** Nombre */
+      nombre: string;
+    };
+    /** SucursalIn */
+    SucursalIn: {
+      /**
+       * Direccion
+       * @default
+       */
+      direccion: string;
+      /**
+       * Es Casa Central
+       * @default false
+       */
+      es_casa_central: boolean;
+      /**
+       * Fotos
+       * @default []
+       */
+      fotos: string[];
+      /**
+       * Horarios
+       * @default []
+       */
+      horarios: components["schemas"]["HorarioIn"][];
+      /** Lat */
+      lat?: number | null;
+      /** Lon */
+      lon?: number | null;
+      /** Nombre */
+      nombre: string;
+      /**
+       * Telefono
+       * @default
+       */
+      telefono: string;
+    };
+    /** SucursalOut */
+    SucursalOut: {
+      /** Direccion */
+      direccion: string;
+      /** Es Casa Central */
+      es_casa_central: boolean;
+      /** Estado */
+      estado: string;
+      /** Fotos */
+      fotos: string[];
+      /** Id */
+      id: string;
+      /** Id Comercio */
+      id_comercio: string;
+      /** Lat */
+      lat: number;
+      /** Lon */
+      lon: number;
+      /** Nombre */
+      nombre: string;
+      /** Qr Token */
+      qr_token: string;
+      /** Telefono */
+      telefono: string;
+    };
+    /** TokensOut */
+    TokensOut: {
+      /** Access Token */
+      access_token: string;
+      /** Refresh Token */
+      refresh_token: string;
+      /** Token Type */
+      token_type: string;
     };
     /** TokensResponse */
     TokensResponse: {
@@ -581,18 +1690,45 @@ export interface components {
        */
       token_type: string;
     };
+    /** TurnoOut */
+    TurnoOut: {
+      /** Id */
+      id: string;
+    };
+    /** UsuarioComercioOut */
+    UsuarioComercioOut: {
+      /** Estado */
+      estado: string;
+      /** Id */
+      id: string;
+      /** Id Persona */
+      id_persona: string;
+      /** Rol */
+      rol: string;
+      /** Sucursales */
+      sucursales: string[];
+    };
+    /** UsuarioFichaOut */
+    UsuarioFichaOut: {
+      /** Estado */
+      estado: string;
+      /** Id Persona */
+      id_persona: string;
+      /** Rol */
+      rol: string;
+    };
     /** ValidationError */
     ValidationError: {
+      /** Context */
+      ctx?: Record<string, never>;
+      /** Input */
+      input?: unknown;
       /** Location */
       loc: (string | number)[];
       /** Message */
       msg: string;
       /** Error Type */
       type: string;
-      /** Input */
-      input?: unknown;
-      /** Context */
-      ctx?: Record<string, never>;
     };
     /** VerificarCelularRequest */
     VerificarCelularRequest: {
@@ -610,105 +1746,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  registro_api_v1_auth_registro_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["RegistroRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["MensajeResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  verificar_celular_api_v1_auth_verificar_celular_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["VerificarCelularRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["MensajeResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  reenviar_otp_api_v1_auth_reenviar_otp_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ReenviarOtpRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["MensajeResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   login_api_v1_auth_login_post: {
     parameters: {
       query?: never;
@@ -731,76 +1768,6 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["LoginResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  mfa_verificar_api_v1_auth_mfa_verificar_post: {
-    parameters: {
-      query?: never;
-      header?: {
-        "x-device-huella"?: string | null;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["MfaVerificarRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["LoginResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  refresh_api_v1_auth_refresh_post: {
-    parameters: {
-      query?: never;
-      header?: {
-        "x-device-huella"?: string | null;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["RefreshRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TokensResponse"];
         };
       };
       /** @description Validation Error */
@@ -847,26 +1814,28 @@ export interface operations {
       };
     };
   };
-  recuperar_api_v1_auth_recuperar_post: {
+  mfa_verificar_api_v1_auth_mfa_verificar_post: {
     parameters: {
       query?: never;
-      header?: never;
+      header?: {
+        "x-device-huella"?: string | null;
+      };
       path?: never;
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["RecuperarRequest"];
+        "application/json": components["schemas"]["MfaVerificarRequest"];
       };
     };
     responses: {
       /** @description Successful Response */
-      202: {
+      200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["MensajeResponse"];
+          "application/json": components["schemas"]["LoginResponse"];
         };
       };
       /** @description Validation Error */
@@ -933,6 +1902,1134 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["TokensResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  recuperar_api_v1_auth_recuperar_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RecuperarRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reenviar_otp_api_v1_auth_reenviar_otp_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReenviarOtpRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  refresh_api_v1_auth_refresh_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RefreshRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokensResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  registro_api_v1_auth_registro_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RegistroRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  verificar_celular_api_v1_auth_verificar_celular_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["VerificarCelularRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  puerta_canje_api_v1_canje_puerta_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  actualizar_estado_api_v1_ciudadania_actualizar_estado_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  crear_excepcion_api_v1_ciudadania_excepciones_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ExcepcionRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mi_estado_api_v1_ciudadania_mi_estado_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MiEstadoResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  bloquear_tarjeta_api_v1_ciudadania_tarjeta_bloquear_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MensajeResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  establecer_pin_api_v1_comercios_cajeros__id_usuario__pin_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        "x-device-huella"?: string | null;
+        authorization?: string | null;
+      };
+      path: {
+        id_usuario: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PinIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cercanas_api_v1_comercios_cercanas_get: {
+    parameters: {
+      query: {
+        lat: number;
+        lon: number;
+        radio_m?: number;
+        limite?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SucursalCercanaOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mi_comercio_api_v1_comercios_mi_comercio_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ComercioOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  listar_sucursales_api_v1_comercios_sucursales_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SucursalOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  crear_sucursal_api_v1_comercios_sucursales_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SucursalIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  abierto_ahora_api_v1_comercios_sucursales__id_sucursal__abierto_ahora_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id_sucursal: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AbiertoOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cerrar_temporal_api_v1_comercios_sucursales__id_sucursal__cerrar_temporal_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_sucursal: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CierreTemporalIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  qr_pdf_api_v1_comercios_sucursales__id_sucursal__qr_pdf_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_sucursal: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reabrir_api_v1_comercios_sucursales__id_sucursal__reabrir_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_sucursal: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  abrir_turno_api_v1_comercios_turnos_abrir_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AbrirTurnoIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TurnoOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cerrar_turno_api_v1_comercios_turnos_cerrar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CierreTurnoOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  listar_usuarios_api_v1_comercios_usuarios_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UsuarioComercioOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  invitar_usuario_api_v1_comercios_usuarios_invitar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["InvitarIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InvitacionOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  agentes_api_v1_gobierno_agentes_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AgenteOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  bandeja_api_v1_gobierno_aprobaciones_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SolicitudPendienteOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  solicitar_api_v1_gobierno_aprobaciones_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SolicitudIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: string;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  aprobar_api_v1_gobierno_aprobaciones__id_solicitud__aprobar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_solicitud: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DecisionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  rechazar_api_v1_gobierno_aprobaciones__id_solicitud__rechazar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_solicitud: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DecisionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  auditoria_api_v1_gobierno_auditoria_get: {
+    parameters: {
+      query?: {
+        actor?: string | null;
+        accion?: string | null;
+        entidad?: string | null;
+        limite?: number;
+        offset?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RegistroAuditoriaOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  parametros_api_v1_gobierno_parametros_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: number;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cambiar_parametro_api_v1_gobierno_parametros__clave__put: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        clave: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CambioParametro"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  recaudacion_api_v1_gobierno_recaudacion_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RecaudacionOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mi_estado_api_v1_padron_mi_estado_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MiEstadoPadronResponse"];
         };
       };
       /** @description Validation Error */
@@ -1218,135 +3315,7 @@ export interface operations {
       };
     };
   };
-  mi_estado_api_v1_padron_mi_estado_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        authorization?: string | null;
-        "x-device-huella"?: string | null;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["MiEstadoPadronResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  mi_estado_api_v1_ciudadania_mi_estado_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        authorization?: string | null;
-        "x-device-huella"?: string | null;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["MiEstadoResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  actualizar_estado_api_v1_ciudadania_actualizar_estado_post: {
-    parameters: {
-      query?: never;
-      header?: {
-        authorization?: string | null;
-        "x-device-huella"?: string | null;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["MensajeResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  bloquear_tarjeta_api_v1_ciudadania_tarjeta_bloquear_post: {
-    parameters: {
-      query?: never;
-      header?: {
-        authorization?: string | null;
-        "x-device-huella"?: string | null;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["MensajeResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  crear_excepcion_api_v1_ciudadania_excepciones_post: {
+  adhesion_api_v1_portal_comercio_adhesion_post: {
     parameters: {
       query?: never;
       header?: {
@@ -1358,7 +3327,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["ExcepcionRequest"];
+        "application/json": components["schemas"]["AdhesionIn"];
       };
     };
     responses: {
@@ -1368,7 +3337,699 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["MensajeResponse"];
+          "application/json": {
+            [key: string]: string;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  baja_aprobar_api_v1_portal_comercio_baja__id_solicitud__aprobar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_solicitud: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DecisionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  bandeja_api_v1_portal_comercio_bandeja_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ComercioBandejaOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cajero_login_api_v1_portal_comercio_cajero_login_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CajeroLoginIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TokensOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  dar_de_baja_cajero_api_v1_portal_comercio_cajeros__id_usuario__baja_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_usuario: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  carga_masiva_api_v1_portal_comercio_carga_masiva_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CargaMasivaIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  aprobar_api_v1_portal_comercio_comercios__id_comercio__aprobar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_comercio: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  baja_solicitar_api_v1_portal_comercio_comercios__id_comercio__baja_solicitar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_comercio: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DecisionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: string;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  ficha_comercio_api_v1_portal_comercio_comercios__id_comercio__ficha_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_comercio: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FichaComercioOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  pedir_documentacion_api_v1_portal_comercio_comercios__id_comercio__pedir_documentacion_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_comercio: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DecisionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  rechazar_api_v1_portal_comercio_comercios__id_comercio__rechazar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_comercio: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DecisionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  suspender_api_v1_portal_comercio_comercios__id_comercio__suspender_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_comercio: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DecisionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  tomar_api_v1_portal_comercio_comercios__id_comercio__tomar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_comercio: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  aceptar_invitacion_api_v1_portal_comercio_invitaciones__token__aceptar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        token: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  asignar_agente_api_v1_portal_agentes_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AsignarAgenteIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  revocar_agente_api_v1_portal_agentes__id_persona__revocar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_persona: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DecisionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  alta_presencial_api_v1_portal_alta_presencial_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AltaPresencialIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: string;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  ficha360_api_v1_portal_ficha360__id_persona__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        "x-reauth"?: string | null;
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_persona: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Ficha360Out"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  crear_reclamo_api_v1_portal_reclamos_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReclamoIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: string;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  aprobar_reclamo_api_v1_portal_reclamos__id_solicitud__aprobar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_solicitud: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DecisionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
         };
       };
       /** @description Validation Error */

@@ -45,4 +45,8 @@ class ClientePadronSimulado:
         return int(dni) % 2 == 0 if dni.isdigit() else False
 
     async def es_comerciante(self, cuit: str) -> bool:
-        return self._comerciante.get(cuit, False)
+        if cuit in self._comerciante:
+            return self._comerciante[cuit]
+        # Regla por defecto determinística: CUIT par => comerciante. Predecible en tests.
+        digitos = "".join(c for c in cuit if c.isdigit())
+        return int(digitos) % 2 == 0 if digitos else False

@@ -61,6 +61,18 @@ class DispositivoRevocado(DomainEvent):
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class PerfilMunicipalOtorgado(DomainEvent):
+    # identidad es dueña del hecho "tiene perfil municipal"; gobierno del rol/permisos.
+    id_persona: str
+    rol: str
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class PerfilMunicipalRevocado(DomainEvent):
+    id_persona: str
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class ConsentimientoOtorgado(DomainEvent):
     id_persona: str
     tipo: str

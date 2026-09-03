@@ -18,6 +18,7 @@ from tarjeta.modules.ciudadania.infrastructure.repositories import (
     SqlAlchemyPerfilCiudadanoRepository,
 )
 from tarjeta.modules.gobierno.application.auditoria_consumer import consumir_evento
+from tarjeta.modules.gobierno.application.sync_agente import desactivar_agente
 from tarjeta.modules.padron.application import consultar as padron
 from tarjeta.modules.padron.infrastructure.composition import construir_cliente
 from tarjeta.modules.padron.infrastructure.repositories import SqlAlchemyEstadoPadronRepository
@@ -78,4 +79,6 @@ def build_dispatcher(settings: Settings) -> EventDispatcher:
     dispatcher.subscribe("IdentidadVerificada", on_identidad_verificada)
     dispatcher.subscribe("EstadoPadronActualizado", on_estado_padron_actualizado)
     dispatcher.subscribe("SolicitudActualizarEstado", on_solicitud_actualizar)
+    # §06.0.B: revocar el perfil municipal en identidad desactiva al agente en gobierno.
+    dispatcher.subscribe("PerfilMunicipalRevocado", desactivar_agente)
     return dispatcher

@@ -37,6 +37,7 @@ class Permiso(StrEnum):
     AUDITORIA_VER = "auditoria:ver"
     TABLERO_VER = "tablero:ver"
     APROBAR_DOBLE_CONF = "doble_conformidad:aprobar"
+    COMERCIO_GESTIONAR = "comercio:gestionar"  # bandeja municipal de comercios (§5.1)
 
 
 # Acciones que exigen doble conformidad (§2.2, 🔒).
@@ -61,6 +62,7 @@ MATRIZ: dict[RolMunicipal, set[Permiso]] = {
         Permiso.AUDITORIA_VER,
         Permiso.TABLERO_VER,
         Permiso.APROBAR_DOBLE_CONF,
+        Permiso.COMERCIO_GESTIONAR,
     },
     RolMunicipal.ENCARGADO: {
         Permiso.CIUDADANO_ALTA,
