@@ -553,6 +553,29 @@
         "title": "CrearIn",
         "type": "object"
       },
+      "CuotaOut": {
+        "properties": {
+          "cuota": {
+            "title": "Cuota",
+            "type": "integer"
+          },
+          "disponibles": {
+            "title": "Disponibles",
+            "type": "integer"
+          },
+          "usados": {
+            "title": "Usados",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "usados",
+          "cuota",
+          "disponibles"
+        ],
+        "title": "CuotaOut",
+        "type": "object"
+      },
       "DecisionIn": {
         "properties": {
           "motivo": {
@@ -929,6 +952,29 @@
         "title": "FichaPublicaOut",
         "type": "object"
       },
+      "FotoIn": {
+        "properties": {
+          "foto_base64": {
+            "title": "Foto Base64",
+            "type": "string"
+          },
+          "id_promocion": {
+            "title": "Id Promocion",
+            "type": "string"
+          },
+          "plantilla": {
+            "default": "clasica",
+            "title": "Plantilla",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_promocion",
+          "foto_base64"
+        ],
+        "title": "FotoIn",
+        "type": "object"
+      },
       "FranjaIn": {
         "properties": {
           "desde": {
@@ -951,6 +997,29 @@
           "hasta"
         ],
         "title": "FranjaIn",
+        "type": "object"
+      },
+      "GenerarIn": {
+        "properties": {
+          "id_promocion": {
+            "title": "Id Promocion",
+            "type": "string"
+          },
+          "idea": {
+            "title": "Idea",
+            "type": "string"
+          },
+          "plantilla": {
+            "default": "clasica",
+            "title": "Plantilla",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_promocion",
+          "idea"
+        ],
+        "title": "GenerarIn",
         "type": "object"
       },
       "GrupoInvitacionOut": {
@@ -1528,6 +1597,14 @@
             "title": "Alertas",
             "type": "array"
           },
+          "avisos": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Avisos",
+            "type": "array"
+          },
           "es_titular": {
             "title": "Es Titular",
             "type": "boolean"
@@ -1655,6 +1732,17 @@
           }
         },
         "title": "ModeracionIn",
+        "type": "object"
+      },
+      "ModeracionPiezaIn": {
+        "properties": {
+          "motivo": {
+            "default": "",
+            "title": "Motivo",
+            "type": "string"
+          }
+        },
+        "title": "ModeracionPiezaIn",
         "type": "object"
       },
       "ModoIn": {
@@ -1968,6 +2056,80 @@
         "title": "PersonaPatchRequest",
         "type": "object"
       },
+      "PiezaOut": {
+        "properties": {
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "formatos": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Formatos",
+            "type": "object"
+          },
+          "generada_por_ia": {
+            "title": "Generada Por Ia",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "id_promocion": {
+            "title": "Id Promocion",
+            "type": "string"
+          },
+          "modelo_ia": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Modelo Ia"
+          },
+          "origen": {
+            "title": "Origen",
+            "type": "string"
+          },
+          "plantilla": {
+            "title": "Plantilla",
+            "type": "string"
+          },
+          "superposicion": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Superposicion",
+            "type": "object"
+          },
+          "variantes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Variantes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "id_promocion",
+          "origen",
+          "estado",
+          "plantilla",
+          "superposicion",
+          "generada_por_ia",
+          "modelo_ia",
+          "formatos",
+          "variantes"
+        ],
+        "title": "PiezaOut",
+        "type": "object"
+      },
       "PinIn": {
         "properties": {
           "pin": {
@@ -1981,6 +2143,37 @@
           "pin"
         ],
         "title": "PinIn",
+        "type": "object"
+      },
+      "PlantillaIn": {
+        "properties": {
+          "plantilla": {
+            "title": "Plantilla",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plantilla"
+        ],
+        "title": "PlantillaIn",
+        "type": "object"
+      },
+      "PlantillaOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "nombre": {
+            "title": "Nombre",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nombre"
+        ],
+        "title": "PlantillaOut",
         "type": "object"
       },
       "PmCirculanteOut": {
@@ -3102,6 +3295,19 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "VarianteIn": {
+        "properties": {
+          "indice": {
+            "title": "Indice",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "indice"
+        ],
+        "title": "VarianteIn",
         "type": "object"
       },
       "VerificarCelularRequest": {
@@ -6168,6 +6374,824 @@
         ]
       }
     },
+    "/api/v1/contenido/creditos": {
+      "get": {
+        "operationId": "creditos_api_v1_contenido_creditos_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CuotaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Creditos",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/moderacion": {
+      "get": {
+        "operationId": "cola_moderacion_api_v1_contenido_moderacion_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PiezaOut"
+                  },
+                  "title": "Response Cola Moderacion Api V1 Contenido Moderacion Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cola Moderacion",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/moderacion/{id_pieza}/aprobar": {
+      "post": {
+        "operationId": "aprobar_pieza_api_v1_contenido_moderacion__id_pieza__aprobar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_pieza",
+            "required": true,
+            "schema": {
+              "title": "Id Pieza",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Aprobar Pieza",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/moderacion/{id_pieza}/rechazar": {
+      "post": {
+        "operationId": "rechazar_pieza_api_v1_contenido_moderacion__id_pieza__rechazar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_pieza",
+            "required": true,
+            "schema": {
+              "title": "Id Pieza",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModeracionPiezaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rechazar Pieza",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/objeto/{clave}": {
+      "get": {
+        "operationId": "servir_objeto_api_v1_contenido_objeto__clave__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "clave",
+            "required": true,
+            "schema": {
+              "title": "Clave",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Servir Objeto",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/piezas": {
+      "get": {
+        "operationId": "listar_piezas_api_v1_contenido_piezas_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PiezaOut"
+                  },
+                  "title": "Response Listar Piezas Api V1 Contenido Piezas Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listar Piezas",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/piezas/foto": {
+      "post": {
+        "operationId": "desde_foto_api_v1_contenido_piezas_foto_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FotoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PiezaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Desde Foto",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/piezas/generar": {
+      "post": {
+        "operationId": "generar_api_v1_contenido_piezas_generar_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerarIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PiezaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Generar",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/piezas/{id_pieza}/plantilla": {
+      "post": {
+        "operationId": "cambiar_plantilla_api_v1_contenido_piezas__id_pieza__plantilla_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_pieza",
+            "required": true,
+            "schema": {
+              "title": "Id Pieza",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlantillaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PiezaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cambiar Plantilla",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/piezas/{id_pieza}/sincronizar-datos": {
+      "post": {
+        "operationId": "sincronizar_datos_api_v1_contenido_piezas__id_pieza__sincronizar_datos_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_pieza",
+            "required": true,
+            "schema": {
+              "title": "Id Pieza",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PiezaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sincronizar Datos",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/piezas/{id_pieza}/variante": {
+      "post": {
+        "operationId": "elegir_variante_api_v1_contenido_piezas__id_pieza__variante_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_pieza",
+            "required": true,
+            "schema": {
+              "title": "Id Pieza",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VarianteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PiezaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elegir Variante",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
+    "/api/v1/contenido/plantillas": {
+      "get": {
+        "operationId": "plantillas_api_v1_contenido_plantillas_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlantillaOut"
+                  },
+                  "title": "Response Plantillas Api V1 Contenido Plantillas Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Plantillas",
+        "tags": [
+          "contenido"
+        ]
+      }
+    },
     "/api/v1/gobierno/agentes": {
       "get": {
         "operationId": "agentes_api_v1_gobierno_agentes_get",
@@ -6903,6 +7927,71 @@
         "summary": "Recaudacion",
         "tags": [
           "gobierno"
+        ]
+      }
+    },
+    "/api/v1/grupo/avisos/vistos": {
+      "post": {
+        "operationId": "marcar_avisos_vistos_api_v1_grupo_avisos_vistos_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Marcar Avisos Vistos",
+        "tags": [
+          "grupo"
         ]
       }
     },

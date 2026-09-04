@@ -736,6 +736,210 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/contenido/creditos": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Creditos */
+    get: operations["creditos_api_v1_contenido_creditos_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/moderacion": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Cola Moderacion */
+    get: operations["cola_moderacion_api_v1_contenido_moderacion_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/moderacion/{id_pieza}/aprobar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Aprobar Pieza */
+    post: operations["aprobar_pieza_api_v1_contenido_moderacion__id_pieza__aprobar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/moderacion/{id_pieza}/rechazar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Rechazar Pieza */
+    post: operations["rechazar_pieza_api_v1_contenido_moderacion__id_pieza__rechazar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/objeto/{clave}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Servir Objeto */
+    get: operations["servir_objeto_api_v1_contenido_objeto__clave__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/piezas": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Listar Piezas */
+    get: operations["listar_piezas_api_v1_contenido_piezas_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/piezas/foto": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Desde Foto */
+    post: operations["desde_foto_api_v1_contenido_piezas_foto_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/piezas/generar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Generar */
+    post: operations["generar_api_v1_contenido_piezas_generar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/piezas/{id_pieza}/plantilla": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Cambiar Plantilla */
+    post: operations["cambiar_plantilla_api_v1_contenido_piezas__id_pieza__plantilla_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/piezas/{id_pieza}/sincronizar-datos": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Sincronizar Datos */
+    post: operations["sincronizar_datos_api_v1_contenido_piezas__id_pieza__sincronizar_datos_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/piezas/{id_pieza}/variante": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Elegir Variante */
+    post: operations["elegir_variante_api_v1_contenido_piezas__id_pieza__variante_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/contenido/plantillas": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Plantillas */
+    get: operations["plantillas_api_v1_contenido_plantillas_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/gobierno/agentes": {
     parameters: {
       query?: never;
@@ -867,6 +1071,23 @@ export interface paths {
     get: operations["recaudacion_api_v1_gobierno_recaudacion_get"];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/avisos/vistos": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Marcar Avisos Vistos */
+    post: operations["marcar_avisos_vistos_api_v1_grupo_avisos_vistos_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -2202,6 +2423,15 @@ export interface components {
        */
       modo_billetera: string;
     };
+    /** CuotaOut */
+    CuotaOut: {
+      /** Cuota */
+      cuota: number;
+      /** Disponibles */
+      disponibles: number;
+      /** Usados */
+      usados: number;
+    };
     /** DecisionIn */
     DecisionIn: {
       /**
@@ -2340,6 +2570,18 @@ export interface components {
       /** Valor Platino */
       valor_platino: number | null;
     };
+    /** FotoIn */
+    FotoIn: {
+      /** Foto Base64 */
+      foto_base64: string;
+      /** Id Promocion */
+      id_promocion: string;
+      /**
+       * Plantilla
+       * @default clasica
+       */
+      plantilla: string;
+    };
     /** FranjaIn */
     FranjaIn: {
       /**
@@ -2352,6 +2594,18 @@ export interface components {
        * @example 13:00
        */
       hasta: string;
+    };
+    /** GenerarIn */
+    GenerarIn: {
+      /** Id Promocion */
+      id_promocion: string;
+      /** Idea */
+      idea: string;
+      /**
+       * Plantilla
+       * @default clasica
+       */
+      plantilla: string;
     };
     /** GrupoInvitacionOut */
     GrupoInvitacionOut: {
@@ -2565,6 +2819,11 @@ export interface components {
       alertas: {
         [key: string]: string;
       }[];
+      /**
+       * Avisos
+       * @default []
+       */
+      avisos: string[];
       /** Es Titular */
       es_titular: boolean;
       /** Id Grupo */
@@ -2604,6 +2863,14 @@ export interface components {
       motivo: string;
       /** Titulo */
       titulo?: string | null;
+    };
+    /** ModeracionPiezaIn */
+    ModeracionPiezaIn: {
+      /**
+       * Motivo
+       * @default
+       */
+      motivo: string;
     };
     /** ModoIn */
     ModoIn: {
@@ -2713,10 +2980,49 @@ export interface components {
       /** Email */
       email?: string | null;
     };
+    /** PiezaOut */
+    PiezaOut: {
+      /** Estado */
+      estado: string;
+      /** Formatos */
+      formatos: {
+        [key: string]: string;
+      };
+      /** Generada Por Ia */
+      generada_por_ia: boolean;
+      /** Id */
+      id: string;
+      /** Id Promocion */
+      id_promocion: string;
+      /** Modelo Ia */
+      modelo_ia: string | null;
+      /** Origen */
+      origen: string;
+      /** Plantilla */
+      plantilla: string;
+      /** Superposicion */
+      superposicion: {
+        [key: string]: string;
+      };
+      /** Variantes */
+      variantes: string[];
+    };
     /** PinIn */
     PinIn: {
       /** Pin */
       pin: string;
+    };
+    /** PlantillaIn */
+    PlantillaIn: {
+      /** Plantilla */
+      plantilla: string;
+    };
+    /** PlantillaOut */
+    PlantillaOut: {
+      /** Id */
+      id: string;
+      /** Nombre */
+      nombre: string;
     };
     /** PmCirculanteOut */
     PmCirculanteOut: {
@@ -3149,6 +3455,11 @@ export interface components {
       msg: string;
       /** Error Type */
       type: string;
+    };
+    /** VarianteIn */
+    VarianteIn: {
+      /** Indice */
+      indice: number;
     };
     /** VerificarCelularRequest */
     VerificarCelularRequest: {
@@ -4685,6 +4996,407 @@ export interface operations {
       };
     };
   };
+  creditos_api_v1_contenido_creditos_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CuotaOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cola_moderacion_api_v1_contenido_moderacion_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PiezaOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  aprobar_pieza_api_v1_contenido_moderacion__id_pieza__aprobar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_pieza: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  rechazar_pieza_api_v1_contenido_moderacion__id_pieza__rechazar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_pieza: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ModeracionPiezaIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  servir_objeto_api_v1_contenido_objeto__clave__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clave: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  listar_piezas_api_v1_contenido_piezas_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PiezaOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  desde_foto_api_v1_contenido_piezas_foto_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["FotoIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PiezaOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  generar_api_v1_contenido_piezas_generar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GenerarIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PiezaOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cambiar_plantilla_api_v1_contenido_piezas__id_pieza__plantilla_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_pieza: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlantillaIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PiezaOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  sincronizar_datos_api_v1_contenido_piezas__id_pieza__sincronizar_datos_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_pieza: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PiezaOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  elegir_variante_api_v1_contenido_piezas__id_pieza__variante_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_pieza: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["VarianteIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PiezaOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  plantillas_api_v1_contenido_plantillas_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PlantillaOut"][];
+        };
+      };
+    };
+  };
   agentes_api_v1_gobierno_agentes_get: {
     parameters: {
       query?: never;
@@ -4992,6 +5704,38 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["RecaudacionOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  marcar_avisos_vistos_api_v1_grupo_avisos_vistos_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
         };
       };
       /** @description Validation Error */

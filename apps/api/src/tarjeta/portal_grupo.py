@@ -100,6 +100,8 @@ class MiGrupoOut(BaseModel):
     modo_billetera: str | None = None
     miembros: list[MiembroOut] = []
     alertas: list[dict[str, str]] = []
+    # §11.0.C: avisos pendientes para esta persona (p. ej. "ahora sos el titular").
+    avisos: list[str] = []
 
 
 def _ip(request: Request) -> str:
@@ -238,17 +240,19 @@ async def cambiar_modo(body: ModoIn, sesion: SesionDep, session: SessionDep) -> 
 @router.get("/mi-grupo", response_model=MiGrupoOut)
 async def mi_grupo(sesion: SesionDep, session: SessionDep) -> MiGrupoOut:
     grupos = SqlAlchemyGrupoRepository(session)
+    avisos = [txt for _tipo, txt in await _puertos(session).avisos.pendientes(sesion.id_persona)]
     grupo = await grupos.por_titular(sesion.id_persona)
     if grupo is None:
         miembro = await grupos.miembro_de(sesion.id_persona)
         if miembro is None:
-            return MiGrupoOut(sin_grupo=True, es_titular=False)
+            return MiGrupoOut(sin_grupo=True, es_titular=False, avisos=avisos)
         g = await grupos.obtener(miembro.id_grupo)
         return MiGrupoOut(
             sin_grupo=False,
             es_titular=False,
             id_grupo=str(miembro.id_grupo),
             modo_billetera=g.modo_billetera.value if g else None,
+            avisos=avisos,
         )
     # Titular: ve montos y puntos por miembro, nunca el detalle de compras (§10.6).
     transacciones = SqlAlchemyTransaccionRepository(session)
@@ -281,7 +285,15 @@ async def mi_grupo(sesion: SesionDep, session: SessionDep) -> MiGrupoOut:
         modo_billetera=grupo.modo_billetera.value,
         miembros=miembros,
         alertas=alertas,
+        avisos=avisos,
     )
+
+
+@router.post("/avisos/vistos", response_model=Mensaje)
+async def marcar_avisos_vistos(sesion: SesionDep, session: SessionDep) -> Mensaje:
+    await _puertos(session).avisos.marcar_vistos(sesion.id_persona)
+    await _puertos(session).uow.commit()
+    return Mensaje(mensaje="Avisos marcados como vistos.")
 
 
 # ------------------------------------------------------------------ gestión de miembros

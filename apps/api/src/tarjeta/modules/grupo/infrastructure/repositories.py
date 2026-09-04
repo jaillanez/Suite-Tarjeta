@@ -20,7 +20,13 @@ from tarjeta.modules.grupo.domain.tipos import (
 )
 from tarjeta.shared.domain.types import EntityId
 
-from .models import AlertaGrupoModel, GrupoModel, InvitacionModel, MiembroModel
+from .models import (
+    AlertaGrupoModel,
+    AvisoGrupoModel,
+    GrupoModel,
+    InvitacionModel,
+    MiembroModel,
+)
 
 
 def _grupo_to_domain(m: GrupoModel) -> Grupo:
@@ -213,3 +219,40 @@ class SqlAlchemyAlertaRepository:
             )
         ).all()
         return [(t, d, c.isoformat()) for t, d, c in rows]
+
+
+class SqlAlchemyAvisoRepository:
+    def __init__(self, session: AsyncSession) -> None:
+        self._s = session
+
+    async def registrar(self, *, id_persona: str, tipo: str, texto: str) -> None:
+        self._s.add(
+            AvisoGrupoModel(
+                id=uuid.uuid4(),
+                id_persona=id_persona,
+                tipo=tipo,
+                texto=texto,
+                visto=False,
+                creado_en=datetime.now(UTC),
+            )
+        )
+        await self._s.flush()
+
+    async def pendientes(self, id_persona: str) -> list[tuple[str, str]]:
+        rows = (
+            await self._s.execute(
+                select(AvisoGrupoModel.tipo, AvisoGrupoModel.texto)
+                .where(AvisoGrupoModel.id_persona == id_persona, AvisoGrupoModel.visto.is_(False))
+                .order_by(AvisoGrupoModel.creado_en.desc())
+            )
+        ).all()
+        return [(t, x) for t, x in rows]
+
+    async def marcar_vistos(self, id_persona: str) -> None:
+        from sqlalchemy import update
+
+        await self._s.execute(
+            update(AvisoGrupoModel)
+            .where(AvisoGrupoModel.id_persona == id_persona, AvisoGrupoModel.visto.is_(False))
+            .values(visto=True)
+        )

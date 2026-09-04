@@ -20,6 +20,7 @@ from tarjeta.modules.padron.api.routers import router as padron_router
 from tarjeta.orquestacion import build_dispatcher
 from tarjeta.portal_canje import router as canje_router
 from tarjeta.portal_comercio import router as portal_comercio_router
+from tarjeta.portal_contenido import router as contenido_router
 from tarjeta.portal_grupo import router as grupo_router
 from tarjeta.portal_municipal import router as portal_router
 from tarjeta.portal_promociones import router as promociones_router
@@ -83,6 +84,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(canje_router)
     app.include_router(puntos_router)
     app.include_router(grupo_router)
+    app.include_router(contenido_router)
 
     @app.middleware("http")
     async def _drenar_eventos(

@@ -10,6 +10,8 @@ sean atómicos.
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
+
 from tarjeta.modules.puntos.domain.moneda import OrigenPuntos, TipoMoneda, TipoTitular
 
 from .contabilidad import Contabilidad
@@ -32,24 +34,34 @@ class TraspasarPozo:
         )
         if pozo is None or pozo.saldo <= 0:
             return
-        consumido = await self.conta.consumir(
+        # §11.0.A: cada lote se recrea en el titular conservando su vencimiento ORIGINAL (cambiar de
+        # modo no debe correr el vencimiento). Se capturan los lotes antes de consumir el pozo.
+        hoy = datetime.now(UTC).date()
+        lotes = await self.p.lotes.disponibles_fifo(pozo.id, hoy)
+        total = sum(lote.saldo_restante for lote in lotes)
+        if total <= 0:
+            return
+        await self.conta.consumir(
             tipo_titular=TipoTitular.GRUPO,
             id_titular=id_grupo,
             tipo_moneda=tipo_moneda,
             id_comercio=id_comercio,
-            puntos=pozo.saldo,
+            puntos=total,
             concepto="Traspaso de pozo al titular",
             exigir_completo=False,
         )
-        if consumido > 0:
+        for lote in lotes:
+            if lote.saldo_restante <= 0:
+                continue
             await self.conta.acreditar(
                 tipo_titular=TipoTitular.PERSONA,
                 id_titular=id_titular,
                 tipo_moneda=tipo_moneda,
                 id_comercio=id_comercio,
-                puntos=consumido,
+                puntos=lote.saldo_restante,
                 origen=OrigenPuntos.INDIVIDUAL,
                 concepto="Traspaso de pozo del grupo",
+                vence_en=lote.vence_en,
             )
 
     async def al_titular(self, *, id_grupo: str, id_titular: str) -> None:

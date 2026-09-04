@@ -14,7 +14,10 @@ export default function GrupoPage() {
 
   const cargar = useCallback(async () => {
     try {
-      setGrupo(await api.miGrupo());
+      const g = await api.miGrupo();
+      setGrupo(g);
+      // §11.0.C: si hay avisos (p. ej. "ahora sos el titular"), se muestran y se marcan vistos.
+      if (g.avisos.length > 0) await api.marcarAvisosVistos().catch(() => undefined);
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'No se pudo cargar el grupo.');
     }
@@ -61,6 +64,16 @@ export default function GrupoPage() {
   return (
     <main className="mx-auto max-w-md space-y-5 p-4">
       <h1 className="text-lg font-semibold">Grupo familiar</h1>
+
+      {grupo.avisos.length > 0 ? (
+        <section className="rounded-lg border-2 border-primary bg-primary/5 p-4">
+          {grupo.avisos.map((a, i) => (
+            <p key={i} className="text-sm font-medium">
+              {a}
+            </p>
+          ))}
+        </section>
+      ) : null}
 
       {grupo.sin_grupo ? (
         <>

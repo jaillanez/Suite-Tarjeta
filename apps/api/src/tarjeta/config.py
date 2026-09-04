@@ -92,6 +92,17 @@ class Settings(BaseSettings):
     # MFA
     mfa_issuer: str = "Tarjeta de Beneficios"
 
+    # Contenido / generación de piezas (§11.2). El proveedor NO se elige acá: simulación por
+    # defecto; el real exige API key. Las variantes por crédito son la palanca de costo.
+    contenido_proveedor: Literal["simulacion", "real"] = "simulacion"
+    contenido_ia_modelo: str = "simulacion"
+    contenido_ia_tamano: str = "1024x1024"
+    contenido_variantes_por_credito: int = 4
+    contenido_ia_api_key: SecretStr = SecretStr("")
+    contenido_ia_base_url: str = ""
+    contenido_ia_precio_unitario_centavos: int = 0  # para el cálculo de costo mensual
+    contenido_almacen_dir: str = "var/contenido"  # almacén de objetos local (dev)
+
     # Rate limiting (login/registro/recuperación)
     rate_limit_login_por_minuto: int = 10
     rate_limit_registro_por_hora: int = 5  # reforzado: única contención sin OTP (§04.0.B)

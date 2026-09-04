@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -57,4 +57,15 @@ class AlertaGrupoModel(Base):
     id_grupo: Mapped[str] = mapped_column(String(64), index=True)
     tipo: Mapped[str] = mapped_column(String(40))
     detalle: Mapped[str] = mapped_column(Text)
+    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class AvisoGrupoModel(Base):
+    __tablename__ = "aviso_grupo"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    id_persona: Mapped[str] = mapped_column(String(64), index=True)
+    tipo: Mapped[str] = mapped_column(String(40))
+    texto: Mapped[str] = mapped_column(Text)
+    visto: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))
