@@ -19,6 +19,7 @@
     "@capacitor/network": "8.0.1",
     "@capacitor/preferences": "8.0.1",
     "@capacitor/push-notifications": "8.1.2",
+    "capacitor-secure-storage-plugin": "0.13.0",
     "@tarjeta/api-client": "workspace:*",
     "@tarjeta/ui": "workspace:*",
     "lucide-react": "1.40.0",

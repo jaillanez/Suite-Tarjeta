@@ -41,7 +41,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 | Recuperación de cuenta | **Pendiente** | Sin flujo funcional | Canal (email/SMS) |
 | Generación de imágenes IA | **Simulada** | Fondos de color deterministas, sin red | Proveedor elegido + API key (ver `docs/costo-ia.md`) |
 | Almacén de objetos | **Parcial** | Disco local detrás de puerto | Bucket de producción |
-| Almacén seguro móvil (Keychain/Keystore) | **Parcial (seam)** | Seam + migración listos y testeados; **fallback a Preferences** (almacenamiento común) hasta cablear el plugin | Elegir/cablear plugin nativo (Capacitor 8) en el bootstrap. **Hasta entonces, en el dispositivo los tokens NO están en almacén seguro.** |
+| Almacén seguro móvil (Keychain/Keystore) | **Parcial** | Seam + migración + **plugin nativo cableado** (`capacitor-secure-storage-plugin` vía `AlmacenSeguroInit`, solo en dispositivo); en web dev, fallback a Preferences | Verificación en dispositivo (`cap:sync` + build nativo): CI no compila el proyecto nativo. |
 | Tiles del mapa | **BLOQUEANTE** | Aviso "mapa no disponible" | **Generar tiles; sin responsable** (`docs/tiles-mapa.md`) |
 
 ---
@@ -77,5 +77,6 @@ Decisión humana requerida: elegir proveedor(es) de notificación define qué se
 
 ## Casi bloqueantes
 
-- **Almacén seguro móvil**: el seam está listo y probado, pero el plugin nativo de Keychain/Keystore
-  **no está cableado**; en el dispositivo los tokens siguen en almacenamiento común hasta hacerlo.
+- **Almacén seguro móvil**: el plugin nativo (`capacitor-secure-storage-plugin`) ya está cableado en
+  el bootstrap; **falta verificarlo en un dispositivo real** (`cap:sync` + build nativo), porque CI
+  no compila el proyecto nativo.

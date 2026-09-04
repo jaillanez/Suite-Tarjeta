@@ -3,12 +3,13 @@
 // §12 P1-B: almacén seguro para credenciales. Es el "puerto": la sesión guarda access/refresh a
 // través de este seam en vez de escribirlos en `@capacitor/preferences` (legible en el dispositivo).
 //
-// En el dispositivo, el bootstrap nativo inyecta un backend respaldado por Keychain (iOS) /
-// Keystore (Android) con `configurarAlmacenSeguro(...)`. El fallback por defecto usa Preferences y
-// es SOLO para el desarrollo web (que no es el artefacto que se distribuye); avisa por consola.
+// En el dispositivo, `AlmacenSeguroInit` (montado en el layout) inyecta un backend respaldado por
+// Keychain (iOS) / Keystore (Android) vía `capacitor-secure-storage-plugin` con
+// `configurarAlmacenSeguro(...)`. El fallback por defecto usa Preferences y es SOLO para el
+// desarrollo web (que no es el artefacto que se distribuye); avisa por consola.
 //
-// Elegir y cablear el plugin nativo concreto (p. ej. un plugin de secure-storage compatible con
-// Capacitor 8) es una decisión de build nativo: ver docs/auditoria-12.md (P1-B) y el informe.
+// Nota: CI no compila el proyecto nativo, así que el plugin se verifica en el dispositivo
+// (`pnpm --filter @tarjeta/mobile cap:sync` + build nativo). Ver docs/estado-funcional.md.
 
 import { Preferences } from '@capacitor/preferences';
 
