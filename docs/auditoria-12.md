@@ -107,11 +107,10 @@ Los cinco necesitan test por cada camino (criterio de aceptación explícito).
   de forma transparente cualquier token legacy que hubiera quedado ahí (lo mueve al almacén seguro y
   lo borra del inseguro). Perfil activo y huella (no sensibles) siguen en Preferences.
   Tests: `session.test.ts` (guarda en el seguro y no en Preferences; migra legacy; limpia ambos).
-- **Decisión pendiente (build nativo):** cablear el adaptador concreto de Keychain/Keystore con
-  `configurarAlmacenSeguro(...)` en el bootstrap nativo (elegir un plugin de secure-storage
-  compatible con Capacitor 8). El fallback por defecto usa Preferences y es **solo para dev web**
-  (avisa por consola). CI no compila el proyecto nativo, así que esta parte se verifica en el
-  dispositivo. Ver §"Riesgos que requieren decisión humana".
+- **Plugin nativo cableado (post-PASO 12):** se eligió `capacitor-secure-storage-plugin` (peer
+  `@capacitor/core >=8`) y se cablea en el dispositivo vía `AlmacenSeguroInit` (montado en el layout,
+  solo `Capacitor.isNativePlatform()`). En web dev queda el fallback de Preferences. **Falta
+  verificarlo en un dispositivo real** (`cap:sync` + build nativo): CI no compila el proyecto nativo.
 
 ### P1-C · Middleware de rutas incompleto (web)
 - **Archivo:** `apps/web/middleware.ts` (matcher sin `/agentes`, `/aprobaciones`, `/auditoria`,
@@ -287,9 +286,8 @@ Queda anotado (sin evidencia nueva en esta PR, riesgo bajo con la arquitectura a
 - **Tiles del mapa:** bloqueante de lanzamiento sin responsable.
 - **Canal de notificaciones:** brecha estructural; define qué se puede prometer al lanzar.
 - **Backup/restore:** hay que validar la infraestructura real de producción, no solo el compose local.
-- **Almacén seguro móvil (P1-B):** el seam y la migración están listos y testeados; falta elegir y
-  cablear el plugin nativo de Keychain/Keystore (compatible con Capacitor 8) en el bootstrap. Hasta
-  entonces, en dev web el fallback usa Preferences.
+- **Almacén seguro móvil (P1-B):** plugin nativo (`capacitor-secure-storage-plugin`) cableado en el
+  bootstrap; falta **verificarlo en un dispositivo real** (CI no compila el proyecto nativo).
 - **Sesión web con cookie HttpOnly (P1-A):** *implementado* (PR #30 backend/cliente + PR web). Queda
   una decisión de despliegue: si la web y la API van en dominios distintos, definir `Domain`/proxy
   para compartir la cookie de refresh (`Secure` fuera de dev, `SameSite=Strict`). Opción a futuro:
