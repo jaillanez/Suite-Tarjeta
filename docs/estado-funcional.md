@@ -42,7 +42,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 | Generación de imágenes IA | **Simulada** | Fondos de color deterministas, sin red | Proveedor elegido + API key (ver `docs/costo-ia.md`) |
 | Almacén de objetos | **Parcial** | Disco local detrás de puerto | Bucket de producción |
 | Almacén seguro móvil (Keychain/Keystore) | **Parcial** | Seam + migración + **plugin nativo cableado** (`capacitor-secure-storage-plugin` vía `AlmacenSeguroInit`, solo en dispositivo); en web dev, fallback a Preferences | Verificación en dispositivo (`cap:sync` + build nativo): CI no compila el proyecto nativo. |
-| Tiles del mapa | **BLOQUEANTE** | Aviso "mapa no disponible" | **Generar tiles; sin responsable** (`docs/tiles-mapa.md`) |
+| Tiles del mapa | **BLOQUEANTE** | Aviso "mapa no disponible" | Generación scriptada (`scripts/generar-tiles.sh`, Java 21+); falta **correrla, hostear y apuntar `NEXT_PUBLIC_TILES_URL`** (`docs/tiles-mapa.md`) |
 
 ---
 
@@ -68,7 +68,9 @@ Decisión humana requerida: elegir proveedor(es) de notificación define qué se
 
 ## Bloqueantes de lanzamiento
 
-- **Tiles del mapa** (§12.6-B): sin generar, **sin responsable asignado**. Arrastrado desde el PASO 07.
+- **Tiles del mapa** (§12.6-B): la generación ahora es un comando (`scripts/generar-tiles.sh`, Java
+  21+); falta **ejecutarla, subir el archivo al hosting y apuntar `NEXT_PUBLIC_TILES_URL`**. Sigue
+  sin responsable asignado. Arrastrado desde el PASO 07.
 - **Proveedores de prod sin elegir**: padrón, OTP, email (recuperación), imágenes IA. Las guardas de
   arranque (§12.2-D) impiden salir a producción con cualquiera en simulación.
 - **Recuperación de cuenta**: el flujo está completo; falta el **proveedor de email real**

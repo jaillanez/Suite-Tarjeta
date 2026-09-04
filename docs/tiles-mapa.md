@@ -2,9 +2,14 @@
 > El archivo de tiles **todavía no se generó**: el código y la configuración están listos, pero
 > `NEXT_PUBLIC_TILES_URL` apunta a un archivo que aún no existe, así que **el mapa se ve con un
 > aviso de "mapa no disponible"** (ya no un rectángulo en blanco). Antes de salir a producción
-> hay que generar y subir los tiles siguiendo este documento.
+> hay que generar y subir los tiles.
 >
-> - **Estado:** PENDIENTE — bloqueante de lanzamiento.
+> **La generación ahora es un comando:** `scripts/generar-tiles.sh` (requiere Java 21+). Descarga
+> planetiler y el extracto, y produce el PMTiles. Igual falta **correrlo, subir el archivo al
+> hosting y apuntar `NEXT_PUBLIC_TILES_URL`** — y, si se usa PMTiles, agregar el adaptador del
+> front (ver "Nota sobre PMTiles"). El detalle manual de abajo queda como referencia.
+>
+> - **Estado:** PENDIENTE — bloqueante de lanzamiento (generación scriptada; falta ejecutar + hostear).
 > - **Responsable:** _(a asignar por el municipio)_.
 > - **Fecha objetivo:** _(a definir; debe estar listo antes del lanzamiento público)_.
 

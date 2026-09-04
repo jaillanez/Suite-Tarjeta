@@ -1,13 +1,13 @@
-# Tiles del mapa (archivo estático)
+# Tiles del mapa
 
-Acá van los tiles del mapa de San Juan, servidos como **archivo estático** desde el propio
-hosting (no dependemos del tile server público de OpenStreetMap).
+Este directorio aloja los tiles del mapa servidos como archivo estático (§07.0.A).
 
-- El frontend los pide en `NEXT_PUBLIC_TILES_URL` (por defecto `/tiles/{z}/{x}/{y}.png`).
-- **No hay ningún servicio corriendo**: son archivos.
-- El procedimiento **reproducible** de generación (de dónde se baja el extracto, con qué
-  herramienta se genera, cuánto pesa, cómo se sube y cómo se verifica) está en
-  [`docs/tiles-mapa.md`](../../../../docs/tiles-mapa.md).
+- **No se commitean** los tiles ni los artefactos de build (ver `.gitignore` de la raíz): son
+  grandes y se regeneran/suben al hosting. Sólo se versionan este README y el `.gitkeep`.
+- **Generación (un comando):** `scripts/generar-tiles.sh` (requiere Java 21+; ver el script).
+- **Procedimiento completo y decisiones:** `docs/tiles-mapa.md`.
+- **Config del front:** `NEXT_PUBLIC_TILES_URL` (por defecto `/tiles/{z}/{x}/{y}.png`, pirámide
+  raster). Si se usa PMTiles (vectorial), hace falta el adaptador `protomaps-leaflet` en el front.
 
-Este archivo es un marcador para que el directorio exista en git. Los tiles reales no se
-commitean (pesan cientos de MB): se generan y suben aparte, según el procedimiento.
+Mientras no haya tiles, el mapa muestra un aviso claro ("mapa no disponible") en vez de un
+rectángulo en blanco (`apps/web/src/components/MapaPicker.tsx`).

@@ -53,3 +53,9 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Tiles del mapa: artefactos de build y tiles generados (se suben al hosting, no a git). §07.0.A
+scripts/.tiles-build/
+apps/web/public/tiles/*
+!apps/web/public/tiles/.gitkeep
+!apps/web/public/tiles/README.md
