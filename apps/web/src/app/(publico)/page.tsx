@@ -8,17 +8,15 @@ export default function Home() {
       <section className="space-y-2">
         <h1 className="text-3xl font-bold">Tarjeta de Beneficios</h1>
         <p className="text-muted-foreground">
-          Descuentos en comercios adheridos de {municipio}. (Pantalla de ejemplo, PASO 02.)
+          Descuentos en comercios adheridos de {municipio}. Iniciá sesión para ver tu tarjeta.
         </p>
       </section>
 
       <section className="grid gap-6 md:grid-cols-2">
-        <TarjetaCredencial
-          nombre="Vecino de ejemplo"
-          numero="4000123456789010"
-          nivel="BLACK"
-          municipio={municipio}
-        />
+        <div className="space-y-2">
+          <TarjetaCredencial nombre="Nombre y apellido" numero="" nivel="BLACK" municipio={municipio} />
+          <p className="text-xs text-muted-foreground">Ejemplo ilustrativo de la tarjeta.</p>
+        </div>
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -27,7 +25,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
             El nivel Black se obtiene al estar al día con el municipio (o heredado por grupo
-            familiar). Sin lógica todavía: es solo la vista.
+            familiar).
           </CardContent>
         </Card>
       </section>
