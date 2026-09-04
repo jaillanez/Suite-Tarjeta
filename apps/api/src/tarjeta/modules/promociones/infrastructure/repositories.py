@@ -5,10 +5,11 @@ from __future__ import annotations
 import uuid
 from datetime import date, datetime
 
-from sqlalchemy import bindparam, delete, select, text
+from sqlalchemy import bindparam, delete, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tarjeta.modules.promociones.domain.confianza import NivelConfianza, PerfilConfianza
+from tarjeta.modules.promociones.domain.errors import TopeAgotado
 from tarjeta.modules.promociones.domain.mecanica import Mecanica, Segmento
 from tarjeta.modules.promociones.domain.ports import CriteriosBusqueda
 from tarjeta.modules.promociones.domain.promocion import EstadoPromocion, Promocion
@@ -20,6 +21,7 @@ from .models import (
     PerfilConfianzaModel,
     PromocionModel,
     PromocionSucursalModel,
+    UsoPromocionModel,
 )
 
 
@@ -175,6 +177,63 @@ class SqlAlchemyPromocionRepository:
             text("UPDATE promocion SET estado = 'AGOTADA' WHERE id = :id AND estado = 'ACTIVA'"),
             {"id": id.value},
         )
+
+    async def reservar_uso(self, id: EntityId, id_persona: EntityId, fecha: date) -> None:
+        # §08.0.A: bloquea la fila de la promoción para serializar todas sus reservas y así
+        # verificar los tres topes de forma consistente antes de incrementar.
+        m = await self._s.get(PromocionModel, id.value, with_for_update=True)
+        if m is None:
+            raise TopeAgotado("Promoción inexistente.")
+        if m.tope_total is not None and m.usos_totales >= m.tope_total:
+            raise TopeAgotado("Tope total agotado.")
+        if m.tope_por_dia is not None:
+            usados_hoy = await self._s.scalar(
+                select(UsoPromocionModel.cantidad).where(
+                    UsoPromocionModel.id_promocion == id.value,
+                    UsoPromocionModel.id_persona == id_persona.value,
+                    UsoPromocionModel.fecha == fecha,
+                )
+            )
+            if (usados_hoy or 0) >= m.tope_por_dia:
+                raise TopeAgotado("Tope por día agotado.")
+        if m.tope_por_usuario is not None:
+            usados_usuario = await self._s.scalar(
+                select(func.coalesce(func.sum(UsoPromocionModel.cantidad), 0)).where(
+                    UsoPromocionModel.id_promocion == id.value,
+                    UsoPromocionModel.id_persona == id_persona.value,
+                )
+            )
+            if int(usados_usuario or 0) >= m.tope_por_usuario:
+                raise TopeAgotado("Tope por usuario agotado.")
+        m.usos_totales += 1
+        uso = await self._s.get(UsoPromocionModel, (id.value, id_persona.value, fecha))
+        if uso is None:
+            self._s.add(
+                UsoPromocionModel(
+                    id_promocion=id.value, id_persona=id_persona.value, fecha=fecha, cantidad=1
+                )
+            )
+        else:
+            uso.cantidad += 1
+        if m.tope_total is not None and m.usos_totales >= m.tope_total:
+            m.estado = EstadoPromocion.AGOTADA.value
+        await self._s.flush()
+
+    async def liberar_uso(self, id: EntityId, id_persona: EntityId, fecha: date) -> None:
+        m = await self._s.get(PromocionModel, id.value, with_for_update=True)
+        if m is None:
+            return
+        if m.usos_totales > 0:
+            m.usos_totales -= 1
+        # Si estaba AGOTADA y se liberó cupo, vuelve a estar disponible.
+        if m.estado == EstadoPromocion.AGOTADA.value and (
+            m.tope_total is None or m.usos_totales < m.tope_total
+        ):
+            m.estado = EstadoPromocion.ACTIVA.value
+        uso = await self._s.get(UsoPromocionModel, (id.value, id_persona.value, fecha))
+        if uso is not None and uso.cantidad > 0:
+            uso.cantidad -= 1
+        await self._s.flush()
 
     async def candidatas(
         self, *, id_sucursal: EntityId, nivel: str, momento_local: datetime, monto: int

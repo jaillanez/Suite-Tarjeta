@@ -47,6 +47,18 @@ class PromocionSucursalModel(Base):
     id_sucursal: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, index=True)
 
 
+class UsoPromocionModel(Base):
+    """Usos por promoción, persona y fecha (§08.0.A): refuerzo atómico de topes por
+    usuario y por día. El tope total vive en `promocion.usos_totales`."""
+
+    __tablename__ = "uso_promocion"
+
+    id_promocion: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    id_persona: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    fecha: Mapped[date] = mapped_column(Date, primary_key=True)
+    cantidad: Mapped[int] = mapped_column(Integer, default=0)
+
+
 class PerfilConfianzaModel(Base):
     __tablename__ = "perfil_confianza_comercio"
 

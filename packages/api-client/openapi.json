@@ -141,6 +141,19 @@
         "title": "CajeroLoginIn",
         "type": "object"
       },
+      "CalificacionIn": {
+        "properties": {
+          "estrellas": {
+            "title": "Estrellas",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "estrellas"
+        ],
+        "title": "CalificacionIn",
+        "type": "object"
+      },
       "CambioParametro": {
         "properties": {
           "motivo": {
@@ -218,6 +231,24 @@
           "resumen"
         ],
         "title": "CierreTurnoOut",
+        "type": "object"
+      },
+      "CodigoOut": {
+        "properties": {
+          "codigo": {
+            "title": "Codigo",
+            "type": "string"
+          },
+          "valido_seg": {
+            "title": "Valido Seg",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "codigo",
+          "valido_seg"
+        ],
+        "title": "CodigoOut",
         "type": "object"
       },
       "ComercioBandejaOut": {
@@ -809,6 +840,100 @@
         "title": "HorarioIn",
         "type": "object"
       },
+      "IniciarIn": {
+        "properties": {
+          "clave_idempotencia": {
+            "title": "Clave Idempotencia",
+            "type": "string"
+          },
+          "codigo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codigo"
+          },
+          "dni": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dni"
+          },
+          "geo_lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Geo Lat"
+          },
+          "geo_lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Geo Lon"
+          },
+          "id_promocion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Promocion"
+          },
+          "id_sucursal": {
+            "title": "Id Sucursal",
+            "type": "string"
+          },
+          "monto": {
+            "title": "Monto",
+            "type": "integer"
+          },
+          "token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Token"
+          },
+          "via": {
+            "title": "Via",
+            "type": "string"
+          }
+        },
+        "required": [
+          "via",
+          "monto",
+          "id_sucursal",
+          "clave_idempotencia"
+        ],
+        "title": "IniciarIn",
+        "type": "object"
+      },
       "InvitacionOut": {
         "properties": {
           "id": {
@@ -1110,6 +1235,109 @@
           }
         },
         "title": "ModeracionIn",
+        "type": "object"
+      },
+      "OpcionOut": {
+        "properties": {
+          "auto_propuesta": {
+            "title": "Auto Propuesta",
+            "type": "boolean"
+          },
+          "descuento": {
+            "title": "Descuento",
+            "type": "integer"
+          },
+          "id_promocion": {
+            "title": "Id Promocion",
+            "type": "string"
+          },
+          "mecanica": {
+            "title": "Mecanica",
+            "type": "string"
+          },
+          "titulo": {
+            "title": "Titulo",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id_promocion",
+          "titulo",
+          "mecanica",
+          "descuento",
+          "total",
+          "auto_propuesta"
+        ],
+        "title": "OpcionOut",
+        "type": "object"
+      },
+      "OperacionEncoladaIn": {
+        "properties": {
+          "clave_idempotencia": {
+            "title": "Clave Idempotencia",
+            "type": "string"
+          },
+          "id_persona": {
+            "title": "Id Persona",
+            "type": "string"
+          },
+          "id_promocion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Promocion"
+          },
+          "id_sucursal": {
+            "title": "Id Sucursal",
+            "type": "string"
+          },
+          "mecanica": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mecanica"
+          },
+          "monto": {
+            "title": "Monto",
+            "type": "integer"
+          },
+          "nivel": {
+            "title": "Nivel",
+            "type": "string"
+          },
+          "valor": {
+            "default": 0,
+            "title": "Valor",
+            "type": "integer"
+          },
+          "via": {
+            "default": "CODIGO",
+            "title": "Via",
+            "type": "string"
+          }
+        },
+        "required": [
+          "clave_idempotencia",
+          "id_persona",
+          "nivel",
+          "id_sucursal",
+          "monto"
+        ],
+        "title": "OperacionEncoladaIn",
         "type": "object"
       },
       "PerfilOut": {
@@ -1730,6 +1958,114 @@
         "title": "RegistroRequest",
         "type": "object"
       },
+      "ResolverIn": {
+        "properties": {
+          "codigo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codigo"
+          },
+          "dni": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dni"
+          },
+          "id_sucursal": {
+            "title": "Id Sucursal",
+            "type": "string"
+          },
+          "monto": {
+            "title": "Monto",
+            "type": "integer"
+          },
+          "token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Token"
+          },
+          "via": {
+            "title": "Via",
+            "type": "string"
+          }
+        },
+        "required": [
+          "via",
+          "monto",
+          "id_sucursal"
+        ],
+        "title": "ResolverIn",
+        "type": "object"
+      },
+      "ResolverOut": {
+        "properties": {
+          "id_persona": {
+            "title": "Id Persona",
+            "type": "string"
+          },
+          "inicial_apellido": {
+            "title": "Inicial Apellido",
+            "type": "string"
+          },
+          "nivel": {
+            "title": "Nivel",
+            "type": "string"
+          },
+          "nombre": {
+            "title": "Nombre",
+            "type": "string"
+          },
+          "opciones": {
+            "items": {
+              "$ref": "#/components/schemas/OpcionOut"
+            },
+            "title": "Opciones",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id_persona",
+          "nombre",
+          "inicial_apellido",
+          "nivel",
+          "opciones"
+        ],
+        "title": "ResolverOut",
+        "type": "object"
+      },
+      "SincronizarIn": {
+        "properties": {
+          "operaciones": {
+            "items": {
+              "$ref": "#/components/schemas/OperacionEncoladaIn"
+            },
+            "title": "Operaciones",
+            "type": "array"
+          }
+        },
+        "required": [
+          "operaciones"
+        ],
+        "title": "SincronizarIn",
+        "type": "object"
+      },
       "SolicitudIn": {
         "properties": {
           "accion": {
@@ -1998,6 +2334,29 @@
         "title": "SucursalOut",
         "type": "object"
       },
+      "TokenOut": {
+        "properties": {
+          "token": {
+            "title": "Token",
+            "type": "string"
+          },
+          "valido_desde": {
+            "title": "Valido Desde",
+            "type": "integer"
+          },
+          "valido_hasta": {
+            "title": "Valido Hasta",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "token",
+          "valido_desde",
+          "valido_hasta"
+        ],
+        "title": "TokenOut",
+        "type": "object"
+      },
       "TokensOut": {
         "properties": {
           "access_token": {
@@ -2042,6 +2401,66 @@
           "refresh_token"
         ],
         "title": "TokensResponse",
+        "type": "object"
+      },
+      "TransaccionOut": {
+        "properties": {
+          "confirmador": {
+            "title": "Confirmador",
+            "type": "string"
+          },
+          "descuento": {
+            "title": "Descuento",
+            "type": "integer"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "id_promocion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Promocion"
+          },
+          "monto_bruto": {
+            "title": "Monto Bruto",
+            "type": "integer"
+          },
+          "nivel_aplicado": {
+            "title": "Nivel Aplicado",
+            "type": "string"
+          },
+          "numero_comprobante": {
+            "title": "Numero Comprobante",
+            "type": "string"
+          },
+          "total_pagar": {
+            "title": "Total Pagar",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "numero_comprobante",
+          "estado",
+          "monto_bruto",
+          "descuento",
+          "total_pagar",
+          "confirmador",
+          "id_promocion",
+          "nivel_aplicado"
+        ],
+        "title": "TransaccionOut",
         "type": "object"
       },
       "TurnoOut": {
@@ -2755,6 +3174,570 @@
         ]
       }
     },
+    "/api/v1/canje/codigo": {
+      "post": {
+        "operationId": "generar_codigo_api_v1_canje_codigo_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodigoOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Generar Codigo",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/comercio/operacion/{id_transaccion}": {
+      "get": {
+        "operationId": "estado_operacion_api_v1_canje_comercio_operacion__id_transaccion__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_transaccion",
+            "required": true,
+            "schema": {
+              "title": "Id Transaccion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransaccionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Estado Operacion",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/comercio/pendientes": {
+      "get": {
+        "operationId": "pendientes_comercio_api_v1_canje_comercio_pendientes_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TransaccionOut"
+                  },
+                  "title": "Response Pendientes Comercio Api V1 Canje Comercio Pendientes Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pendientes Comercio",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/comercio/{id_transaccion}/confirmar": {
+      "post": {
+        "operationId": "confirmar_comercio_api_v1_canje_comercio__id_transaccion__confirmar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_transaccion",
+            "required": true,
+            "schema": {
+              "title": "Id Transaccion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransaccionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Confirmar Comercio",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/historial": {
+      "get": {
+        "operationId": "historial_api_v1_canje_historial_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TransaccionOut"
+                  },
+                  "title": "Response Historial Api V1 Canje Historial Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Historial",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/iniciar": {
+      "post": {
+        "operationId": "iniciar_api_v1_canje_iniciar_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IniciarIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransaccionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Iniciar",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/mis-pendientes": {
+      "get": {
+        "operationId": "mis_pendientes_api_v1_canje_mis_pendientes_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TransaccionOut"
+                  },
+                  "title": "Response Mis Pendientes Api V1 Canje Mis Pendientes Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mis Pendientes",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/mis-tokens": {
+      "get": {
+        "operationId": "mis_tokens_api_v1_canje_mis_tokens_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TokenOut"
+                  },
+                  "title": "Response Mis Tokens Api V1 Canje Mis Tokens Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mis Tokens",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
     "/api/v1/canje/puerta": {
       "get": {
         "operationId": "puerta_canje_api_v1_canje_puerta_get",
@@ -2817,6 +3800,625 @@
         "summary": "Puerta Canje",
         "tags": [
           "identidad"
+        ]
+      }
+    },
+    "/api/v1/canje/resolver": {
+      "post": {
+        "operationId": "resolver_api_v1_canje_resolver_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolverIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResolverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resolver",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/sincronizar": {
+      "post": {
+        "operationId": "sincronizar_api_v1_canje_sincronizar_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SincronizarIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Sincronizar Api V1 Canje Sincronizar Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sincronizar",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/turno/resumen": {
+      "get": {
+        "operationId": "resumen_turno_api_v1_canje_turno_resumen_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Resumen Turno Api V1 Canje Turno Resumen Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resumen Turno",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/{id_transaccion}/anular": {
+      "post": {
+        "operationId": "anular_api_v1_canje__id_transaccion__anular_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_transaccion",
+            "required": true,
+            "schema": {
+              "title": "Id Transaccion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Anular",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/{id_transaccion}/calificar": {
+      "post": {
+        "operationId": "calificar_api_v1_canje__id_transaccion__calificar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_transaccion",
+            "required": true,
+            "schema": {
+              "title": "Id Transaccion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalificacionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Calificar",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/{id_transaccion}/confirmar": {
+      "post": {
+        "operationId": "confirmar_ciudadano_api_v1_canje__id_transaccion__confirmar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_transaccion",
+            "required": true,
+            "schema": {
+              "title": "Id Transaccion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransaccionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Confirmar Ciudadano",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/{id_transaccion}/disputar": {
+      "post": {
+        "operationId": "disputar_api_v1_canje__id_transaccion__disputar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_transaccion",
+            "required": true,
+            "schema": {
+              "title": "Id Transaccion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disputar",
+        "tags": [
+          "canje"
+        ]
+      }
+    },
+    "/api/v1/canje/{id_transaccion}/rechazar": {
+      "post": {
+        "operationId": "rechazar_ciudadano_api_v1_canje__id_transaccion__rechazar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_transaccion",
+            "required": true,
+            "schema": {
+              "title": "Id Transaccion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rechazar Ciudadano",
+        "tags": [
+          "canje"
         ]
       }
     },

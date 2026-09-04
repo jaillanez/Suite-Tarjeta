@@ -482,6 +482,65 @@ en el buscador, el mapa y el feed. El canje viene después, pero el contador de 
   verdad; `lat`/`lon` se derivan por un **trigger** (`trg_sucursal_sync_latlon`). Actualizar la
   ubicación por cualquier camino deja las dos representaciones coherentes (test).
 
+## Módulo `canje` (PASO 08)
+
+El corazón operativo: el vecino presenta su tarjeta, el cajero aplica el descuento y ambos
+tienen comprobante. `canje` no importa a otros módulos; el composition root
+`tarjeta/portal_canje.py` cablea comercios (cajero), ciudadania (nivel), identidad
+(persona/tarjeta), promociones (motor y **reserva de topes**) y gobierno (parametría).
+
+### Tokens y las cuatro vías (§08.2)
+
+- **QR dinámico del ciudadano**, nunca estático: token firmado (HMAC) que **rota cada 45 s** con
+  validez de 90 s (tolera desfases de reloj), con id de persona, **nivel congelado**, ventana y
+  un **nonce** de un solo uso (Redis). La app **pregenera 2 h** de tokens para funcionar sin señal.
+- Cuatro vías: cajero escanea (normal, confirma el ciudadano); ciudadano escanea el QR fijo de la
+  sucursal (confirma el comercio); **código de 6 dígitos** (sin cámara; vive 90 s en Redis);
+  **tarjeta física + DNI** (confirma el cajero). El nivel se congela al emitir el token.
+
+### Confirmación del ciudadano (§08.3)
+
+- Sin canal de notificaciones: la operación nace `PENDIENTE_CONFIRMACION` con vencimiento corto;
+  **la app del ciudadano consulta** (`mis-pendientes`) y acepta/rechaza en su propio teléfono. Al
+  vencer, se cancela y **se libera la reserva de tope**. Excepción: en tarjeta física confirma el
+  cajero (la operación queda marcada para que antifraude la trate distinto).
+
+### Topes atómicos, idempotencia y anulación (§08.0.A, §08.4)
+
+- **Deuda 07.0.A saldada:** los tres topes (total, por usuario, por día) se reservan de forma
+  **atómica** bloqueando la fila de la promoción (`FOR UPDATE`) y verificándolos en una sola
+  operación (`promociones.reservar_uso`, tabla `uso_promocion`). Test de concurrencia por cada tope.
+- **Idempotencia** por clave de cliente: reintentar con la misma clave devuelve la operación
+  original y **no consume el QR de nuevo** (el chequeo va antes del nonce). **Anulación** en
+  ventana (de parametría) que **revierte descuento y tope**; fuera de ventana, solo `ADMIN_COMERCIO`.
+  **Disputa** por operación (caso con el municipio).
+
+### Descuento real, no heurístico (§08.0.B)
+
+- **Deuda 07.0.B saldada:** en la caja el orden se recalcula con el **descuento real en pesos**
+  según el monto (no la heurística de listado). Las mecánicas por cantidad (**2x1, combo**) no se
+  proponen automáticamente: aparecen para que el cajero las elija a mano.
+
+### Modo sin conexión (§08.5)
+
+- La cola local se sincroniza al reconectar. **Regla de conflicto:** si el tope se agotó mientras
+  el comercio estaba offline, **se honra al ciudadano** (la operación se aplica igual) y se emite
+  un evento para avisar al comercio. Límites reforzados desde config: monto máximo por operación y
+  cantidad máxima en cola.
+
+### La transacción (§08.6)
+
+- Comprobante con número legible `RIV-000000123` (secuencia de base). Geolocalización opcional
+  (sin permiso, no se bloquea). Bitácora por cajero; historial del ciudadano; calificación de un
+  toque. Los **campos de puntos existen y quedan en cero** (el módulo `puntos` llega después).
+  Cierre de turno con **datos reales** (operaciones, bruto, descuento, desglose por promoción).
+
+### Deuda 08.0.C (tiles) — bloqueante de lanzamiento
+
+- El archivo de tiles del mapa **aún no se generó**: está registrado como bloqueante de
+  lanzamiento en `docs/tiles-mapa.md` (con responsable y fecha a asignar), y el mapa ahora
+  muestra un **aviso claro** cuando los tiles no cargan, en vez de un rectángulo en blanco.
+
 ## Walking skeleton (estado actual, PASO 01)
 
 La línea fina que atraviesa todas las capas está implementada y verificada:

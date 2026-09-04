@@ -1,3 +1,13 @@
+> ## 🚫 BLOQUEANTE DE LANZAMIENTO (§08.0.C)
+> El archivo de tiles **todavía no se generó**: el código y la configuración están listos, pero
+> `NEXT_PUBLIC_TILES_URL` apunta a un archivo que aún no existe, así que **el mapa se ve con un
+> aviso de "mapa no disponible"** (ya no un rectángulo en blanco). Antes de salir a producción
+> hay que generar y subir los tiles siguiendo este documento.
+>
+> - **Estado:** PENDIENTE — bloqueante de lanzamiento.
+> - **Responsable:** _(a asignar por el municipio)_.
+> - **Fecha objetivo:** _(a definir; debe estar listo antes del lanzamiento público)_.
+
 # Mapa: generación de tiles propios de San Juan (§07.0.A)
 
 Este documento explica, **paso a paso y reproducible por alguien ajeno al proyecto**, cómo se

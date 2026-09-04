@@ -179,6 +179,26 @@
 | Config | `NEXT_PUBLIC_TILES_URL` (no en el código). Procedimiento: `docs/tiles-mapa.md`. |
 | **Regenerar** | **Cada 6 meses (2×/año)** para incorporar calles nuevas. |
 
+## Módulo canje (PASO 08)
+| Tema | Definición |
+|---|---|
+| Tokens | QR dinámico firmado (HMAC) que rota cada 45 s, validez 90 s, nivel congelado, nonce de un solo uso (Redis); pregeneración de 2 h. |
+| Cuatro vías | Cajero escanea / ciudadano escanea sucursal / código 6 dígitos / tarjeta física + DNI. |
+| Confirmación | Sin canal: la app del ciudadano consulta `mis-pendientes` y acepta/rechaza; al vencer se libera la reserva. |
+| Topes (deuda 07) | Los tres (total/usuario/día) reservados atómicamente con `FOR UPDATE` en una sola operación; test de concurrencia por cada uno. |
+| Descuento (deuda 07) | Orden en la caja por **descuento real en pesos**; 2x1/combo no se proponen solas (test: real ≠ heurística). |
+| Idempotencia | Por clave de cliente, antes de consumir el QR; reintento → misma operación. |
+| Anulación | En ventana (parametría), revierte descuento y tope; fuera de ventana solo ADMIN_COMERCIO. |
+| Offline | Cola + límites (monto/cantidad); al sincronizar, si el tope se agotó se **honra al ciudadano** y se avisa al comercio. |
+| Comprobante | Número legible `RIV-000000123` (secuencia). Campos de puntos presentes y en cero. |
+| Cierre de turno | Datos reales: operaciones, bruto, descuento, desglose por promoción. |
+| Privacidad | Ningún endpoint expone contacto/domicilio/fiscal del ciudadano al comercio (resolver devuelve nombre + inicial). |
+| Cobertura | ≥85% por módulo, incluye **canje** (medido: 91.2%). |
+
+> **Bloqueante de lanzamiento (§08.0.C):** el archivo de tiles del mapa todavía no se generó
+> (`docs/tiles-mapa.md`, responsable y fecha a asignar). El mapa muestra un aviso claro cuando
+> no cargan, pero **antes de producción hay que generarlos**.
+
 ## CI (actualizado en PASO 02)
 | Tema | Definición |
 |---|---|
