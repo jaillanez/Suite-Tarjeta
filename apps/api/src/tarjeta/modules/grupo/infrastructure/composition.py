@@ -10,6 +10,7 @@ from tarjeta.shared.infrastructure.outbox import SqlAlchemyOutbox
 
 from .repositories import (
     SqlAlchemyAlertaRepository,
+    SqlAlchemyAvisoRepository,
     SqlAlchemyGrupoRepository,
     SqlAlchemyInvitacionRepository,
 )
@@ -21,5 +22,6 @@ def construir_puertos_grupo(session: AsyncSession) -> GrupoPuertos:
         grupos=SqlAlchemyGrupoRepository(session),
         invitaciones=SqlAlchemyInvitacionRepository(session),
         alertas=SqlAlchemyAlertaRepository(session),
+        avisos=SqlAlchemyAvisoRepository(session),
         outbox=SqlAlchemyOutbox(session),
     )

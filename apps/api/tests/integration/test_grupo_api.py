@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 import uuid
 from collections.abc import AsyncIterator
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 
 import pytest
@@ -439,6 +439,80 @@ async def test_gestion_miembro_suspender_tope_reactivar(sm: async_sessionmaker) 
     async with sm() as s:
         m = await SqlAlchemyGrupoRepository(s).miembro_en(EntityId.from_str(gid), miembro)
     assert m is not None and m.estado is EstadoMiembro.ACTIVO
+
+
+# --------------------------------------------------------------- deudas del PASO 10
+
+
+async def test_traspaso_pozo_conserva_el_vencimiento(sm: async_sessionmaker) -> None:
+    # §11.0.A: cambiar de modo no debe correr el vencimiento del lote traspasado.
+
+    titular = await _ciudadano(sm, al_dia=True)
+    gid = await _crear_grupo(sm, titular, ModoBilletera.COMUN)
+    comercio = str(uuid.uuid4())
+    vence = datetime.now(UTC).date() + timedelta(days=100)
+    async with sm() as s:
+        await Contabilidad(construir_puertos_puntos(s)).acreditar(
+            tipo_titular=TipoTitular.GRUPO,
+            id_titular=gid,
+            tipo_moneda=TipoMoneda.PC,
+            id_comercio=comercio,
+            puntos=50,
+            origen=OrigenPuntos.GRUPO_COMUN,
+            concepto="pozo",
+            vence_en=vence,
+        )
+        await s.commit()
+    async with sm() as s:
+        await TraspasarPozo(construir_puertos_puntos(s)).al_titular(
+            id_grupo=gid, id_titular=titular
+        )
+        await s.commit()
+    async with sm() as s:
+        p = construir_puertos_puntos(s)
+        bill = await p.billeteras.obtener(
+            tipo_titular=TipoTitular.PERSONA,
+            id_titular=titular,
+            tipo_moneda=TipoMoneda.PC,
+            id_comercio=comercio,
+        )
+        lotes = await p.lotes.disponibles_fifo(bill.id, datetime.now(UTC).date())  # type: ignore[union-attr]
+    assert len(lotes) == 1 and lotes[0].vence_en == vence  # conservó el vencimiento original
+
+
+async def test_miembro_suspendido_puede_salir(sm: async_sessionmaker) -> None:
+    # §11.0.B: la suspensión limita el pozo, nunca encierra a nadie en el grupo.
+    from tarjeta.modules.grupo.application.casos import GestionMiembro, SalirDelGrupo
+
+    titular = await _ciudadano(sm, al_dia=True)
+    miembro = await _ciudadano(sm, al_dia=False)
+    gid = await _crear_grupo(sm, titular)
+    await _sumar(sm, gid, titular, miembro)
+    async with sm() as s:
+        await GestionMiembro(construir_puertos_grupo(s)).suspender(
+            id_grupo=gid, id_actor=titular, id_persona=miembro
+        )
+    async with sm() as s:
+        await SalirDelGrupo(construir_puertos_grupo(s)).ejecutar(id_grupo=gid, id_persona=miembro)
+    await _drain(sm)
+    async with sm() as s:
+        assert await SqlAlchemyGrupoRepository(s).miembro_de(miembro) is None  # salió
+
+
+async def test_sucesor_ve_aviso(sm: async_sessionmaker) -> None:
+    # §11.0.C: el sucesor se entera de que ahora es el titular.
+    from tarjeta.portal_grupo import salir
+
+    titular = await _ciudadano(sm, al_dia=True)
+    sucesor = await _ciudadano(sm, al_dia=True)
+    gid = await _crear_grupo(sm, titular)
+    await _sumar(sm, gid, titular, sucesor)
+    async with sm() as s:
+        await salir(SimpleNamespace(id_persona=titular), s)
+    await _drain(sm)
+    async with sm() as s:
+        avisos = await construir_puertos_grupo(s).avisos.pendientes(sucesor)
+    assert any(tipo == "sucesion_titular" for tipo, _txt in avisos)
 
 
 async def test_antifraude_genera_caso_y_no_bloquea(sm: async_sessionmaker) -> None:

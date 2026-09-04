@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from tarjeta.modules.grupo.domain.ports import (
     AlertaRepository,
+    AvisoRepository,
     GrupoRepository,
     InvitacionRepository,
     Outbox,
@@ -19,4 +20,5 @@ class GrupoPuertos:
     grupos: GrupoRepository
     invitaciones: InvitacionRepository
     alertas: AlertaRepository
+    avisos: AvisoRepository
     outbox: Outbox

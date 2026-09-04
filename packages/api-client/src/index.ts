@@ -376,6 +376,24 @@ export function createApiClient(options: ApiClientOptions) {
       post<Mensaje>(`/api/v1/grupo/miembros/${encodeURIComponent(idPersona)}/tope`, {
         tope_mensual,
       }),
+    marcarAvisosVistos: () => post<Mensaje>('/api/v1/grupo/avisos/vistos'),
+    // --- contenido (PASO 11) ---
+    plantillasContenido: () => request<PlantillaContenidoOut[]>('/api/v1/contenido/plantillas'),
+    creditosContenido: () => request<CuotaContenidoOut>('/api/v1/contenido/creditos'),
+    generarPieza: (body: GenerarPiezaIn) => post<PiezaOut>('/api/v1/contenido/piezas/generar', body),
+    piezaDesdeFoto: (body: FotoPiezaIn) => post<PiezaOut>('/api/v1/contenido/piezas/foto', body),
+    listarPiezas: () => request<PiezaOut[]>('/api/v1/contenido/piezas'),
+    cambiarPlantillaPieza: (id: string, plantilla: string) =>
+      post<PiezaOut>(`/api/v1/contenido/piezas/${encodeURIComponent(id)}/plantilla`, { plantilla }),
+    elegirVariantePieza: (id: string, indice: number) =>
+      post<PiezaOut>(`/api/v1/contenido/piezas/${encodeURIComponent(id)}/variante`, { indice }),
+    sincronizarDatosPieza: (id: string) =>
+      post<PiezaOut>(`/api/v1/contenido/piezas/${encodeURIComponent(id)}/sincronizar-datos`),
+    colaModeracionPiezas: () => request<PiezaOut[]>('/api/v1/contenido/moderacion'),
+    aprobarPieza: (id: string) =>
+      post<Mensaje>(`/api/v1/contenido/moderacion/${encodeURIComponent(id)}/aprobar`),
+    rechazarPieza: (id: string, motivo: string) =>
+      post<Mensaje>(`/api/v1/contenido/moderacion/${encodeURIComponent(id)}/rechazar`, { motivo }),
   };
 }
 
@@ -535,6 +553,13 @@ export type MiGrupoOut = S['MiGrupoOut'];
 export type GrupoMiembroOut = S['MiembroOut'];
 export type GrupoInvitacionOut = S['GrupoInvitacionOut'];
 export type InvitacionDetalleOut = S['InvitacionDetalleOut'];
+
+// contenido (PASO 11)
+export type PiezaOut = S['PiezaOut'];
+export type PlantillaContenidoOut = S['PlantillaOut'];
+export type CuotaContenidoOut = S['CuotaOut'];
+export type GenerarPiezaIn = S['GenerarIn'];
+export type FotoPiezaIn = S['FotoIn'];
 
 export interface ResumenTurno {
   operaciones: number;

@@ -21,7 +21,7 @@ from tarjeta.modules.grupo.domain.events import MiembroInvitado, MiembroSalio
 from tarjeta.modules.grupo.domain.grupo import Grupo
 from tarjeta.modules.grupo.domain.invitacion import Invitacion
 from tarjeta.modules.grupo.domain.miembro import Miembro
-from tarjeta.modules.grupo.domain.tipos import ModoBilletera, RolGrupo
+from tarjeta.modules.grupo.domain.tipos import EstadoMiembro, ModoBilletera, RolGrupo
 from tarjeta.shared.domain.types import EntityId
 
 from .antifraude import EvaluarAntifraude
@@ -113,8 +113,10 @@ class SalirDelGrupo:
     async def ejecutar(self, *, id_grupo: str, id_persona: str) -> None:
         gid = EntityId.from_str(id_grupo)
         miembro = await self.p.grupos.miembro_en(gid, id_persona)
-        if miembro is None or not miembro.activo:
-            raise MiembroInexistente("No sos miembro activo de este grupo.")
+        # §11.0.B: la puerta de salida siempre está abierta, incluso suspendido. La suspensión solo
+        # limita el gasto del pozo, nunca encierra a nadie en el grupo.
+        if miembro is None or miembro.estado is EstadoMiembro.BAJA:
+            raise MiembroInexistente("No sos miembro de este grupo.")
         if miembro.rol is RolGrupo.TITULAR:
             raise NoEsTitular("El titular no puede salir: debe suceder o disolver el grupo.")
         miembro.dar_de_baja()
@@ -170,6 +172,16 @@ class SucederTitular:
         await self.p.grupos.guardar_miembro(nuevo)
         grupo.suceder_titular(id_nuevo_titular)
         await self.p.grupos.guardar(grupo)
+        # §11.0.C: el sucesor pasa a ser el declarante responsable y se queda con el pozo; tiene
+        # que enterarse. Queda un aviso visible para la próxima vez que entre a la app.
+        await self.p.avisos.registrar(
+            id_persona=id_nuevo_titular,
+            tipo="sucesion_titular",
+            texto=(
+                "Ahora sos el titular de este grupo familiar: quedás como responsable de la "
+                "declaración y administrás el pozo de puntos común."
+            ),
+        )
         await self.p.outbox.escribir(
             [*grupo.pull_events(), MiembroSalio(id_grupo=id_grupo, id_persona=id_titular_actual)]
         )
