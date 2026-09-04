@@ -249,6 +249,65 @@ export function createApiClient(options: ApiClientOptions) {
       }),
     cargaMasivaComercios: (contenido: string, confirmar: boolean) =>
       post<CargaMasivaResultado>('/api/v1/portal-comercio/carga-masiva', { contenido, confirmar }),
+    // --- promociones (PASO 07) ---
+    crearPromocion: (body: S['PromocionIn']) =>
+      post<Mensaje>('/api/v1/portal-comercio/promociones', body),
+    listarPromociones: () =>
+      request<PromocionOut[]>('/api/v1/portal-comercio/promociones'),
+    editarCondicionesPromo: (id: string, body: S['CondicionesIn']) =>
+      request<Mensaje>(
+        `/api/v1/portal-comercio/promociones/${encodeURIComponent(id)}/condiciones`,
+        { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) },
+      ),
+    publicarPromocion: (id: string) =>
+      post<Mensaje>(`/api/v1/portal-comercio/promociones/${encodeURIComponent(id)}/publicar`),
+    pausarPromocion: (id: string) =>
+      post<Mensaje>(`/api/v1/portal-comercio/promociones/${encodeURIComponent(id)}/pausar`),
+    reanudarPromocion: (id: string) =>
+      post<Mensaje>(`/api/v1/portal-comercio/promociones/${encodeURIComponent(id)}/reanudar`),
+    duplicarPromocion: (id: string) =>
+      post<Mensaje>(`/api/v1/portal-comercio/promociones/${encodeURIComponent(id)}/duplicar`),
+    // moderación municipal
+    colaModeracion: () =>
+      request<PromocionOut[]>('/api/v1/portal-comercio/moderacion/promociones'),
+    moderarAprobar: (id: string, body: S['ModeracionIn'] = { motivo: '' }) =>
+      post<Mensaje>(
+        `/api/v1/portal-comercio/moderacion/promociones/${encodeURIComponent(id)}/aprobar`,
+        body,
+      ),
+    moderarRechazar: (id: string, motivo: string) =>
+      post<Mensaje>(
+        `/api/v1/portal-comercio/moderacion/promociones/${encodeURIComponent(id)}/rechazar`,
+        { motivo },
+      ),
+    // descubrimiento (ciudadano)
+    buscarPromos: (params: {
+      texto?: string | undefined;
+      porcentaje_min?: number | undefined;
+      solo_black?: boolean | undefined;
+      lat?: number | undefined;
+      lon?: number | undefined;
+    } = {}) => {
+      const p = new URLSearchParams();
+      if (params.texto) p.set('texto', params.texto);
+      if (params.porcentaje_min) p.set('porcentaje_min', String(params.porcentaje_min));
+      if (params.solo_black) p.set('solo_black', 'true');
+      if (params.lat !== undefined) p.set('lat', String(params.lat));
+      if (params.lon !== undefined) p.set('lon', String(params.lon));
+      const qs = p.toString();
+      return request<PromocionOut[]>(`/api/v1/promociones/buscar${qs ? `?${qs}` : ''}`);
+    },
+    feedPromos: () => request<FeedOut>('/api/v1/promociones/feed'),
+    resolverPromos: (idSucursal: string, monto = 0) =>
+      request<PromocionOut[]>(
+        `/api/v1/promociones/resolver?id_sucursal=${encodeURIComponent(idSucursal)}&monto=${monto}`,
+      ),
+    rankingCriterio: () => request<Mensaje>('/api/v1/promociones/ranking-criterio'),
+    favoritosPromo: () => request<Record<string, string[]>>('/api/v1/promociones/favoritos'),
+    marcarFavoritoPromo: (body: S['FavoritoIn']) =>
+      post<Mensaje>('/api/v1/promociones/favoritos', body),
+    fichaPublicaPromo: (id: string) =>
+      request<FichaPublicaOut>(`/api/v1/promociones/${encodeURIComponent(id)}`),
   };
 }
 
@@ -377,5 +436,12 @@ export type ComercioBandejaOut = S['ComercioBandejaOut'];
 export type FichaComercioOut = S['FichaComercioOut'];
 export type SucursalIn = S['SucursalIn'];
 export type InvitacionOut = S['InvitacionOut'];
+
+// promociones (PASO 07)
+export type PromocionOut = S['PromocionOut'];
+export type PromocionFeedOut = S['PromocionFeedOut'];
+export type FichaPublicaOut = S['FichaPublicaOut'];
+export type FeedOut = S['FeedOut'];
+export type PromocionIn = S['PromocionIn'];
 
 export type ApiClient = ReturnType<typeof createApiClient>;

@@ -944,6 +944,160 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/portal-comercio/moderacion/promociones": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Cola Moderacion */
+    get: operations["cola_moderacion_api_v1_portal_comercio_moderacion_promociones_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/moderacion/promociones/{id_promocion}/aprobar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Moderar Aprobar */
+    post: operations["moderar_aprobar_api_v1_portal_comercio_moderacion_promociones__id_promocion__aprobar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/moderacion/promociones/{id_promocion}/rechazar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Moderar Rechazar */
+    post: operations["moderar_rechazar_api_v1_portal_comercio_moderacion_promociones__id_promocion__rechazar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/promociones": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Listar Promociones */
+    get: operations["listar_promociones_api_v1_portal_comercio_promociones_get"];
+    put?: never;
+    /** Crear Promocion */
+    post: operations["crear_promocion_api_v1_portal_comercio_promociones_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/promociones/{id_promocion}/condiciones": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Editar Condiciones */
+    put: operations["editar_condiciones_api_v1_portal_comercio_promociones__id_promocion__condiciones_put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/promociones/{id_promocion}/duplicar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Duplicar Promocion */
+    post: operations["duplicar_promocion_api_v1_portal_comercio_promociones__id_promocion__duplicar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/promociones/{id_promocion}/pausar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Pausar Promocion */
+    post: operations["pausar_promocion_api_v1_portal_comercio_promociones__id_promocion__pausar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/promociones/{id_promocion}/publicar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Publicar Promocion */
+    post: operations["publicar_promocion_api_v1_portal_comercio_promociones__id_promocion__publicar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/portal-comercio/promociones/{id_promocion}/reanudar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Reanudar Promocion */
+    post: operations["reanudar_promocion_api_v1_portal_comercio_promociones__id_promocion__reanudar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/portal/agentes": {
     parameters: {
       query?: never;
@@ -1040,6 +1194,109 @@ export interface paths {
     put?: never;
     /** Aprobar Reclamo */
     post: operations["aprobar_reclamo_api_v1_portal_reclamos__id_solicitud__aprobar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/promociones/buscar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Buscar */
+    get: operations["buscar_api_v1_promociones_buscar_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/promociones/favoritos": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Favoritos */
+    get: operations["favoritos_api_v1_promociones_favoritos_get"];
+    put?: never;
+    /** Marcar Favorito */
+    post: operations["marcar_favorito_api_v1_promociones_favoritos_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/promociones/feed": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Feed */
+    get: operations["feed_api_v1_promociones_feed_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/promociones/ranking-criterio": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Ranking Criterio */
+    get: operations["ranking_criterio_api_v1_promociones_ranking_criterio_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/promociones/resolver": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Resolver */
+    get: operations["resolver_api_v1_promociones_resolver_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/promociones/{id_promocion}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Ficha Publica */
+    get: operations["ficha_publica_api_v1_promociones__id_promocion__get"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1213,6 +1470,17 @@ export interface components {
       /** Rubro */
       rubro: string;
     };
+    /** CondicionesIn */
+    CondicionesIn: {
+      /** Mecanica */
+      mecanica: string;
+      /** Tope Total */
+      tope_total?: number | null;
+      /** Valor Black */
+      valor_black: number;
+      /** Valor Platino */
+      valor_platino?: number | null;
+    };
     /** ConsentimientoIn */
     ConsentimientoIn: {
       /** Otorgado */
@@ -1278,6 +1546,28 @@ export interface components {
       /** Motivo */
       motivo: string;
     };
+    /** FavoritoIn */
+    FavoritoIn: {
+      /**
+       * Comercio
+       * @default
+       */
+      comercio: string;
+      /**
+       * Rubro
+       * @default
+       */
+      rubro: string;
+    };
+    /** FeedOut */
+    FeedOut: {
+      /** Exclusivos Black */
+      exclusivos_black: components["schemas"]["PromocionFeedOut"][];
+      /** Nuevos Esta Semana */
+      nuevos_esta_semana: components["schemas"]["PromocionOut"][];
+      /** Vencen Pronto */
+      vencen_pronto: components["schemas"]["PromocionOut"][];
+    };
     /** Ficha360Out */
     Ficha360Out: {
       /** Apellido */
@@ -1321,6 +1611,27 @@ export interface components {
       sucursales: components["schemas"]["SucursalFichaOut"][];
       /** Usuarios */
       usuarios: components["schemas"]["UsuarioFichaOut"][];
+    };
+    /** FichaPublicaOut */
+    FichaPublicaOut: {
+      /** Descripcion */
+      descripcion: string;
+      /** Disponible */
+      disponible: boolean;
+      /** Estado */
+      estado: string;
+      /** Id */
+      id: string;
+      /** Imagen Url */
+      imagen_url: string;
+      /** Mecanica */
+      mecanica: string;
+      /** Titulo */
+      titulo: string;
+      /** Valor Black */
+      valor_black: number;
+      /** Valor Platino */
+      valor_platino: number | null;
     };
     /** FranjaIn */
     FranjaIn: {
@@ -1439,6 +1750,20 @@ export interface components {
       /** Tiene Tarjeta Fisica */
       tiene_tarjeta_fisica: boolean;
     };
+    /** ModeracionIn */
+    ModeracionIn: {
+      /** Descripcion */
+      descripcion?: string | null;
+      /** Imagen Url */
+      imagen_url?: string | null;
+      /**
+       * Motivo
+       * @default
+       */
+      motivo: string;
+      /** Titulo */
+      titulo?: string | null;
+    };
     /** PerfilOut */
     PerfilOut: {
       /** Clave */
@@ -1482,6 +1807,114 @@ export interface components {
     PinIn: {
       /** Pin */
       pin: string;
+    };
+    /** PromocionFeedOut */
+    PromocionFeedOut: {
+      /**
+       * Bloqueada
+       * @default false
+       */
+      bloqueada: boolean;
+      /** Descripcion */
+      descripcion: string;
+      /** Destacada Municipal */
+      destacada_municipal: boolean;
+      /** Estado */
+      estado: string;
+      /** Id */
+      id: string;
+      /** Id Comercio */
+      id_comercio: string;
+      /** Imagen Url */
+      imagen_url: string;
+      /** Mecanica */
+      mecanica: string;
+      /** Segmento */
+      segmento: string;
+      /** Titulo */
+      titulo: string;
+      /** Tope Total */
+      tope_total: number | null;
+      /** Usos Totales */
+      usos_totales: number;
+      /** Valor Black */
+      valor_black: number;
+      /** Valor Platino */
+      valor_platino: number | null;
+    };
+    /** PromocionIn */
+    PromocionIn: {
+      /**
+       * Acumulable
+       * @default false
+       */
+      acumulable: boolean;
+      /**
+       * Descripcion
+       * @default
+       */
+      descripcion: string;
+      /**
+       * Imagen Url
+       * @default
+       */
+      imagen_url: string;
+      /** Mecanica */
+      mecanica: string;
+      /**
+       * Monto Minimo
+       * @default 0
+       */
+      monto_minimo: number;
+      /**
+       * Segmento
+       * @default AMBOS
+       */
+      segmento: string;
+      /** Sucursales */
+      sucursales: string[];
+      /** Titulo */
+      titulo: string;
+      /** Tope Por Dia */
+      tope_por_dia?: number | null;
+      /** Tope Por Usuario */
+      tope_por_usuario?: number | null;
+      /** Tope Total */
+      tope_total?: number | null;
+      /** Valor Black */
+      valor_black: number;
+      /** Valor Platino */
+      valor_platino?: number | null;
+      vigencia: components["schemas"]["VigenciaIn"];
+    };
+    /** PromocionOut */
+    PromocionOut: {
+      /** Descripcion */
+      descripcion: string;
+      /** Destacada Municipal */
+      destacada_municipal: boolean;
+      /** Estado */
+      estado: string;
+      /** Id */
+      id: string;
+      /** Id Comercio */
+      id_comercio: string;
+      /** Imagen Url */
+      imagen_url: string;
+      /** Mecanica */
+      mecanica: string;
+      /** Segmento */
+      segmento: string;
+      /** Titulo */
+      titulo: string;
+      /** Tope Total */
+      tope_total: number | null;
+      /** Usos Totales */
+      usos_totales: number;
+      /** Valor Black */
+      valor_black: number;
+      /** Valor Platino */
+      valor_platino: number | null;
     };
     /** RecaudacionOut */
     RecaudacionOut: {
@@ -1736,6 +2169,22 @@ export interface components {
       celular: string;
       /** Codigo */
       codigo: string;
+    };
+    /** VigenciaIn */
+    VigenciaIn: {
+      /**
+       * Dias Semana
+       * @default []
+       */
+      dias_semana: number[];
+      /** Fecha Desde */
+      fecha_desde: string;
+      /** Fecha Hasta */
+      fecha_hasta: string;
+      /** Hora Desde */
+      hora_desde?: string | null;
+      /** Hora Hasta */
+      hora_hasta?: string | null;
     };
   };
   responses: never;
@@ -3820,6 +4269,356 @@ export interface operations {
       };
     };
   };
+  cola_moderacion_api_v1_portal_comercio_moderacion_promociones_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PromocionOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  moderar_aprobar_api_v1_portal_comercio_moderacion_promociones__id_promocion__aprobar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_promocion: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ModeracionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  moderar_rechazar_api_v1_portal_comercio_moderacion_promociones__id_promocion__rechazar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_promocion: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ModeracionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  listar_promociones_api_v1_portal_comercio_promociones_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PromocionOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  crear_promocion_api_v1_portal_comercio_promociones_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PromocionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  editar_condiciones_api_v1_portal_comercio_promociones__id_promocion__condiciones_put: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_promocion: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CondicionesIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  duplicar_promocion_api_v1_portal_comercio_promociones__id_promocion__duplicar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_promocion: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  pausar_promocion_api_v1_portal_comercio_promociones__id_promocion__pausar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_promocion: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  publicar_promocion_api_v1_portal_comercio_promociones__id_promocion__publicar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_promocion: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reanudar_promocion_api_v1_portal_comercio_promociones__id_promocion__reanudar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_promocion: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   asignar_agente_api_v1_portal_agentes_post: {
     parameters: {
       query?: never;
@@ -4030,6 +4829,233 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  buscar_api_v1_promociones_buscar_get: {
+    parameters: {
+      query?: {
+        texto?: string;
+        porcentaje_min?: number;
+        solo_black?: boolean;
+        lat?: number | null;
+        lon?: number | null;
+        radio_m?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PromocionOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  favoritos_api_v1_promociones_favoritos_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: string[];
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  marcar_favorito_api_v1_promociones_favoritos_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["FavoritoIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  feed_api_v1_promociones_feed_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FeedOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  ranking_criterio_api_v1_promociones_ranking_criterio_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+    };
+  };
+  resolver_api_v1_promociones_resolver_get: {
+    parameters: {
+      query: {
+        id_sucursal: string;
+        monto?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PromocionOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  ficha_publica_api_v1_promociones__id_promocion__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id_promocion: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FichaPublicaOut"];
         };
       };
       /** @description Validation Error */

@@ -38,6 +38,7 @@ class Permiso(StrEnum):
     TABLERO_VER = "tablero:ver"
     APROBAR_DOBLE_CONF = "doble_conformidad:aprobar"
     COMERCIO_GESTIONAR = "comercio:gestionar"  # bandeja municipal de comercios (§5.1)
+    PROMOCION_MODERAR = "promocion:moderar"  # cola de moderación de promociones (§07.5)
 
 
 # Acciones que exigen doble conformidad (§2.2, 🔒).
@@ -63,6 +64,7 @@ MATRIZ: dict[RolMunicipal, set[Permiso]] = {
         Permiso.TABLERO_VER,
         Permiso.APROBAR_DOBLE_CONF,
         Permiso.COMERCIO_GESTIONAR,
+        Permiso.PROMOCION_MODERAR,
     },
     RolMunicipal.ENCARGADO: {
         Permiso.CIUDADANO_ALTA,
@@ -71,6 +73,7 @@ MATRIZ: dict[RolMunicipal, set[Permiso]] = {
         Permiso.EXCEPCION_NIVEL,
         Permiso.AJUSTE_PUNTOS,
         Permiso.TABLERO_VER,
+        Permiso.PROMOCION_MODERAR,
     },
     RolMunicipal.PERSONAL: {
         Permiso.CIUDADANO_ALTA,

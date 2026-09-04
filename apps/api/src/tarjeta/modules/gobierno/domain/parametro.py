@@ -39,6 +39,12 @@ CATALOGO: dict[str, DefinicionParametro] = {
         DefinicionParametro(
             "cuota_ia_mensual_por_comercio", "Cuota IA mensual por comercio", 10, 0, 1000
         ),
+        DefinicionParametro(
+            "promos_para_establecido", "Promos aprobadas para nivel ESTABLECIDO", 3, 1, 100
+        ),
+        DefinicionParametro(
+            "promos_para_verificado", "Promos aprobadas para nivel VERIFICADO", 10, 1, 500
+        ),
     ]
 }
 

@@ -32,6 +32,7 @@ class Permiso(StrEnum):
     TURNO_OPERAR = "turno:operar"
     CANJE_OPERAR = "canje:operar"  # habilita la caja (paso siguiente)
     REPORTES_VER = "reportes:ver"
+    PROMOCION_GESTIONAR = "promocion:gestionar"  # cargar/editar/pausar promociones (§07.8)
 
 
 MATRIZ: dict[RolComercio, set[Permiso]] = {
@@ -42,11 +43,13 @@ MATRIZ: dict[RolComercio, set[Permiso]] = {
         Permiso.CAJERO_GESTIONAR,
         Permiso.TURNO_OPERAR,
         Permiso.REPORTES_VER,
+        Permiso.PROMOCION_GESTIONAR,
     },
     RolComercio.ENCARGADO: {
         Permiso.CAJERO_GESTIONAR,
         Permiso.TURNO_OPERAR,
         Permiso.REPORTES_VER,
+        Permiso.PROMOCION_GESTIONAR,
     },
     # El cajero solo opera la caja y su turno.
     RolComercio.CAJERO: {

@@ -154,6 +154,31 @@
 > pero más pesada y requiere un proveedor de tiles vectoriales; se puede migrar sin cambiar el
 > backend. Se descartaron Google Maps y Mapbox por costo por carga.
 
+## Módulo promociones y descubrimiento (PASO 07)
+| Tema | Definición |
+|---|---|
+| Mecánicas | 7: porcentaje, monto fijo, 2x1, precio especial, multiplicador de puntos, cupón único, combo. |
+| Segmentación | Valores diferenciados Platino/Black o exclusiva Black (conversión fiscal). |
+| Vigencia | Fechas, días de la semana y franja horaria en la zona horaria de config (borde de medianoche incluido). |
+| Topes | Incremento **atómico** en DB con verificación del tope en la misma sentencia; AGOTADA consistente. |
+| Concurrencia (test) | 200 operaciones simultáneas sobre tope=50 → **exactamente 50 otorgadas** (test verde). |
+| Motor de resolución | Filtros por SQL + tabla puente `promocion_sucursal` con índices; conflicto por mayor beneficio. |
+| Rendimiento motor | **3000 promos / 300 sucursales → ~5 ms** (medido en el test; umbral <500 ms). |
+| Moderación | 3 niveles de confianza con promoción automática por historial (umbrales en parametría de gobierno). |
+| Búsqueda | `pg_trgm` + `unaccent` (función inmutable `f_unaccent` + índice GIN): sin tildes encuentra con tildes. |
+| Feed | 5 secciones, incluidas Exclusivas Black **bloqueadas con % visible** para Platino; ranking público y auditable. |
+| Ficha pública | `promo/[id]` con Open Graph (SSR); dice si venció/pausó. |
+| Deuda 06 | (A) tiles propios estáticos + `NEXT_PUBLIC_TILES_URL` + `docs/tiles-mapa.md`; (B) ubicación de sucursal única fuente por trigger. |
+| Cobertura | ≥85% por módulo, incluye **promociones** (medido: 97.6%). |
+
+### Tiles del mapa (§07.0.A) — recordatorio
+| Tema | Definición |
+|---|---|
+| Fuente | Extracto de **San Juan** desde OpenStreetMap (Geofabrik) → PMTiles/raster. |
+| Servido | Archivo estático desde el propio hosting (`/tiles`), caché `immutable`. **Sin servicio corriendo.** |
+| Config | `NEXT_PUBLIC_TILES_URL` (no en el código). Procedimiento: `docs/tiles-mapa.md`. |
+| **Regenerar** | **Cada 6 meses (2×/año)** para incorporar calles nuevas. |
+
 ## CI (actualizado en PASO 02)
 | Tema | Definición |
 |---|---|
