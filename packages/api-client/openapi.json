@@ -514,6 +514,45 @@
         "title": "ConsentimientoInput",
         "type": "object"
       },
+      "ConsumoMes": {
+        "properties": {
+          "monto": {
+            "title": "Monto",
+            "type": "integer"
+          },
+          "operaciones": {
+            "title": "Operaciones",
+            "type": "integer"
+          },
+          "puntos_acreditados": {
+            "title": "Puntos Acreditados",
+            "type": "integer"
+          },
+          "puntos_usados": {
+            "title": "Puntos Usados",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "operaciones",
+          "monto",
+          "puntos_acreditados",
+          "puntos_usados"
+        ],
+        "title": "ConsumoMes",
+        "type": "object"
+      },
+      "CrearIn": {
+        "properties": {
+          "modo_billetera": {
+            "default": "COMUN",
+            "title": "Modo Billetera",
+            "type": "string"
+          }
+        },
+        "title": "CrearIn",
+        "type": "object"
+      },
       "DecisionIn": {
         "properties": {
           "motivo": {
@@ -914,6 +953,29 @@
         "title": "FranjaIn",
         "type": "object"
       },
+      "GrupoInvitacionOut": {
+        "properties": {
+          "texto_declaracion": {
+            "title": "Texto Declaracion",
+            "type": "string"
+          },
+          "token": {
+            "title": "Token",
+            "type": "string"
+          },
+          "vence_en": {
+            "title": "Vence En",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "texto_declaracion",
+          "vence_en"
+        ],
+        "title": "GrupoInvitacionOut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1043,6 +1105,34 @@
           "clave_idempotencia"
         ],
         "title": "IniciarIn",
+        "type": "object"
+      },
+      "InvitacionDetalleOut": {
+        "properties": {
+          "id_grupo": {
+            "title": "Id Grupo",
+            "type": "string"
+          },
+          "texto_declaracion": {
+            "title": "Texto Declaracion",
+            "type": "string"
+          },
+          "vence_en": {
+            "title": "Vence En",
+            "type": "string"
+          },
+          "vigente": {
+            "title": "Vigente",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id_grupo",
+          "texto_declaracion",
+          "vence_en",
+          "vigente"
+        ],
+        "title": "InvitacionDetalleOut",
         "type": "object"
       },
       "InvitacionOut": {
@@ -1425,6 +1515,104 @@
         "title": "MiEstadoResponse",
         "type": "object"
       },
+      "MiGrupoOut": {
+        "properties": {
+          "alertas": {
+            "default": [],
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "title": "Alertas",
+            "type": "array"
+          },
+          "es_titular": {
+            "title": "Es Titular",
+            "type": "boolean"
+          },
+          "id_grupo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Grupo"
+          },
+          "miembros": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MiembroOut"
+            },
+            "title": "Miembros",
+            "type": "array"
+          },
+          "modo_billetera": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Modo Billetera"
+          },
+          "sin_grupo": {
+            "title": "Sin Grupo",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sin_grupo",
+          "es_titular"
+        ],
+        "title": "MiGrupoOut",
+        "type": "object"
+      },
+      "MiembroOut": {
+        "properties": {
+          "consumo_mes": {
+            "$ref": "#/components/schemas/ConsumoMes"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "id_persona": {
+            "title": "Id Persona",
+            "type": "string"
+          },
+          "rol": {
+            "title": "Rol",
+            "type": "string"
+          },
+          "tope_mensual": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tope Mensual"
+          }
+        },
+        "required": [
+          "id_persona",
+          "rol",
+          "estado",
+          "tope_mensual",
+          "consumo_mes"
+        ],
+        "title": "MiembroOut",
+        "type": "object"
+      },
       "ModeracionIn": {
         "properties": {
           "descripcion": {
@@ -1467,6 +1655,19 @@
           }
         },
         "title": "ModeracionIn",
+        "type": "object"
+      },
+      "ModoIn": {
+        "properties": {
+          "modo_billetera": {
+            "title": "Modo Billetera",
+            "type": "string"
+          }
+        },
+        "required": [
+          "modo_billetera"
+        ],
+        "title": "ModoIn",
         "type": "object"
       },
       "MovimientoOut": {
@@ -2702,6 +2903,23 @@
           "refresh_token"
         ],
         "title": "TokensResponse",
+        "type": "object"
+      },
+      "TopeIn": {
+        "properties": {
+          "tope_mensual": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tope Mensual"
+          }
+        },
+        "title": "TopeIn",
         "type": "object"
       },
       "TransaccionOut": {
@@ -6685,6 +6903,800 @@
         "summary": "Recaudacion",
         "tags": [
           "gobierno"
+        ]
+      }
+    },
+    "/api/v1/grupo/crear": {
+      "post": {
+        "operationId": "crear_grupo_api_v1_grupo_crear_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Crear Grupo Api V1 Grupo Crear Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crear Grupo",
+        "tags": [
+          "grupo"
+        ]
+      }
+    },
+    "/api/v1/grupo/disolver": {
+      "post": {
+        "operationId": "disolver_api_v1_grupo_disolver_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disolver",
+        "tags": [
+          "grupo"
+        ]
+      }
+    },
+    "/api/v1/grupo/invitacion/{token}": {
+      "get": {
+        "operationId": "ver_invitacion_api_v1_grupo_invitacion__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitacionDetalleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ver Invitacion",
+        "tags": [
+          "grupo"
+        ]
+      }
+    },
+    "/api/v1/grupo/invitacion/{token}/aceptar": {
+      "post": {
+        "operationId": "aceptar_invitacion_api_v1_grupo_invitacion__token__aceptar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Aceptar Invitacion Api V1 Grupo Invitacion  Token  Aceptar Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Aceptar Invitacion",
+        "tags": [
+          "grupo"
+        ]
+      }
+    },
+    "/api/v1/grupo/invitar": {
+      "post": {
+        "operationId": "invitar_api_v1_grupo_invitar_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoInvitacionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Invitar",
+        "tags": [
+          "grupo"
+        ]
+      }
+    },
+    "/api/v1/grupo/mi-grupo": {
+      "get": {
+        "operationId": "mi_grupo_api_v1_grupo_mi_grupo_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MiGrupoOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mi Grupo",
+        "tags": [
+          "grupo"
+        ]
+      }
+    },
+    "/api/v1/grupo/miembros/{id_persona}/reactivar": {
+      "post": {
+        "operationId": "reactivar_miembro_api_v1_grupo_miembros__id_persona__reactivar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_persona",
+            "required": true,
+            "schema": {
+              "title": "Id Persona",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reactivar Miembro",
+        "tags": [
+          "grupo"
+        ]
+      }
+    },
+    "/api/v1/grupo/miembros/{id_persona}/suspender": {
+      "post": {
+        "operationId": "suspender_miembro_api_v1_grupo_miembros__id_persona__suspender_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_persona",
+            "required": true,
+            "schema": {
+              "title": "Id Persona",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suspender Miembro",
+        "tags": [
+          "grupo"
+        ]
+      }
+    },
+    "/api/v1/grupo/miembros/{id_persona}/tope": {
+      "post": {
+        "operationId": "fijar_tope_api_v1_grupo_miembros__id_persona__tope_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_persona",
+            "required": true,
+            "schema": {
+              "title": "Id Persona",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TopeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Fijar Tope",
+        "tags": [
+          "grupo"
+        ]
+      }
+    },
+    "/api/v1/grupo/modo": {
+      "post": {
+        "operationId": "cambiar_modo_api_v1_grupo_modo_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cambiar Modo",
+        "tags": [
+          "grupo"
+        ]
+      }
+    },
+    "/api/v1/grupo/salir": {
+      "post": {
+        "operationId": "salir_api_v1_grupo_salir_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Salir",
+        "tags": [
+          "grupo"
         ]
       }
     },

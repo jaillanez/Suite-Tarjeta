@@ -48,6 +48,8 @@ from tarjeta.modules.comercios.domain.roles import Permiso as PermisoComercio
 from tarjeta.modules.comercios.domain.roles import RolComercio
 from tarjeta.modules.gobierno.application.parametria import ParametriaService
 from tarjeta.modules.gobierno.infrastructure.composition import construir_puertos_gobierno
+from tarjeta.modules.grupo.domain.tipos import EstadoMiembro, ModoBilletera
+from tarjeta.modules.grupo.infrastructure.repositories import SqlAlchemyGrupoRepository
 from tarjeta.modules.identidad.infrastructure.composition import construir_puertos
 from tarjeta.modules.promociones.application.resolucion import MotorResolucion
 from tarjeta.modules.promociones.infrastructure.composition import (
@@ -56,7 +58,11 @@ from tarjeta.modules.promociones.infrastructure.composition import (
 from tarjeta.modules.promociones.infrastructure.repositories import SqlAlchemyPromocionRepository
 from tarjeta.modules.puntos.application.canje import PuntosCanjeServicio
 from tarjeta.modules.puntos.application.deps import PuntosConfig
-from tarjeta.modules.puntos.domain.moneda import puntos_comercio_por_canje
+from tarjeta.modules.puntos.domain.moneda import (
+    OrigenPuntos,
+    TipoTitular,
+    puntos_comercio_por_canje,
+)
 from tarjeta.modules.puntos.infrastructure.composition import construir_puertos_puntos
 from tarjeta.shared.api.auth import SesionDep
 from tarjeta.shared.api.dependencies import RedisDep, SessionDep, SettingsDep
@@ -104,9 +110,21 @@ class _PuntosCanje:
 
     def __init__(self, session: SessionDep) -> None:
         self._session = session
+        self._grupos = SqlAlchemyGrupoRepository(session)
         self._svc = PuntosCanjeServicio(
             construir_puertos_puntos(session, _puntos_config(get_settings()))
         )
+
+    async def _billetera(self, id_persona: str) -> tuple[TipoTitular, str, OrigenPuntos]:
+        # §10.5: en modo COMÚN los canjes van al pozo del grupo; si no, a la billetera personal.
+        # Un miembro suspendido no toca el pozo (cae a su billetera personal).
+        miembro = await self._grupos.miembro_de(id_persona)
+        if miembro is None or miembro.estado is not EstadoMiembro.ACTIVO:
+            return (TipoTitular.PERSONA, id_persona, OrigenPuntos.INDIVIDUAL)
+        grupo = await self._grupos.obtener(miembro.id_grupo)
+        if grupo is None or not grupo.activo or grupo.modo_billetera is not ModoBilletera.COMUN:
+            return (TipoTitular.PERSONA, id_persona, OrigenPuntos.INDIVIDUAL)
+        return (TipoTitular.GRUPO, str(grupo.id), OrigenPuntos.GRUPO_COMUN)
 
     async def acreditar(
         self,
@@ -125,13 +143,16 @@ class _PuntosCanje:
         )
         if promo is None:
             return 0
+        tipo_titular, id_titular, origen = await self._billetera(id_persona)
         return await self._svc.acreditar_canje(
             id_transaccion=id_transaccion,
-            id_titular=id_persona,
+            id_titular=id_titular,
             id_comercio=id_comercio,
             mecanica=promo.mecanica.value,
             valor=promo.valor_para(nivel),
             monto=monto,
+            tipo_titular=tipo_titular,
+            origen=origen,
         )
 
     async def consumir(
@@ -143,12 +164,15 @@ class _PuntosCanje:
         puntos_solicitados: int,
         tope_pesos: int,
     ) -> tuple[int, int]:
+        tipo_titular, id_titular, origen = await self._billetera(id_persona)
         return await self._svc.consumir_canje(
             id_transaccion=id_transaccion,
-            id_titular=id_persona,
+            id_titular=id_titular,
             id_comercio=id_comercio,
             puntos_solicitados=puntos_solicitados,
             tope_pesos=tope_pesos,
+            tipo_titular=tipo_titular,
+            origen=origen,
         )
 
     async def revertir(self, *, id_transaccion: str) -> None:

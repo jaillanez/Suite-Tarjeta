@@ -355,6 +355,27 @@ export function createApiClient(options: ApiClientOptions) {
     catalogoMunicipal: () => request<ItemCatalogoOut[]>('/api/v1/puntos/municipal/catalogo'),
     pmCirculante: () => request<PmCirculanteOut>('/api/v1/puntos/municipal/pm-circulante'),
     acreditarPm: (body: AcreditarPmIn) => post<Mensaje>('/api/v1/puntos/municipal/acreditar', body),
+    // --- grupo familiar (PASO 10) ---
+    crearGrupo: (modo_billetera = 'COMUN') =>
+      post<{ id_grupo: string }>('/api/v1/grupo/crear', { modo_billetera }),
+    invitarAlGrupo: () => post<GrupoInvitacionOut>('/api/v1/grupo/invitar'),
+    verInvitacionGrupo: (token: string) =>
+      request<InvitacionDetalleOut>(`/api/v1/grupo/invitacion/${encodeURIComponent(token)}`),
+    aceptarInvitacionGrupo: (token: string) =>
+      post<{ id_grupo: string }>(`/api/v1/grupo/invitacion/${encodeURIComponent(token)}/aceptar`),
+    salirDelGrupo: () => post<Mensaje>('/api/v1/grupo/salir'),
+    disolverGrupo: () => post<Mensaje>('/api/v1/grupo/disolver'),
+    cambiarModoGrupo: (modo_billetera: string) =>
+      post<Mensaje>('/api/v1/grupo/modo', { modo_billetera }),
+    miGrupo: () => request<MiGrupoOut>('/api/v1/grupo/mi-grupo'),
+    suspenderMiembro: (idPersona: string) =>
+      post<Mensaje>(`/api/v1/grupo/miembros/${encodeURIComponent(idPersona)}/suspender`),
+    reactivarMiembro: (idPersona: string) =>
+      post<Mensaje>(`/api/v1/grupo/miembros/${encodeURIComponent(idPersona)}/reactivar`),
+    fijarTopeMiembro: (idPersona: string, tope_mensual: number | null) =>
+      post<Mensaje>(`/api/v1/grupo/miembros/${encodeURIComponent(idPersona)}/tope`, {
+        tope_mensual,
+      }),
   };
 }
 
@@ -508,6 +529,12 @@ export type ComprobanteInventarioOut = S['ComprobanteOut'];
 export type PasivoComercioOut = S['PasivoComercioOut'];
 export type PmCirculanteOut = S['PmCirculanteOut'];
 export type AcreditarPmIn = S['AcreditarPmIn'];
+
+// grupo familiar (PASO 10)
+export type MiGrupoOut = S['MiGrupoOut'];
+export type GrupoMiembroOut = S['MiembroOut'];
+export type GrupoInvitacionOut = S['GrupoInvitacionOut'];
+export type InvitacionDetalleOut = S['InvitacionDetalleOut'];
 
 export interface ResumenTurno {
   operaciones: number;

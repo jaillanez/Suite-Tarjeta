@@ -8,7 +8,9 @@ acreditación es idempotente por transacción: reintentar una sincronización no
 from __future__ import annotations
 
 from tarjeta.modules.puntos.domain.moneda import (
+    OrigenPuntos,
     TipoMoneda,
+    TipoTitular,
     puntos_comercio_por_canje,
 )
 from tarjeta.modules.puntos.domain.movimiento import MovimientoBilletera, TipoMovimiento
@@ -32,18 +34,26 @@ class PuntosCanjeServicio:
         mecanica: str,
         valor: int,
         monto: int,
+        tipo_titular: TipoTitular = TipoTitular.PERSONA,
+        origen: OrigenPuntos = OrigenPuntos.INDIVIDUAL,
     ) -> int:
-        """PC que otorga el canje. Idempotente por `cred:{id_transaccion}`."""
+        """PC que otorga el canje. Idempotente por `cred:{id_transaccion}`.
+
+        `id_titular`/`tipo_titular`/`origen` los resuelve el composition root: en modo COMÚN
+        apuntan al pozo del grupo (§10.5); si no, a la billetera de la persona.
+        """
         puntos = puntos_comercio_por_canje(
             mecanica, valor, monto, base_por_cien=self.p.config.base_por_cien
         )
         if puntos <= 0:
             return 0
         return await self.conta.acreditar(
+            tipo_titular=tipo_titular,
             id_titular=id_titular,
             tipo_moneda=TipoMoneda.PC,
             id_comercio=id_comercio,
             puntos=puntos,
+            origen=origen,
             concepto="Acreditación por canje",
             id_transaccion=id_transaccion,
             clave_dedup=f"cred:{id_transaccion}",
@@ -57,6 +67,8 @@ class PuntosCanjeServicio:
         id_comercio: str,
         puntos_solicitados: int,
         tope_pesos: int,
+        tipo_titular: TipoTitular = TipoTitular.PERSONA,
+        origen: OrigenPuntos = OrigenPuntos.INDIVIDUAL,
     ) -> tuple[int, int]:
         """Consume PC para pagar. Devuelve (puntos_consumidos, pesos_cubiertos).
 
@@ -69,7 +81,11 @@ class PuntosCanjeServicio:
         objetivo = min(puntos_solicitados, tope_pesos // vp)
         if objetivo <= 0:
             return (0, 0)
+        # El consumo hereda el origen de cada lote (INDIVIDUAL o GRUPO_COMUN); `origen` acá solo
+        # documenta la resolución del titular hecha por el composition root.
+        _ = origen
         consumido = await self.conta.consumir(
+            tipo_titular=tipo_titular,
             id_titular=id_titular,
             tipo_moneda=TipoMoneda.PC,
             id_comercio=id_comercio,

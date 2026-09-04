@@ -38,25 +38,33 @@ class ConsultaBilleteras:
     def __init__(self, puertos: PuntosPuertos) -> None:
         self.p = puertos
 
-    async def resumen(self, id_persona: str) -> ResumenBilleteras:
+    async def resumen(
+        self, id_titular: str, *, tipo_titular: TipoTitular = TipoTitular.PERSONA
+    ) -> ResumenBilleteras:
         pc = [
             SaldoComercio(id_comercio=b.id_comercio, saldo=b.saldo)
-            for b in await self.p.billeteras.pc_de_titular(id_persona)
+            for b in await self.p.billeteras.pc_de_titular(id_titular)
         ]
         pm_bill = await self.p.billeteras.obtener(
-            tipo_titular=TipoTitular.PERSONA,
-            id_titular=id_persona,
+            tipo_titular=tipo_titular,
+            id_titular=id_titular,
             tipo_moneda=TipoMoneda.PM,
             id_comercio=None,
         )
         return ResumenBilleteras(pc=pc, pm=pm_bill.saldo if pm_bill else 0)
 
     async def movimientos(
-        self, id_persona: str, *, tipo_moneda: str, id_comercio: str | None, limite: int = 100
+        self,
+        id_titular: str,
+        *,
+        tipo_moneda: str,
+        id_comercio: str | None,
+        tipo_titular: TipoTitular = TipoTitular.PERSONA,
+        limite: int = 100,
     ) -> list[MovimientoBilletera]:
         b = await self.p.billeteras.obtener(
-            tipo_titular=TipoTitular.PERSONA,
-            id_titular=id_persona,
+            tipo_titular=tipo_titular,
+            id_titular=id_titular,
             tipo_moneda=TipoMoneda(tipo_moneda),
             id_comercio=id_comercio,
         )
@@ -64,11 +72,11 @@ class ConsultaBilleteras:
             return []
         return await self.p.movimientos.listar(b.id, limite)
 
-    async def _billeteras_de(self, id_persona: str) -> list[Billetera]:
-        billeteras = list(await self.p.billeteras.pc_de_titular(id_persona))
+    async def _billeteras_de(self, id_titular: str, tipo_titular: TipoTitular) -> list[Billetera]:
+        billeteras = list(await self.p.billeteras.pc_de_titular(id_titular))
         pm = await self.p.billeteras.obtener(
-            tipo_titular=TipoTitular.PERSONA,
-            id_titular=id_persona,
+            tipo_titular=tipo_titular,
+            id_titular=id_titular,
             tipo_moneda=TipoMoneda.PM,
             id_comercio=None,
         )
@@ -76,11 +84,13 @@ class ConsultaBilleteras:
             billeteras.append(pm)
         return billeteras
 
-    async def por_vencer(self, id_persona: str, *, dias: int = 30) -> list[LotePorVencer]:
+    async def por_vencer(
+        self, id_titular: str, *, dias: int = 30, tipo_titular: TipoTitular = TipoTitular.PERSONA
+    ) -> list[LotePorVencer]:
         hoy = datetime.now(UTC).date()
         hasta = hoy + timedelta(days=dias)
         salida: list[LotePorVencer] = []
-        for b in await self._billeteras_de(id_persona):
+        for b in await self._billeteras_de(id_titular, tipo_titular):
             for lote in await self.p.lotes.por_vencer(b.id, hoy, hasta):
                 salida.append(
                     LotePorVencer(
@@ -94,9 +104,11 @@ class ConsultaBilleteras:
         salida.sort(key=lambda x: x.dias_restantes)
         return salida
 
-    async def verificar_consistencia(self, id_persona: str) -> bool:
+    async def verificar_consistencia(
+        self, id_titular: str, *, tipo_titular: TipoTitular = TipoTitular.PERSONA
+    ) -> bool:
         """Cada saldo debe coincidir con la suma de su libro (§09.2)."""
-        for b in await self._billeteras_de(id_persona):
+        for b in await self._billeteras_de(id_titular, tipo_titular):
             if b.saldo != await self.p.movimientos.suma(b.id):
                 return False
         return True
