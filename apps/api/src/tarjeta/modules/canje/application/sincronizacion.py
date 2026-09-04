@@ -114,6 +114,18 @@ class SincronizarSinConexion:
             )
             t.aplicar_directo()  # ya se aceptó en el mostrador
             await self.p.transacciones.agregar(t)
+            # §09.4: acreditación idempotente por transacción (reintentar no acredita dos veces).
+            creditados = await self.p.puntos.acreditar(
+                id_transaccion=str(t.id),
+                id_persona=op.id_persona,
+                id_comercio=op.id_comercio,
+                id_promocion=op.id_promocion,
+                nivel=op.nivel,
+                monto=op.monto,
+            )
+            if creditados > 0:
+                t.acreditar_puntos(creditados)
+                await self.p.transacciones.guardar(t)
             eventos = list(t.pull_events())
             if conflicto and op.id_promocion:
                 eventos.append(

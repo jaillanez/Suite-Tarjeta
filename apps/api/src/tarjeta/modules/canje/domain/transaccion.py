@@ -65,9 +65,12 @@ class Transaccion(AggregateRoot):
         calificacion: int | None = None,
         motivo_anulacion: str | None = None,
         en_disputa: bool = False,
-        # §08.1: campos de puntos presentes y en cero (el módulo puntos llega después).
+        # §09.4: puntos del canje. puntos_ciudadano = PC acreditados; puntos_consumidos = PC que
+        # el ciudadano usó para pagar y pesos_cubiertos_puntos, los pesos que esos puntos cubren.
         puntos_ciudadano: int = 0,
         puntos_municipio: int = 0,
+        puntos_consumidos: int = 0,
+        pesos_cubiertos_puntos: int = 0,
     ) -> None:
         super().__init__(id)
         self.numero_comprobante = numero_comprobante
@@ -95,6 +98,8 @@ class Transaccion(AggregateRoot):
         self.en_disputa = en_disputa
         self.puntos_ciudadano = puntos_ciudadano
         self.puntos_municipio = puntos_municipio
+        self.puntos_consumidos = puntos_consumidos
+        self.pesos_cubiertos_puntos = pesos_cubiertos_puntos
 
     @property
     def estado(self) -> EstadoTransaccion:
@@ -102,7 +107,17 @@ class Transaccion(AggregateRoot):
 
     @property
     def total_pagar(self) -> int:
-        return max(0, self.monto_bruto - self.descuento)
+        # Los puntos usados por el ciudadano cubren parte del total (§09.4).
+        return max(0, self.monto_bruto - self.descuento - self.pesos_cubiertos_puntos)
+
+    def acreditar_puntos(self, puntos_ciudadano: int) -> None:
+        """PC otorgados por el canje (solo una vez aplicado)."""
+        self.puntos_ciudadano = puntos_ciudadano
+
+    def registrar_consumo_puntos(self, puntos: int, pesos_cubiertos: int) -> None:
+        """PC que el ciudadano usó para pagar y los pesos que cubrieron."""
+        self.puntos_consumidos = puntos
+        self.pesos_cubiertos_puntos = pesos_cubiertos
 
     @classmethod
     def crear(

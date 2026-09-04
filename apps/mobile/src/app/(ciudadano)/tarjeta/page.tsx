@@ -21,6 +21,7 @@ export default function TarjetaPage() {
   const [tokenActual, setTokenActual] = useState<string | null>(null);
   const [codigo, setCodigo] = useState<string | null>(null);
   const [pendiente, setPendiente] = useState<TransaccionOut | null>(null);
+  const [usarPuntos, setUsarPuntos] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
@@ -62,9 +63,12 @@ export default function TarjetaPage() {
 
   async function confirmar(): Promise<void> {
     if (!pendiente) return;
-    await api.confirmarCanje(pendiente.id);
+    const puntos = Math.max(0, Number(usarPuntos) || 0);
+    const aplicada = await api.confirmarCanje(pendiente.id, puntos);
     setPendiente(null);
-    setMsg('¡Descuento aplicado!');
+    setUsarPuntos('');
+    const usados = aplicada.puntos_consumidos;
+    setMsg(usados > 0 ? `¡Aplicado! Usaste ${usados} puntos.` : '¡Descuento aplicado!');
   }
 
   async function rechazar(): Promise<void> {
@@ -97,7 +101,23 @@ export default function TarjetaPage() {
           <p className="mt-1 text-sm text-muted-foreground">
             Monto ${pendiente.monto_bruto} · Descuento ${pendiente.descuento}
           </p>
-          <p className="text-2xl font-semibold">Pagás ${pendiente.total_pagar}</p>
+          {/* §09.4: el ciudadano decide si usa puntos y ve el total resultante antes de aceptar. */}
+          <label className="mt-2 block text-sm">
+            Usar puntos de este comercio
+            <input
+              type="number"
+              min={0}
+              inputMode="numeric"
+              aria-label="Puntos a usar en esta compra"
+              value={usarPuntos}
+              onChange={(e) => setUsarPuntos(e.target.value)}
+              className="mt-1 w-full rounded-md border border-border bg-background p-2"
+              placeholder="0"
+            />
+          </label>
+          <p className="mt-2 text-2xl font-semibold">
+            Pagás ${Math.max(0, pendiente.total_pagar - (Number(usarPuntos) || 0))}
+          </p>
           <div className="mt-3 flex gap-2">
             <Button onClick={confirmar}>Aceptar</Button>
             <Button variant="outline" onClick={rechazar}>

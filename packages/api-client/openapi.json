@@ -27,6 +27,34 @@
         "title": "AbrirTurnoIn",
         "type": "object"
       },
+      "AcreditarPmIn": {
+        "properties": {
+          "clave_dedup": {
+            "title": "Clave Dedup",
+            "type": "string"
+          },
+          "concepto": {
+            "title": "Concepto",
+            "type": "string"
+          },
+          "id_persona": {
+            "title": "Id Persona",
+            "type": "string"
+          },
+          "puntos": {
+            "title": "Puntos",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id_persona",
+          "puntos",
+          "concepto",
+          "clave_dedup"
+        ],
+        "title": "AcreditarPmIn",
+        "type": "object"
+      },
       "AdhesionIn": {
         "properties": {
           "convenio_version": {
@@ -121,6 +149,45 @@
           "rol"
         ],
         "title": "AsignarAgenteIn",
+        "type": "object"
+      },
+      "BilleteraPCOut": {
+        "properties": {
+          "id_comercio": {
+            "title": "Id Comercio",
+            "type": "string"
+          },
+          "saldo": {
+            "title": "Saldo",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id_comercio",
+          "saldo"
+        ],
+        "title": "BilleteraPCOut",
+        "type": "object"
+      },
+      "BilleterasOut": {
+        "properties": {
+          "pc": {
+            "items": {
+              "$ref": "#/components/schemas/BilleteraPCOut"
+            },
+            "title": "Pc",
+            "type": "array"
+          },
+          "pm": {
+            "title": "Pm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "pc",
+          "pm"
+        ],
+        "title": "BilleterasOut",
         "type": "object"
       },
       "CajeroLoginIn": {
@@ -327,6 +394,39 @@
         "title": "ComercioOut",
         "type": "object"
       },
+      "ComprobanteOut": {
+        "properties": {
+          "codigo": {
+            "title": "Codigo",
+            "type": "string"
+          },
+          "costo_pm": {
+            "title": "Costo Pm",
+            "type": "integer"
+          },
+          "creado_en": {
+            "title": "Creado En",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "titulo_item": {
+            "title": "Titulo Item",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "codigo",
+          "titulo_item",
+          "costo_pm",
+          "creado_en"
+        ],
+        "title": "ComprobanteOut",
+        "type": "object"
+      },
       "CondicionesIn": {
         "properties": {
           "mecanica": {
@@ -365,6 +465,17 @@
           "valor_black"
         ],
         "title": "CondicionesIn",
+        "type": "object"
+      },
+      "ConfirmarIn": {
+        "properties": {
+          "usar_puntos": {
+            "default": 0,
+            "title": "Usar Puntos",
+            "type": "integer"
+          }
+        },
+        "title": "ConfirmarIn",
         "type": "object"
       },
       "ConsentimientoIn": {
@@ -978,6 +1089,94 @@
         "title": "InvitarIn",
         "type": "object"
       },
+      "ItemIn": {
+        "properties": {
+          "costo_pm": {
+            "title": "Costo Pm",
+            "type": "integer"
+          },
+          "descripcion": {
+            "default": "",
+            "title": "Descripcion",
+            "type": "string"
+          },
+          "fecha_desde": {
+            "format": "date",
+            "title": "Fecha Desde",
+            "type": "string"
+          },
+          "fecha_hasta": {
+            "format": "date",
+            "title": "Fecha Hasta",
+            "type": "string"
+          },
+          "stock": {
+            "title": "Stock",
+            "type": "integer"
+          },
+          "titulo": {
+            "title": "Titulo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "titulo",
+          "costo_pm",
+          "stock",
+          "fecha_desde",
+          "fecha_hasta"
+        ],
+        "title": "ItemIn",
+        "type": "object"
+      },
+      "ItemOut": {
+        "properties": {
+          "costo_pm": {
+            "title": "Costo Pm",
+            "type": "integer"
+          },
+          "descripcion": {
+            "title": "Descripcion",
+            "type": "string"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "fecha_desde": {
+            "title": "Fecha Desde",
+            "type": "string"
+          },
+          "fecha_hasta": {
+            "title": "Fecha Hasta",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "stock": {
+            "title": "Stock",
+            "type": "integer"
+          },
+          "titulo": {
+            "title": "Titulo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "titulo",
+          "descripcion",
+          "costo_pm",
+          "stock",
+          "fecha_desde",
+          "fecha_hasta",
+          "estado"
+        ],
+        "title": "ItemOut",
+        "type": "object"
+      },
       "LoginRequest": {
         "properties": {
           "dni": {
@@ -1047,6 +1246,39 @@
           "perfiles"
         ],
         "title": "LoginResponse",
+        "type": "object"
+      },
+      "LotePorVencerOut": {
+        "properties": {
+          "dias_restantes": {
+            "title": "Dias Restantes",
+            "type": "integer"
+          },
+          "id_comercio": {
+            "title": "Id Comercio",
+            "type": "string"
+          },
+          "saldo_restante": {
+            "title": "Saldo Restante",
+            "type": "integer"
+          },
+          "tipo_moneda": {
+            "title": "Tipo Moneda",
+            "type": "string"
+          },
+          "vence_en": {
+            "title": "Vence En",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tipo_moneda",
+          "id_comercio",
+          "saldo_restante",
+          "vence_en",
+          "dias_restantes"
+        ],
+        "title": "LotePorVencerOut",
         "type": "object"
       },
       "Mensaje": {
@@ -1237,6 +1469,39 @@
         "title": "ModeracionIn",
         "type": "object"
       },
+      "MovimientoOut": {
+        "properties": {
+          "concepto": {
+            "title": "Concepto",
+            "type": "string"
+          },
+          "creado_en": {
+            "title": "Creado En",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "monto": {
+            "title": "Monto",
+            "type": "integer"
+          },
+          "tipo": {
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "tipo",
+          "monto",
+          "concepto",
+          "creado_en"
+        ],
+        "title": "MovimientoOut",
+        "type": "object"
+      },
       "OpcionOut": {
         "properties": {
           "auto_propuesta": {
@@ -1255,6 +1520,10 @@
             "title": "Mecanica",
             "type": "string"
           },
+          "puntos": {
+            "title": "Puntos",
+            "type": "integer"
+          },
           "titulo": {
             "title": "Titulo",
             "type": "string"
@@ -1270,6 +1539,7 @@
           "mecanica",
           "descuento",
           "total",
+          "puntos",
           "auto_propuesta"
         ],
         "title": "OpcionOut",
@@ -1338,6 +1608,24 @@
           "monto"
         ],
         "title": "OperacionEncoladaIn",
+        "type": "object"
+      },
+      "PasivoComercioOut": {
+        "properties": {
+          "canjeados": {
+            "title": "Canjeados",
+            "type": "integer"
+          },
+          "emitidos": {
+            "title": "Emitidos",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "emitidos",
+          "canjeados"
+        ],
+        "title": "PasivoComercioOut",
         "type": "object"
       },
       "PerfilOut": {
@@ -1492,6 +1780,19 @@
           "pin"
         ],
         "title": "PinIn",
+        "type": "object"
+      },
+      "PmCirculanteOut": {
+        "properties": {
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total"
+        ],
+        "title": "PmCirculanteOut",
         "type": "object"
       },
       "PromocionFeedOut": {
@@ -2444,6 +2745,14 @@
             "title": "Numero Comprobante",
             "type": "string"
           },
+          "puntos_ciudadano": {
+            "title": "Puntos Ciudadano",
+            "type": "integer"
+          },
+          "puntos_consumidos": {
+            "title": "Puntos Consumidos",
+            "type": "integer"
+          },
           "total_pagar": {
             "title": "Total Pagar",
             "type": "integer"
@@ -2458,7 +2767,9 @@
           "total_pagar",
           "confirmador",
           "id_promocion",
-          "nivel_aplicado"
+          "nivel_aplicado",
+          "puntos_ciudadano",
+          "puntos_consumidos"
         ],
         "title": "TransaccionOut",
         "type": "object"
@@ -4236,6 +4547,23 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ConfirmarIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "content": {
@@ -9815,6 +10143,806 @@
         "summary": "Ficha Publica",
         "tags": [
           "promociones"
+        ]
+      }
+    },
+    "/api/v1/puntos/billeteras": {
+      "get": {
+        "operationId": "mis_billeteras_api_v1_puntos_billeteras_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BilleterasOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mis Billeteras",
+        "tags": [
+          "puntos"
+        ]
+      }
+    },
+    "/api/v1/puntos/catalogo": {
+      "get": {
+        "operationId": "catalogo_api_v1_puntos_catalogo_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ItemOut"
+                  },
+                  "title": "Response Catalogo Api V1 Puntos Catalogo Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Catalogo",
+        "tags": [
+          "puntos"
+        ]
+      }
+    },
+    "/api/v1/puntos/catalogo/{id_item}/canjear": {
+      "post": {
+        "operationId": "canjear_inventario_api_v1_puntos_catalogo__id_item__canjear_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_item",
+            "required": true,
+            "schema": {
+              "title": "Id Item",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComprobanteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Canjear Inventario",
+        "tags": [
+          "puntos"
+        ]
+      }
+    },
+    "/api/v1/puntos/comercio/pasivo": {
+      "get": {
+        "operationId": "pasivo_comercio_api_v1_puntos_comercio_pasivo_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasivoComercioOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pasivo Comercio",
+        "tags": [
+          "puntos"
+        ]
+      }
+    },
+    "/api/v1/puntos/mis-comprobantes": {
+      "get": {
+        "operationId": "mis_comprobantes_api_v1_puntos_mis_comprobantes_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ComprobanteOut"
+                  },
+                  "title": "Response Mis Comprobantes Api V1 Puntos Mis Comprobantes Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mis Comprobantes",
+        "tags": [
+          "puntos"
+        ]
+      }
+    },
+    "/api/v1/puntos/movimientos": {
+      "get": {
+        "operationId": "mis_movimientos_api_v1_puntos_movimientos_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "tipo_moneda",
+            "required": false,
+            "schema": {
+              "default": "PM",
+              "title": "Tipo Moneda",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "id_comercio",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Id Comercio"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MovimientoOut"
+                  },
+                  "title": "Response Mis Movimientos Api V1 Puntos Movimientos Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mis Movimientos",
+        "tags": [
+          "puntos"
+        ]
+      }
+    },
+    "/api/v1/puntos/municipal/acreditar": {
+      "post": {
+        "operationId": "acreditar_pm_api_v1_puntos_municipal_acreditar_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcreditarPmIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Acreditar Pm",
+        "tags": [
+          "puntos"
+        ]
+      }
+    },
+    "/api/v1/puntos/municipal/catalogo": {
+      "get": {
+        "operationId": "catalogo_municipal_api_v1_puntos_municipal_catalogo_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ItemOut"
+                  },
+                  "title": "Response Catalogo Municipal Api V1 Puntos Municipal Catalogo Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Catalogo Municipal",
+        "tags": [
+          "puntos"
+        ]
+      },
+      "post": {
+        "operationId": "publicar_item_api_v1_puntos_municipal_catalogo_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Publicar Item Api V1 Puntos Municipal Catalogo Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Publicar Item",
+        "tags": [
+          "puntos"
+        ]
+      }
+    },
+    "/api/v1/puntos/municipal/pm-circulante": {
+      "get": {
+        "operationId": "pm_circulante_api_v1_puntos_municipal_pm_circulante_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PmCirculanteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pm Circulante",
+        "tags": [
+          "puntos"
+        ]
+      }
+    },
+    "/api/v1/puntos/por-vencer": {
+      "get": {
+        "operationId": "mis_lotes_por_vencer_api_v1_puntos_por_vencer_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "dias",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "title": "Dias",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LotePorVencerOut"
+                  },
+                  "title": "Response Mis Lotes Por Vencer Api V1 Puntos Por Vencer Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mis Lotes Por Vencer",
+        "tags": [
+          "puntos"
         ]
       }
     },

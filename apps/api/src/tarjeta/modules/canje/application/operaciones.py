@@ -98,13 +98,40 @@ class DecidirOperacion:
         return t
 
     async def confirmar(
-        self, *, id_transaccion: str, por: Confirmador, id_actor: str | None = None
+        self,
+        *,
+        id_transaccion: str,
+        por: Confirmador,
+        id_actor: str | None = None,
+        usar_puntos: int = 0,
     ) -> Transaccion:
         t = await self._cargar(id_transaccion)
         # Si confirma el ciudadano, debe ser el titular de la operación.
         if por is Confirmador.CIUDADANO and id_actor is not None and id_actor != t.id_persona:
             raise ConfirmadorInvalido("Solo el titular puede confirmar su operación.")
         t.confirmar(por=por)
+        # §09.4: el ciudadano puede usar puntos (consumo) y el canje acredita PC. Se hace en la
+        # misma transacción que la aplicación; con puntos desconectados (PASO 08) es un no-op.
+        if usar_puntos > 0 and t.total_pagar > 0:
+            consumido, pesos = await self.p.puntos.consumir(
+                id_transaccion=str(t.id),
+                id_persona=t.id_persona,
+                id_comercio=t.id_comercio,
+                puntos_solicitados=usar_puntos,
+                tope_pesos=t.total_pagar,
+            )
+            if consumido > 0:
+                t.registrar_consumo_puntos(consumido, pesos)
+        creditados = await self.p.puntos.acreditar(
+            id_transaccion=str(t.id),
+            id_persona=t.id_persona,
+            id_comercio=t.id_comercio,
+            id_promocion=t.id_promocion,
+            nivel=t.nivel_aplicado,
+            monto=t.monto_bruto,
+        )
+        if creditados > 0:
+            t.acreditar_puntos(creditados)
         await self.p.transacciones.guardar(t)
         await self.p.outbox.escribir(t.pull_events())
         await self.p.uow.commit()
@@ -151,6 +178,8 @@ class AnularOperacion:
         t.anular(motivo=motivo, ventana_minutos=self.ventana, es_admin=es_admin)
         if t.id_promocion:
             await self.p.reserva.liberar(t.id_promocion, t.id_persona, t.creada_en.date())
+        # §09.4: revierte los puntos con movimientos compensatorios (no edita los originales).
+        await self.p.puntos.revertir(id_transaccion=str(t.id))
         await self.p.transacciones.guardar(t)
         await self.p.outbox.escribir(t.pull_events())
         await self.p.uow.commit()

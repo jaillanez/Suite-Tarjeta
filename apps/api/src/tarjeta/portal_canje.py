@@ -16,6 +16,7 @@ from zoneinfo import ZoneInfo
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from tarjeta.config import Settings, get_settings
 from tarjeta.modules.canje.application.deps import CanjePuertos
 from tarjeta.modules.canje.application.operaciones import (
     AnularOperacion,
@@ -53,6 +54,10 @@ from tarjeta.modules.promociones.infrastructure.composition import (
     construir_puertos_promociones,
 )
 from tarjeta.modules.promociones.infrastructure.repositories import SqlAlchemyPromocionRepository
+from tarjeta.modules.puntos.application.canje import PuntosCanjeServicio
+from tarjeta.modules.puntos.application.deps import PuntosConfig
+from tarjeta.modules.puntos.domain.moneda import puntos_comercio_por_canje
+from tarjeta.modules.puntos.infrastructure.composition import construir_puertos_puntos
 from tarjeta.shared.api.auth import SesionDep
 from tarjeta.shared.api.dependencies import RedisDep, SessionDep, SettingsDep
 from tarjeta.shared.domain.errors import NotFoundError
@@ -82,8 +87,76 @@ class _ReservaPromo(ReservaPromocion):
         )
 
 
+def _puntos_config(settings: Settings) -> PuntosConfig:
+    return PuntosConfig(
+        vencimiento_meses=settings.puntos_vencimiento_meses,
+        base_por_cien=settings.puntos_base_por_cien,
+        valor_punto=settings.puntos_valor_peso,
+        pm_al_dia=settings.pm_al_dia,
+    )
+
+
+class _PuntosCanje:
+    """Adapta el módulo `puntos` al puerto del canje (independencia de módulos, §09.4).
+
+    Traduce la promoción a su mecánica/valor con `promociones` y delega la contabilidad en `puntos`.
+    """
+
+    def __init__(self, session: SessionDep) -> None:
+        self._session = session
+        self._svc = PuntosCanjeServicio(
+            construir_puertos_puntos(session, _puntos_config(get_settings()))
+        )
+
+    async def acreditar(
+        self,
+        *,
+        id_transaccion: str,
+        id_persona: str,
+        id_comercio: str,
+        id_promocion: str | None,
+        nivel: str,
+        monto: int,
+    ) -> int:
+        if not id_promocion:
+            return 0
+        promo = await SqlAlchemyPromocionRepository(self._session).obtener(
+            EntityId.from_str(id_promocion)
+        )
+        if promo is None:
+            return 0
+        return await self._svc.acreditar_canje(
+            id_transaccion=id_transaccion,
+            id_titular=id_persona,
+            id_comercio=id_comercio,
+            mecanica=promo.mecanica.value,
+            valor=promo.valor_para(nivel),
+            monto=monto,
+        )
+
+    async def consumir(
+        self,
+        *,
+        id_transaccion: str,
+        id_persona: str,
+        id_comercio: str,
+        puntos_solicitados: int,
+        tope_pesos: int,
+    ) -> tuple[int, int]:
+        return await self._svc.consumir_canje(
+            id_transaccion=id_transaccion,
+            id_titular=id_persona,
+            id_comercio=id_comercio,
+            puntos_solicitados=puntos_solicitados,
+            tope_pesos=tope_pesos,
+        )
+
+    async def revertir(self, *, id_transaccion: str) -> None:
+        await self._svc.revertir_canje(id_transaccion=id_transaccion)
+
+
 def _puertos(session: SessionDep) -> CanjePuertos:
-    return construir_puertos_canje(session, _ReservaPromo(session))
+    return construir_puertos_canje(session, _ReservaPromo(session), _PuntosCanje(session))
 
 
 def _firmador(settings: SettingsDep) -> FirmadorTokenCiudadano:
@@ -130,6 +203,7 @@ class OpcionOut(BaseModel):
     mecanica: str
     descuento: int
     total: int
+    puntos: int
     auto_propuesta: bool
 
 
@@ -164,10 +238,17 @@ class TransaccionOut(BaseModel):
     confirmador: str
     id_promocion: str | None
     nivel_aplicado: str
+    puntos_ciudadano: int
+    puntos_consumidos: int
 
 
 class DecisionIn(BaseModel):
     motivo: str = ""
+
+
+class ConfirmarIn(BaseModel):
+    # §09.4: el ciudadano decide en la confirmación si quiere usar puntos.
+    usar_puntos: int = 0
 
 
 class CalificacionIn(BaseModel):
@@ -201,6 +282,8 @@ def _out(t: Transaccion) -> TransaccionOut:
         confirmador=t.confirmador.value,
         id_promocion=t.id_promocion,
         nivel_aplicado=t.nivel_aplicado,
+        puntos_ciudadano=t.puntos_ciudadano,
+        puntos_consumidos=t.puntos_consumidos,
     )
 
 
@@ -284,9 +367,17 @@ async def _opciones(
     promos = await MotorResolucion(construir_puertos_promociones(session)).resolver(
         nivel=nivel, id_sucursal=id_sucursal, momento_local=ahora, monto=monto
     )
+    base = settings.puntos_base_por_cien
     entradas = [
         PromoParaCaja(
-            id=str(p.id), titulo=p.titulo, mecanica=p.mecanica.value, valor=p.valor_para(nivel)
+            id=str(p.id),
+            titulo=p.titulo,
+            mecanica=p.mecanica.value,
+            valor=p.valor_para(nivel),
+            # §09.0.B: el orden incorpora el valor de los puntos que otorga la promoción.
+            puntos=puntos_comercio_por_canje(
+                p.mecanica.value, p.valor_para(nivel), monto, base_por_cien=base
+            ),
         )
         for p in promos
     ]
@@ -297,9 +388,10 @@ async def _opciones(
             mecanica=o.mecanica,
             descuento=o.descuento,
             total=o.total,
+            puntos=o.puntos,
             auto_propuesta=o.auto_propuesta,
         )
-        for o in ordenar_por_descuento(entradas, monto)
+        for o in ordenar_por_descuento(entradas, monto, valor_punto=settings.puntos_valor_peso)
     ]
 
 
@@ -406,10 +498,16 @@ async def mis_pendientes(sesion: SesionDep, session: SessionDep) -> list[Transac
 
 @router.post("/{id_transaccion}/confirmar", response_model=TransaccionOut)
 async def confirmar_ciudadano(
-    id_transaccion: str, sesion: SesionDep, session: SessionDep
+    id_transaccion: str,
+    sesion: SesionDep,
+    session: SessionDep,
+    body: ConfirmarIn | None = None,
 ) -> TransaccionOut:
     t = await DecidirOperacion(_puertos(session)).confirmar(
-        id_transaccion=id_transaccion, por=Confirmador.CIUDADANO, id_actor=sesion.id_persona
+        id_transaccion=id_transaccion,
+        por=Confirmador.CIUDADANO,
+        id_actor=sesion.id_persona,
+        usar_puntos=body.usar_puntos if body else 0,
     )
     return _out(t)
 

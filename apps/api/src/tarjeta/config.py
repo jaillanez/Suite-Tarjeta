@@ -101,6 +101,10 @@ class Settings(BaseSettings):
 
     # Parámetros del programa (§13 de la especificación)
     puntos_vencimiento_meses: int = 24
+    # Puntos (PASO 09): acumulación base y valor del punto al pagar (ordena la caja, §09.4).
+    puntos_base_por_cien: int = 1  # puntos base por cada 100 pesos, antes del multiplicador
+    puntos_valor_peso: int = 1  # pesos que vale un punto al pagar con puntos
+    pm_al_dia: int = 50  # PM por estar al día (regla activa, §09.5)
     grupo_max_miembros: int = 6
     grupo_cooldown_dias: int = 90
     grupo_max_altas_anuales: int = 4

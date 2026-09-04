@@ -1575,6 +1575,177 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/puntos/billeteras": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mis Billeteras */
+    get: operations["mis_billeteras_api_v1_puntos_billeteras_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/puntos/catalogo": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Catalogo */
+    get: operations["catalogo_api_v1_puntos_catalogo_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/puntos/catalogo/{id_item}/canjear": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Canjear Inventario */
+    post: operations["canjear_inventario_api_v1_puntos_catalogo__id_item__canjear_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/puntos/comercio/pasivo": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Pasivo Comercio */
+    get: operations["pasivo_comercio_api_v1_puntos_comercio_pasivo_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/puntos/mis-comprobantes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mis Comprobantes */
+    get: operations["mis_comprobantes_api_v1_puntos_mis_comprobantes_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/puntos/movimientos": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mis Movimientos */
+    get: operations["mis_movimientos_api_v1_puntos_movimientos_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/puntos/municipal/acreditar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Acreditar Pm */
+    post: operations["acreditar_pm_api_v1_puntos_municipal_acreditar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/puntos/municipal/catalogo": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Catalogo Municipal */
+    get: operations["catalogo_municipal_api_v1_puntos_municipal_catalogo_get"];
+    put?: never;
+    /** Publicar Item */
+    post: operations["publicar_item_api_v1_puntos_municipal_catalogo_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/puntos/municipal/pm-circulante": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Pm Circulante */
+    get: operations["pm_circulante_api_v1_puntos_municipal_pm_circulante_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/puntos/por-vencer": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mis Lotes Por Vencer */
+    get: operations["mis_lotes_por_vencer_api_v1_puntos_por_vencer_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/health": {
     parameters: {
       query?: never;
@@ -1623,6 +1794,17 @@ export interface components {
       /** Id Sucursal */
       id_sucursal: string;
     };
+    /** AcreditarPmIn */
+    AcreditarPmIn: {
+      /** Clave Dedup */
+      clave_dedup: string;
+      /** Concepto */
+      concepto: string;
+      /** Id Persona */
+      id_persona: string;
+      /** Puntos */
+      puntos: number;
+    };
     /** AdhesionIn */
     AdhesionIn: {
       /** Convenio Version */
@@ -1668,6 +1850,20 @@ export interface components {
       id_persona: string;
       /** Rol */
       rol: string;
+    };
+    /** BilleteraPCOut */
+    BilleteraPCOut: {
+      /** Id Comercio */
+      id_comercio: string;
+      /** Saldo */
+      saldo: number;
+    };
+    /** BilleterasOut */
+    BilleterasOut: {
+      /** Pc */
+      pc: components["schemas"]["BilleteraPCOut"][];
+      /** Pm */
+      pm: number;
     };
     /** CajeroLoginIn */
     CajeroLoginIn: {
@@ -1754,6 +1950,19 @@ export interface components {
       /** Rubro */
       rubro: string;
     };
+    /** ComprobanteOut */
+    ComprobanteOut: {
+      /** Codigo */
+      codigo: string;
+      /** Costo Pm */
+      costo_pm: number;
+      /** Creado En */
+      creado_en: string;
+      /** Id */
+      id: string;
+      /** Titulo Item */
+      titulo_item: string;
+    };
     /** CondicionesIn */
     CondicionesIn: {
       /** Mecanica */
@@ -1764,6 +1973,14 @@ export interface components {
       valor_black: number;
       /** Valor Platino */
       valor_platino?: number | null;
+    };
+    /** ConfirmarIn */
+    ConfirmarIn: {
+      /**
+       * Usar Puntos
+       * @default 0
+       */
+      usar_puntos: number;
     };
     /** ConsentimientoIn */
     ConsentimientoIn: {
@@ -1990,6 +2207,49 @@ export interface components {
        */
       sucursales: string[];
     };
+    /** ItemIn */
+    ItemIn: {
+      /** Costo Pm */
+      costo_pm: number;
+      /**
+       * Descripcion
+       * @default
+       */
+      descripcion: string;
+      /**
+       * Fecha Desde
+       * Format: date
+       */
+      fecha_desde: string;
+      /**
+       * Fecha Hasta
+       * Format: date
+       */
+      fecha_hasta: string;
+      /** Stock */
+      stock: number;
+      /** Titulo */
+      titulo: string;
+    };
+    /** ItemOut */
+    ItemOut: {
+      /** Costo Pm */
+      costo_pm: number;
+      /** Descripcion */
+      descripcion: string;
+      /** Estado */
+      estado: string;
+      /** Fecha Desde */
+      fecha_desde: string;
+      /** Fecha Hasta */
+      fecha_hasta: string;
+      /** Id */
+      id: string;
+      /** Stock */
+      stock: number;
+      /** Titulo */
+      titulo: string;
+    };
     /** LoginRequest */
     LoginRequest: {
       /** Dni */
@@ -2008,6 +2268,19 @@ export interface components {
       /** Perfiles */
       perfiles: components["schemas"]["PerfilOut"][];
       tokens?: components["schemas"]["TokensResponse"] | null;
+    };
+    /** LotePorVencerOut */
+    LotePorVencerOut: {
+      /** Dias Restantes */
+      dias_restantes: number;
+      /** Id Comercio */
+      id_comercio: string;
+      /** Saldo Restante */
+      saldo_restante: number;
+      /** Tipo Moneda */
+      tipo_moneda: string;
+      /** Vence En */
+      vence_en: string;
     };
     /** Mensaje */
     Mensaje: {
@@ -2071,6 +2344,19 @@ export interface components {
       /** Titulo */
       titulo?: string | null;
     };
+    /** MovimientoOut */
+    MovimientoOut: {
+      /** Concepto */
+      concepto: string;
+      /** Creado En */
+      creado_en: string;
+      /** Id */
+      id: string;
+      /** Monto */
+      monto: number;
+      /** Tipo */
+      tipo: string;
+    };
     /** OpcionOut */
     OpcionOut: {
       /** Auto Propuesta */
@@ -2081,6 +2367,8 @@ export interface components {
       id_promocion: string;
       /** Mecanica */
       mecanica: string;
+      /** Puntos */
+      puntos: number;
       /** Titulo */
       titulo: string;
       /** Total */
@@ -2112,6 +2400,13 @@ export interface components {
        * @default CODIGO
        */
       via: string;
+    };
+    /** PasivoComercioOut */
+    PasivoComercioOut: {
+      /** Canjeados */
+      canjeados: number;
+      /** Emitidos */
+      emitidos: number;
     };
     /** PerfilOut */
     PerfilOut: {
@@ -2156,6 +2451,11 @@ export interface components {
     PinIn: {
       /** Pin */
       pin: string;
+    };
+    /** PmCirculanteOut */
+    PmCirculanteOut: {
+      /** Total */
+      total: number;
     };
     /** PromocionFeedOut */
     PromocionFeedOut: {
@@ -2532,6 +2832,10 @@ export interface components {
       nivel_aplicado: string;
       /** Numero Comprobante */
       numero_comprobante: string;
+      /** Puntos Ciudadano */
+      puntos_ciudadano: number;
+      /** Puntos Consumidos */
+      puntos_consumidos: number;
       /** Total Pagar */
       total_pagar: number;
     };
@@ -3435,7 +3739,11 @@ export interface operations {
       };
       cookie?: never;
     };
-    requestBody?: never;
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["ConfirmarIn"] | null;
+      };
+    };
     responses: {
       /** @description Successful Response */
       200: {
@@ -6022,6 +6330,375 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["FichaPublicaOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mis_billeteras_api_v1_puntos_billeteras_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BilleterasOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  catalogo_api_v1_puntos_catalogo_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ItemOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  canjear_inventario_api_v1_puntos_catalogo__id_item__canjear_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_item: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ComprobanteOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  pasivo_comercio_api_v1_puntos_comercio_pasivo_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PasivoComercioOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mis_comprobantes_api_v1_puntos_mis_comprobantes_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ComprobanteOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mis_movimientos_api_v1_puntos_movimientos_get: {
+    parameters: {
+      query?: {
+        tipo_moneda?: string;
+        id_comercio?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MovimientoOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  acreditar_pm_api_v1_puntos_municipal_acreditar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AcreditarPmIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  catalogo_municipal_api_v1_puntos_municipal_catalogo_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ItemOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  publicar_item_api_v1_puntos_municipal_catalogo_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ItemIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  pm_circulante_api_v1_puntos_municipal_pm_circulante_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PmCirculanteOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mis_lotes_por_vencer_api_v1_puntos_por_vencer_get: {
+    parameters: {
+      query?: {
+        dias?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LotePorVencerOut"][];
         };
       };
       /** @description Validation Error */

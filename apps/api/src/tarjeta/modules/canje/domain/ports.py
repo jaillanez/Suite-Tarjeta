@@ -44,5 +44,65 @@ class ReservaPromocion(Protocol):
     async def liberar(self, id_promocion: str, id_persona: str, fecha: date) -> None: ...
 
 
+class PuntosCanje(Protocol):
+    """Acredita/consume/revierte puntos de un canje (§09.4).
+
+    Lo implementa el composition root con el módulo `puntos` (independencia de módulos). `acreditar`
+    devuelve los PC otorgados; `consumir` devuelve (puntos_consumidos, pesos_cubiertos)."""
+
+    async def acreditar(
+        self,
+        *,
+        id_transaccion: str,
+        id_persona: str,
+        id_comercio: str,
+        id_promocion: str | None,
+        nivel: str,
+        monto: int,
+    ) -> int: ...
+
+    async def consumir(
+        self,
+        *,
+        id_transaccion: str,
+        id_persona: str,
+        id_comercio: str,
+        puntos_solicitados: int,
+        tope_pesos: int,
+    ) -> tuple[int, int]: ...
+
+    async def revertir(self, *, id_transaccion: str) -> None: ...
+
+
+class NoOpPuntos:
+    """Puntos desconectados: usado por los tests del canje que no ejercitan puntos (PASO 08)."""
+
+    async def acreditar(
+        self,
+        *,
+        id_transaccion: str,
+        id_persona: str,
+        id_comercio: str,
+        id_promocion: str | None,
+        nivel: str,
+        monto: int,
+    ) -> int:
+        return 0
+
+    async def consumir(
+        self,
+        *,
+        id_transaccion: str,
+        id_persona: str,
+        id_comercio: str,
+        puntos_solicitados: int,
+        tope_pesos: int,
+    ) -> tuple[int, int]:
+        return (0, 0)
+
+    async def revertir(self, *, id_transaccion: str) -> None:
+        return None
+
+
 class Outbox(Protocol):
     async def escribir(self, eventos: list[DomainEvent]) -> None: ...
