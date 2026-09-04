@@ -20,6 +20,7 @@ from tarjeta.modules.padron.api.routers import router as padron_router
 from tarjeta.orquestacion import build_dispatcher
 from tarjeta.portal_comercio import router as portal_comercio_router
 from tarjeta.portal_municipal import router as portal_router
+from tarjeta.portal_promociones import router as promociones_router
 from tarjeta.shared.api.dependencies import SessionDep
 from tarjeta.shared.api.errors import register_error_handlers
 from tarjeta.shared.infrastructure.database import get_sessionmaker
@@ -75,6 +76,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(comercios_router)
     app.include_router(portal_router)
     app.include_router(portal_comercio_router)
+    app.include_router(promociones_router)
 
     @app.middleware("http")
     async def _drenar_eventos(

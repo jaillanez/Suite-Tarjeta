@@ -423,6 +423,65 @@ da de alta a sus encargados y cajeros; el municipio lo aprueba, suspende o da de
   (`vista_recaudacion_*`, creadas por migración): si otro módulo cambia su esquema, la vista
   rompe de forma ruidosa. **Ninguna escritura cruza módulos por SQL.**
 
+## Módulo `promociones` y descubrimiento (PASO 07)
+
+El paso que le da contenido a la app: el comercio publica promociones y el vecino las encuentra
+en el buscador, el mapa y el feed. El canje viene después, pero el contador de topes se diseña acá.
+
+### Agregado `Promocion` (§07.2)
+
+- **Siete mecánicas** (porcentaje, monto fijo, 2x1, precio especial, multiplicador de puntos,
+  cupón único, combo) y **segmentación Platino/Black**: valores diferenciados por nivel
+  (`valor_platino` / `valor_black`) o exclusiva Black. Es el mecanismo de conversión fiscal.
+- **Vigencia** por fechas, días de la semana y franja horaria, **siempre en la zona horaria de
+  configuración** (incluye el borde de medianoche). **Estados** con transiciones válidas; una
+  promo `ACTIVA` **no puede editar condiciones económicas** (hay que pausar y crear otra), y los
+  topes no bajan por debajo de los usos consumidos.
+
+### Concurrencia en los topes (§07.3)
+
+- El contador se **incrementa de forma atómica** en la base con la verificación del tope en la
+  misma sentencia (`UPDATE … SET usos_totales = usos_totales + 1 WHERE … usos_totales <
+  tope_total RETURNING …`), nunca leído-y-sumado en Python. Al alcanzar el tope pasa a
+  `AGOTADA`. Test de concurrencia: N operaciones simultáneas contra un tope de M (N>M) otorgan
+  **exactamente M**. Es la base de la reserva que usará el canje.
+
+### Motor de resolución (§07.4)
+
+- Entrada: nivel del ciudadano, sucursal, momento; salida: promociones aplicables **ordenadas
+  por beneficio**. Los filtros baratos (estado, fecha, sucursal, segmento, monto, tope) van en
+  SQL con índices pensados para esta consulta (incluida la tabla puente `promocion_sucursal`);
+  el filtro fino de día/franja en hora local va en la app. Conflicto por defecto: **mayor
+  beneficio** (configurable). Prueba de rendimiento con volumen realista documentada en
+  `docs/VERSIONS.md`.
+
+### Moderación por confianza (§07.5)
+
+- Tres niveles del comercio (`NUEVO` → revisión previa; `ESTABLECIDO` → automática; `VERIFICADO`
+  → inmediata) con **promoción automática por historial**; los umbrales viven en la parametría
+  de `gobierno` y los inyecta el composition root (`promociones` no importa `gobierno`). Cola de
+  moderación municipal con vista lado a lado (creatividad vs datos), aprobar/rechazar/aprobar con
+  edición, auditado por el consumidor de eventos.
+
+### Descubrimiento (§07.6-07.7)
+
+- Buscador con **`pg_trgm` + `unaccent`** (función inmutable `f_unaccent` + índice GIN): en
+  español la búsqueda sin tildes no es opcional. Feed con las cinco secciones, incluidas las
+  **Exclusivas Black bloqueadas con el % visible** para Platino (gancho de conversión). El
+  **criterio de ordenamiento es público y auditable** (`GET /api/v1/promociones/ranking-criterio`).
+  Ficha pública `promo/[id]` con **Open Graph** (la única razón por la que `apps/web` es SSR):
+  si la promo venció o está pausada, la página lo dice.
+
+### Deuda del PASO 06 saldada (§07.0)
+
+- **A — Tiles propios del mapa:** se deja de depender del tile server público de OSM. La URL de
+  tiles sale de configuración (`NEXT_PUBLIC_TILES_URL`, por defecto `/tiles/…` estático) con
+  caché `immutable`; **no hay ningún servicio corriendo**. El procedimiento reproducible de
+  generación del extracto de San Juan está en `docs/tiles-mapa.md` (regenerar 1–2 veces al año).
+- **B — Ubicación de sucursal, una sola fuente:** la columna `geography` es la única fuente de
+  verdad; `lat`/`lon` se derivan por un **trigger** (`trg_sucursal_sync_latlon`). Actualizar la
+  ubicación por cualquier camino deja las dos representaciones coherentes (test).
+
 ## Walking skeleton (estado actual, PASO 01)
 
 La línea fina que atraviesa todas las capas está implementada y verificada:

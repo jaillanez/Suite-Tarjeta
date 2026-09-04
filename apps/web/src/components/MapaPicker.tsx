@@ -1,10 +1,15 @@
 'use client';
 
-// Mapa con pin arrastrable (Leaflet + OpenStreetMap). Leaflet es BSD-2 y OSM no cobra por
-// carga (ver docs/VERSIONS.md). Se carga solo en el cliente para no romper el SSR.
+// Mapa con pin arrastrable (Leaflet). Los tiles salen de configuración y por defecto se
+// sirven como archivo estático desde el propio hosting (§07.0.A: no dependemos del tile
+// server público de OSM). Ver docs/tiles-mapa.md. Se carga solo en el cliente (SSR seguro).
 
 import { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
+
+// URL de tiles configurable (sin recompilar). Por defecto, tiles propios estáticos.
+const TILES_URL = process.env.NEXT_PUBLIC_TILES_URL ?? '/tiles/{z}/{x}/{y}.png';
+const TILES_ATTR = process.env.NEXT_PUBLIC_TILES_ATTR ?? 'Mapa © OpenStreetMap · Municipio';
 
 interface Props {
   lat: number | null;
@@ -33,10 +38,7 @@ export function MapaPicker({ lat, lon, onChange, centro }: Props) {
         lon ?? centro?.lon ?? -68.398,
       ];
       map = L.map(nodo).setView(inicial, 14);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap',
-        maxZoom: 19,
-      }).addTo(map);
+      L.tileLayer(TILES_URL, { attribution: TILES_ATTR, maxZoom: 19 }).addTo(map);
 
       const icono = L.divIcon({
         className: '',

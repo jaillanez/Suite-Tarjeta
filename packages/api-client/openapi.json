@@ -296,6 +296,46 @@
         "title": "ComercioOut",
         "type": "object"
       },
+      "CondicionesIn": {
+        "properties": {
+          "mecanica": {
+            "title": "Mecanica",
+            "type": "string"
+          },
+          "tope_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tope Total"
+          },
+          "valor_black": {
+            "title": "Valor Black",
+            "type": "integer"
+          },
+          "valor_platino": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valor Platino"
+          }
+        },
+        "required": [
+          "mecanica",
+          "valor_black"
+        ],
+        "title": "CondicionesIn",
+        "type": "object"
+      },
       "ConsentimientoIn": {
         "properties": {
           "otorgado": {
@@ -443,6 +483,54 @@
           "motivo"
         ],
         "title": "ExcepcionRequest",
+        "type": "object"
+      },
+      "FavoritoIn": {
+        "properties": {
+          "comercio": {
+            "default": "",
+            "title": "Comercio",
+            "type": "string"
+          },
+          "rubro": {
+            "default": "",
+            "title": "Rubro",
+            "type": "string"
+          }
+        },
+        "title": "FavoritoIn",
+        "type": "object"
+      },
+      "FeedOut": {
+        "properties": {
+          "exclusivos_black": {
+            "items": {
+              "$ref": "#/components/schemas/PromocionFeedOut"
+            },
+            "title": "Exclusivos Black",
+            "type": "array"
+          },
+          "nuevos_esta_semana": {
+            "items": {
+              "$ref": "#/components/schemas/PromocionOut"
+            },
+            "title": "Nuevos Esta Semana",
+            "type": "array"
+          },
+          "vencen_pronto": {
+            "items": {
+              "$ref": "#/components/schemas/PromocionOut"
+            },
+            "title": "Vencen Pronto",
+            "type": "array"
+          }
+        },
+        "required": [
+          "nuevos_esta_semana",
+          "exclusivos_black",
+          "vencen_pronto"
+        ],
+        "title": "FeedOut",
         "type": "object"
       },
       "Ficha360Out": {
@@ -598,6 +686,66 @@
           "usuarios"
         ],
         "title": "FichaComercioOut",
+        "type": "object"
+      },
+      "FichaPublicaOut": {
+        "properties": {
+          "descripcion": {
+            "title": "Descripcion",
+            "type": "string"
+          },
+          "disponible": {
+            "title": "Disponible",
+            "type": "boolean"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "imagen_url": {
+            "title": "Imagen Url",
+            "type": "string"
+          },
+          "mecanica": {
+            "title": "Mecanica",
+            "type": "string"
+          },
+          "titulo": {
+            "title": "Titulo",
+            "type": "string"
+          },
+          "valor_black": {
+            "title": "Valor Black",
+            "type": "integer"
+          },
+          "valor_platino": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valor Platino"
+          }
+        },
+        "required": [
+          "id",
+          "titulo",
+          "descripcion",
+          "imagen_url",
+          "estado",
+          "disponible",
+          "valor_platino",
+          "valor_black",
+          "mecanica"
+        ],
+        "title": "FichaPublicaOut",
         "type": "object"
       },
       "FranjaIn": {
@@ -920,6 +1068,50 @@
         "title": "MiEstadoResponse",
         "type": "object"
       },
+      "ModeracionIn": {
+        "properties": {
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "imagen_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imagen Url"
+          },
+          "motivo": {
+            "default": "",
+            "title": "Motivo",
+            "type": "string"
+          },
+          "titulo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Titulo"
+          }
+        },
+        "title": "ModeracionIn",
+        "type": "object"
+      },
       "PerfilOut": {
         "properties": {
           "clave": {
@@ -1072,6 +1264,289 @@
           "pin"
         ],
         "title": "PinIn",
+        "type": "object"
+      },
+      "PromocionFeedOut": {
+        "properties": {
+          "bloqueada": {
+            "default": false,
+            "title": "Bloqueada",
+            "type": "boolean"
+          },
+          "descripcion": {
+            "title": "Descripcion",
+            "type": "string"
+          },
+          "destacada_municipal": {
+            "title": "Destacada Municipal",
+            "type": "boolean"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "id_comercio": {
+            "title": "Id Comercio",
+            "type": "string"
+          },
+          "imagen_url": {
+            "title": "Imagen Url",
+            "type": "string"
+          },
+          "mecanica": {
+            "title": "Mecanica",
+            "type": "string"
+          },
+          "segmento": {
+            "title": "Segmento",
+            "type": "string"
+          },
+          "titulo": {
+            "title": "Titulo",
+            "type": "string"
+          },
+          "tope_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tope Total"
+          },
+          "usos_totales": {
+            "title": "Usos Totales",
+            "type": "integer"
+          },
+          "valor_black": {
+            "title": "Valor Black",
+            "type": "integer"
+          },
+          "valor_platino": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valor Platino"
+          }
+        },
+        "required": [
+          "id",
+          "id_comercio",
+          "titulo",
+          "descripcion",
+          "mecanica",
+          "segmento",
+          "valor_platino",
+          "valor_black",
+          "estado",
+          "imagen_url",
+          "destacada_municipal",
+          "usos_totales",
+          "tope_total"
+        ],
+        "title": "PromocionFeedOut",
+        "type": "object"
+      },
+      "PromocionIn": {
+        "properties": {
+          "acumulable": {
+            "default": false,
+            "title": "Acumulable",
+            "type": "boolean"
+          },
+          "descripcion": {
+            "default": "",
+            "title": "Descripcion",
+            "type": "string"
+          },
+          "imagen_url": {
+            "default": "",
+            "title": "Imagen Url",
+            "type": "string"
+          },
+          "mecanica": {
+            "title": "Mecanica",
+            "type": "string"
+          },
+          "monto_minimo": {
+            "default": 0,
+            "title": "Monto Minimo",
+            "type": "integer"
+          },
+          "segmento": {
+            "default": "AMBOS",
+            "title": "Segmento",
+            "type": "string"
+          },
+          "sucursales": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sucursales",
+            "type": "array"
+          },
+          "titulo": {
+            "title": "Titulo",
+            "type": "string"
+          },
+          "tope_por_dia": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tope Por Dia"
+          },
+          "tope_por_usuario": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tope Por Usuario"
+          },
+          "tope_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tope Total"
+          },
+          "valor_black": {
+            "title": "Valor Black",
+            "type": "integer"
+          },
+          "valor_platino": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valor Platino"
+          },
+          "vigencia": {
+            "$ref": "#/components/schemas/VigenciaIn"
+          }
+        },
+        "required": [
+          "titulo",
+          "mecanica",
+          "valor_black",
+          "vigencia",
+          "sucursales"
+        ],
+        "title": "PromocionIn",
+        "type": "object"
+      },
+      "PromocionOut": {
+        "properties": {
+          "descripcion": {
+            "title": "Descripcion",
+            "type": "string"
+          },
+          "destacada_municipal": {
+            "title": "Destacada Municipal",
+            "type": "boolean"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "id_comercio": {
+            "title": "Id Comercio",
+            "type": "string"
+          },
+          "imagen_url": {
+            "title": "Imagen Url",
+            "type": "string"
+          },
+          "mecanica": {
+            "title": "Mecanica",
+            "type": "string"
+          },
+          "segmento": {
+            "title": "Segmento",
+            "type": "string"
+          },
+          "titulo": {
+            "title": "Titulo",
+            "type": "string"
+          },
+          "tope_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tope Total"
+          },
+          "usos_totales": {
+            "title": "Usos Totales",
+            "type": "integer"
+          },
+          "valor_black": {
+            "title": "Valor Black",
+            "type": "integer"
+          },
+          "valor_platino": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valor Platino"
+          }
+        },
+        "required": [
+          "id",
+          "id_comercio",
+          "titulo",
+          "descripcion",
+          "mecanica",
+          "segmento",
+          "valor_platino",
+          "valor_black",
+          "estado",
+          "imagen_url",
+          "destacada_municipal",
+          "usos_totales",
+          "tope_total"
+        ],
+        "title": "PromocionOut",
         "type": "object"
       },
       "RecaudacionOut": {
@@ -1697,6 +2172,54 @@
           "codigo"
         ],
         "title": "VerificarCelularRequest",
+        "type": "object"
+      },
+      "VigenciaIn": {
+        "properties": {
+          "dias_semana": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Dias Semana",
+            "type": "array"
+          },
+          "fecha_desde": {
+            "title": "Fecha Desde",
+            "type": "string"
+          },
+          "fecha_hasta": {
+            "title": "Fecha Hasta",
+            "type": "string"
+          },
+          "hora_desde": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hora Desde"
+          },
+          "hora_hasta": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hora Hasta"
+          }
+        },
+        "required": [
+          "fecha_desde",
+          "fecha_hasta"
+        ],
+        "title": "VigenciaIn",
         "type": "object"
       }
     }
@@ -5939,6 +6462,765 @@
         ]
       }
     },
+    "/api/v1/portal-comercio/moderacion/promociones": {
+      "get": {
+        "operationId": "cola_moderacion_api_v1_portal_comercio_moderacion_promociones_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PromocionOut"
+                  },
+                  "title": "Response Cola Moderacion Api V1 Portal Comercio Moderacion Promociones Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cola Moderacion",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/portal-comercio/moderacion/promociones/{id_promocion}/aprobar": {
+      "post": {
+        "operationId": "moderar_aprobar_api_v1_portal_comercio_moderacion_promociones__id_promocion__aprobar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_promocion",
+            "required": true,
+            "schema": {
+              "title": "Id Promocion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModeracionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Moderar Aprobar",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/portal-comercio/moderacion/promociones/{id_promocion}/rechazar": {
+      "post": {
+        "operationId": "moderar_rechazar_api_v1_portal_comercio_moderacion_promociones__id_promocion__rechazar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_promocion",
+            "required": true,
+            "schema": {
+              "title": "Id Promocion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModeracionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Moderar Rechazar",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/portal-comercio/promociones": {
+      "get": {
+        "operationId": "listar_promociones_api_v1_portal_comercio_promociones_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PromocionOut"
+                  },
+                  "title": "Response Listar Promociones Api V1 Portal Comercio Promociones Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listar Promociones",
+        "tags": [
+          "promociones"
+        ]
+      },
+      "post": {
+        "operationId": "crear_promocion_api_v1_portal_comercio_promociones_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromocionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crear Promocion",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/portal-comercio/promociones/{id_promocion}/condiciones": {
+      "put": {
+        "operationId": "editar_condiciones_api_v1_portal_comercio_promociones__id_promocion__condiciones_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_promocion",
+            "required": true,
+            "schema": {
+              "title": "Id Promocion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CondicionesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Editar Condiciones",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/portal-comercio/promociones/{id_promocion}/duplicar": {
+      "post": {
+        "operationId": "duplicar_promocion_api_v1_portal_comercio_promociones__id_promocion__duplicar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_promocion",
+            "required": true,
+            "schema": {
+              "title": "Id Promocion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Duplicar Promocion",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/portal-comercio/promociones/{id_promocion}/pausar": {
+      "post": {
+        "operationId": "pausar_promocion_api_v1_portal_comercio_promociones__id_promocion__pausar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_promocion",
+            "required": true,
+            "schema": {
+              "title": "Id Promocion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pausar Promocion",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/portal-comercio/promociones/{id_promocion}/publicar": {
+      "post": {
+        "operationId": "publicar_promocion_api_v1_portal_comercio_promociones__id_promocion__publicar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_promocion",
+            "required": true,
+            "schema": {
+              "title": "Id Promocion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Publicar Promocion",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/portal-comercio/promociones/{id_promocion}/reanudar": {
+      "post": {
+        "operationId": "reanudar_promocion_api_v1_portal_comercio_promociones__id_promocion__reanudar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_promocion",
+            "required": true,
+            "schema": {
+              "title": "Id Promocion",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reanudar Promocion",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
     "/api/v1/portal/agentes": {
       "post": {
         "operationId": "asignar_agente_api_v1_portal_agentes_post",
@@ -6427,6 +7709,510 @@
         "summary": "Aprobar Reclamo",
         "tags": [
           "portal-municipal"
+        ]
+      }
+    },
+    "/api/v1/promociones/buscar": {
+      "get": {
+        "operationId": "buscar_api_v1_promociones_buscar_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "texto",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Texto",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "porcentaje_min",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Porcentaje Min",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "solo_black",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Solo Black",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lon",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lon"
+            }
+          },
+          {
+            "in": "query",
+            "name": "radio_m",
+            "required": false,
+            "schema": {
+              "default": 5000,
+              "exclusiveMinimum": 0,
+              "maximum": 50000,
+              "title": "Radio M",
+              "type": "number"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PromocionOut"
+                  },
+                  "title": "Response Buscar Api V1 Promociones Buscar Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Buscar",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/promociones/favoritos": {
+      "get": {
+        "operationId": "favoritos_api_v1_promociones_favoritos_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "title": "Response Favoritos Api V1 Promociones Favoritos Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Favoritos",
+        "tags": [
+          "promociones"
+        ]
+      },
+      "post": {
+        "operationId": "marcar_favorito_api_v1_promociones_favoritos_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FavoritoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Marcar Favorito",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/promociones/feed": {
+      "get": {
+        "operationId": "feed_api_v1_promociones_feed_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Feed",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/promociones/ranking-criterio": {
+      "get": {
+        "operationId": "ranking_criterio_api_v1_promociones_ranking_criterio_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensaje"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Ranking Criterio",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/promociones/resolver": {
+      "get": {
+        "operationId": "resolver_api_v1_promociones_resolver_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id_sucursal",
+            "required": true,
+            "schema": {
+              "title": "Id Sucursal",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "monto",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Monto",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PromocionOut"
+                  },
+                  "title": "Response Resolver Api V1 Promociones Resolver Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resolver",
+        "tags": [
+          "promociones"
+        ]
+      }
+    },
+    "/api/v1/promociones/{id_promocion}": {
+      "get": {
+        "operationId": "ficha_publica_api_v1_promociones__id_promocion__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_promocion",
+            "required": true,
+            "schema": {
+              "title": "Id Promocion",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FichaPublicaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ficha Publica",
+        "tags": [
+          "promociones"
         ]
       }
     },

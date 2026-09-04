@@ -145,14 +145,14 @@ class SqlAlchemySucursalRepository:
         self._s = session
 
     def _to_model(self, x: Sucursal) -> SucursalModel:
+        # §07.0.B: `ubicacion` (geography) es la ÚNICA fuente de verdad; un trigger de base
+        # deriva lat/lon de ella. Por eso no se escriben lat/lon acá.
         return SucursalModel(
             id=x.id.value,
             id_comercio=x.id_comercio.value,
             nombre=x.nombre,
             direccion=x.direccion,
             telefono=x.telefono,
-            lat=x.lat,
-            lon=x.lon,
             ubicacion=_punto(x.lat, x.lon),
             estado=x.estado.value,
             es_casa_central=x.es_casa_central,
@@ -192,8 +192,7 @@ class SqlAlchemySucursalRepository:
         m.nombre = sucursal.nombre
         m.direccion = sucursal.direccion
         m.telefono = sucursal.telefono
-        m.lat = sucursal.lat
-        m.lon = sucursal.lon
+        # §07.0.B: solo se escribe `ubicacion`; el trigger re-deriva lat/lon.
         m.ubicacion = _punto(sucursal.lat, sucursal.lon)
         m.estado = sucursal.estado.value
         m.horarios = _horarios_a_json(sucursal.horarios)
