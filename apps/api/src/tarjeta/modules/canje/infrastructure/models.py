@@ -39,6 +39,8 @@ class TransaccionModel(Base):
     calificacion: Mapped[int | None] = mapped_column(Integer, nullable=True)
     motivo_anulacion: Mapped[str | None] = mapped_column(Text, nullable=True)
     en_disputa: Mapped[bool] = mapped_column(Boolean, default=False)
-    # §08.1: presentes y en cero hasta el módulo puntos.
+    # §09.4: puntos del canje (acreditados / usados por el ciudadano).
     puntos_ciudadano: Mapped[int] = mapped_column(Integer, default=0)
     puntos_municipio: Mapped[int] = mapped_column(Integer, default=0)
+    puntos_consumidos: Mapped[int] = mapped_column(Integer, default=0)
+    pesos_cubiertos_puntos: Mapped[int] = mapped_column(Integer, default=0)

@@ -255,8 +255,8 @@ export function createApiClient(options: ApiClientOptions) {
     resolverCanje: (body: S['ResolverIn']) => post<ResolverOut>('/api/v1/canje/resolver', body),
     iniciarCanje: (body: S['IniciarIn']) => post<TransaccionOut>('/api/v1/canje/iniciar', body),
     misPendientesCanje: () => request<TransaccionOut[]>('/api/v1/canje/mis-pendientes'),
-    confirmarCanje: (id: string) =>
-      post<TransaccionOut>(`/api/v1/canje/${encodeURIComponent(id)}/confirmar`),
+    confirmarCanje: (id: string, usar_puntos = 0) =>
+      post<TransaccionOut>(`/api/v1/canje/${encodeURIComponent(id)}/confirmar`, { usar_puntos }),
     rechazarCanje: (id: string) =>
       post<Mensaje>(`/api/v1/canje/${encodeURIComponent(id)}/rechazar`),
     pendientesComercioCanje: () =>
@@ -332,6 +332,29 @@ export function createApiClient(options: ApiClientOptions) {
       post<Mensaje>('/api/v1/promociones/favoritos', body),
     fichaPublicaPromo: (id: string) =>
       request<FichaPublicaOut>(`/api/v1/promociones/${encodeURIComponent(id)}`),
+    // --- puntos (PASO 09) ---
+    misBilleteras: () => request<BilleterasOut>('/api/v1/puntos/billeteras'),
+    movimientosPuntos: (tipo_moneda = 'PM', id_comercio?: string) => {
+      const p = new URLSearchParams({ tipo_moneda });
+      if (id_comercio) p.set('id_comercio', id_comercio);
+      return request<MovimientoPuntosOut[]>(`/api/v1/puntos/movimientos?${p.toString()}`);
+    },
+    puntosPorVencer: (dias = 30) =>
+      request<LotePorVencerOut[]>(`/api/v1/puntos/por-vencer?dias=${dias}`),
+    catalogoPuntos: () => request<ItemCatalogoOut[]>('/api/v1/puntos/catalogo'),
+    canjearInventario: (idItem: string) =>
+      post<ComprobanteInventarioOut>(
+        `/api/v1/puntos/catalogo/${encodeURIComponent(idItem)}/canjear`,
+      ),
+    misComprobantesPuntos: () =>
+      request<ComprobanteInventarioOut[]>('/api/v1/puntos/mis-comprobantes'),
+    pasivoComercioPuntos: () => request<PasivoComercioOut>('/api/v1/puntos/comercio/pasivo'),
+    // municipal
+    publicarItemCatalogo: (body: ItemCatalogoIn) =>
+      post<{ id: string }>('/api/v1/puntos/municipal/catalogo', body),
+    catalogoMunicipal: () => request<ItemCatalogoOut[]>('/api/v1/puntos/municipal/catalogo'),
+    pmCirculante: () => request<PmCirculanteOut>('/api/v1/puntos/municipal/pm-circulante'),
+    acreditarPm: (body: AcreditarPmIn) => post<Mensaje>('/api/v1/puntos/municipal/acreditar', body),
   };
 }
 
@@ -473,6 +496,18 @@ export type TokenOut = S['TokenOut'];
 export type TransaccionOut = S['TransaccionOut'];
 export type ResolverOut = S['ResolverOut'];
 export type OpcionOut = S['OpcionOut'];
+
+// puntos (PASO 09)
+export type BilleterasOut = S['BilleterasOut'];
+export type BilleteraPCOut = S['BilleteraPCOut'];
+export type MovimientoPuntosOut = S['MovimientoOut'];
+export type LotePorVencerOut = S['LotePorVencerOut'];
+export type ItemCatalogoOut = S['ItemOut'];
+export type ItemCatalogoIn = S['ItemIn'];
+export type ComprobanteInventarioOut = S['ComprobanteOut'];
+export type PasivoComercioOut = S['PasivoComercioOut'];
+export type PmCirculanteOut = S['PmCirculanteOut'];
+export type AcreditarPmIn = S['AcreditarPmIn'];
 
 export interface ResumenTurno {
   operaciones: number;

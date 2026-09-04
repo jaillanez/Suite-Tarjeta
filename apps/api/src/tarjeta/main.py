@@ -22,6 +22,7 @@ from tarjeta.portal_canje import router as canje_router
 from tarjeta.portal_comercio import router as portal_comercio_router
 from tarjeta.portal_municipal import router as portal_router
 from tarjeta.portal_promociones import router as promociones_router
+from tarjeta.portal_puntos import router as puntos_router
 from tarjeta.shared.api.dependencies import SessionDep
 from tarjeta.shared.api.errors import register_error_handlers
 from tarjeta.shared.infrastructure.database import get_sessionmaker
@@ -79,6 +80,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(portal_comercio_router)
     app.include_router(promociones_router)
     app.include_router(canje_router)
+    app.include_router(puntos_router)
 
     @app.middleware("http")
     async def _drenar_eventos(

@@ -48,6 +48,8 @@ def _to_domain(m: TransaccionModel) -> Transaccion:
         en_disputa=m.en_disputa,
         puntos_ciudadano=m.puntos_ciudadano,
         puntos_municipio=m.puntos_municipio,
+        puntos_consumidos=m.puntos_consumidos,
+        pesos_cubiertos_puntos=m.pesos_cubiertos_puntos,
     )
 
 
@@ -83,6 +85,8 @@ class SqlAlchemyTransaccionRepository:
             en_disputa=t.en_disputa,
             puntos_ciudadano=t.puntos_ciudadano,
             puntos_municipio=t.puntos_municipio,
+            puntos_consumidos=t.puntos_consumidos,
+            pesos_cubiertos_puntos=t.pesos_cubiertos_puntos,
         )
 
     async def agregar(self, t: Transaccion) -> None:
@@ -99,6 +103,9 @@ class SqlAlchemyTransaccionRepository:
         m.calificacion = t.calificacion
         m.motivo_anulacion = t.motivo_anulacion
         m.en_disputa = t.en_disputa
+        m.puntos_ciudadano = t.puntos_ciudadano
+        m.puntos_consumidos = t.puntos_consumidos
+        m.pesos_cubiertos_puntos = t.pesos_cubiertos_puntos
 
     async def obtener(self, id: EntityId) -> Transaccion | None:
         m = await self._s.get(TransaccionModel, id.value)
