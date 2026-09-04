@@ -241,6 +241,12 @@ Queda anotado (sin evidencia nueva en esta PR, riesgo bajo con la arquitectura a
 - **Actual:** hay `docker-compose.yml` y volúmenes, pero ningún procedimiento probado de
   restauración. Un backup no probado no es un backup.
 - **Acción:** hacer la prueba de restauración completa y dejar `docs/restauracion-backup.md`.
+- **Resuelto:** [`docs/restauracion-backup.md`](restauracion-backup.md) con el procedimiento y la
+  **prueba real** ejecutada el 2026-09-04: `pg_dump -Fc` → restore en una base separada →
+  verificación de conteos (46 tablas; persona=1110; auditoría=18978), versión de esquema
+  (`e1f3b9c7a840`) e **inmutabilidad efectiva** (UPDATE de `tarjeta_app` sobre `registro_auditoria`
+  ⇒ *permission denied*). Queda como decisión humana repetirlo contra la infraestructura real de
+  producción y respaldar la **clave de cifrado de campos** (sin ella el DNI/CUIL es irrecuperable).
 
 ---
 
