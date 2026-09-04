@@ -179,6 +179,14 @@ Queda anotado (sin evidencia nueva en esta PR, riesgo bajo con la arquitectura a
 - **Esperado:** distinguir 401 (sesión vencida) / 403 / 404 / 409-422 (negocio) / 500 / red. Los
   errores durante la confirmación de canje **no se pueden ignorar en silencio**.
 - **Falta test:** cada código produce el estado de UI correcto.
+- **Resuelto (web):** `apps/web/src/lib/errores.ts` clasifica por código (`clasificarError`,
+  `mensajeDeError`, `esSesionVencida`). Solo el 401 expulsa al login; el resto muestra su mensaje
+  con opción de reintentar. Aplicado en `perfil`, `mi-estado` (además el "actualizar" ya no
+  disfraza un 500 de límite diario), `seleccionar-perfil` y `registro` (verificación de celular).
+  Tests: `errores.test.ts` (clasificador por código) y `perfil/page.test.tsx` (401 ⇒ login;
+  500 ⇒ error + reintentar, sin redirigir).
+- **Pendiente (móvil):** mismo helper para `apps/mobile` y, en particular, que el error durante la
+  **confirmación de canje** se muestre y no se ignore (PR siguiente del bloque).
 
 ---
 

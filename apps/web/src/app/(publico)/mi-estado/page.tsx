@@ -14,13 +14,9 @@ import {
   TarjetaCredencial,
 } from '@tarjeta/ui';
 import { api } from '@/lib/api';
+import { esSesionVencida, mensajeDeError } from '@/lib/errores';
 
 const municipio = process.env.NEXT_PUBLIC_MUNICIPIO_NOMBRE ?? 'Municipio';
-
-// Placeholder: el módulo `promociones` no existe todavía (se conecta después).
-function beneficiosBloqueados(): number {
-  return 12;
-}
 
 export default function MiEstadoPage() {
   const router = useRouter();
@@ -28,15 +24,18 @@ export default function MiEstadoPage() {
   const [estado, setEstado] = useState<EstadoCiudadano | null>(null);
   const [padron, setPadron] = useState<EstadoPadron | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
+    setError(null);
     try {
       const [m, e, p] = await Promise.all([api.me(), api.miEstado(), api.estadoPadron()]);
       setMe(m);
       setEstado(e);
       setPadron(p);
-    } catch {
-      router.push('/login');
+    } catch (err) {
+      if (esSesionVencida(err)) router.push('/login');
+      else setError(mensajeDeError(err));
     }
   }, [router]);
 
@@ -50,14 +49,26 @@ export default function MiEstadoPage() {
       await api.actualizarEstado();
       await cargar();
       setMsg('Estado actualizado.');
-    } catch {
-      setMsg('Alcanzaste el máximo de actualizaciones por hoy.');
+    } catch (err) {
+      // El límite diario (429) tiene su propio mensaje; un 500/red no debe disfrazarse de límite.
+      setMsg(mensajeDeError(err));
     }
   }
 
   async function bloquear(): Promise<void> {
     await api.bloquearTarjeta();
     await cargar();
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-md space-y-3" role="alert">
+        <p className="text-sm text-destructive">{error}</p>
+        <Button variant="outline" onClick={() => void cargar()}>
+          Reintentar
+        </Button>
+      </div>
+    );
   }
 
   if (!me || !estado) {
@@ -88,10 +99,7 @@ export default function MiEstadoPage() {
             <p>Estás al día con el municipio. Por eso accedés a los mejores beneficios.</p>
           ) : (
             <>
-              <p>
-                Si estás al día con el municipio pasás a Black y accedés a{' '}
-                {beneficiosBloqueados()} beneficios más.
-              </p>
+              <p>Si estás al día con el municipio pasás a Black y accedés a más beneficios.</p>
               <button type="button" className="block text-left text-primary underline">
                 Ir al portal de pagos
               </button>
