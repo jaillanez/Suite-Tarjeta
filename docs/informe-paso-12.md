@@ -3,9 +3,9 @@
 PASO sin funcionalidad nueva: corregir desvíos, quitar integraciones falsas y documentar el
 estado real. Todo entró en PRs chicos (uno por bloque), en orden de prioridad, con CI verde.
 
-**Estado:** completado salvo **P1-A** (sesión web con cookie HttpOnly), que se deja como
-**decisión humana** por su alcance transversal (ver al final). El informe de auditoría vivo está en
-[`docs/auditoria-12.md`](auditoria-12.md); la matriz funcional en
+**Estado:** completado. Todos los hallazgos P0–P3 y §12.6 quedaron corregidos o documentados, incluida
+**P1-A** (sesión web con cookie HttpOnly), que se implementó con el enfoque aprobado por el usuario.
+El informe de auditoría vivo está en [`docs/auditoria-12.md`](auditoria-12.md); la matriz funcional en
 [`docs/estado-funcional.md`](estado-funcional.md).
 
 ## PRs del PASO 12
@@ -24,6 +24,9 @@ estado real. Todo entró en PRs chicos (uno por bloque), en orden de prioridad, 
 | #26 | P2-B (cierre): placeholders honestos |
 | #27 | P1-B: almacén seguro para credenciales móviles (seam + migración + tests) |
 | #28 | 12.6-C: procedimiento de restauración probado |
+| #29 | Informe de cierre |
+| #30 | P1-A (backend + cliente): refresh en cookie HttpOnly |
+| #31 | P1-A (web): access en memoria, refresh silencioso, middleware sin cookie manipulable |
 
 ## Hallazgos corregidos (cada uno con test)
 
@@ -55,6 +58,11 @@ estado real. Todo entró en PRs chicos (uno por bloque), en orden de prioridad, 
   plugin nativo de Keychain/Keystore queda como decisión — ver abajo.)*
 - **12.6-C — restore probado.** Prueba real de `pg_dump`/`pg_restore` con verificación de conteos,
   versión de esquema e inmutabilidad efectiva. Doc: [`docs/restauracion-backup.md`](restauracion-backup.md).
+- **P1-A — sesión web sin `localStorage`.** El refresh pasa a cookie `HttpOnly; Secure;
+  SameSite=Strict` (no robable por XSS ni devuelta al cuerpo); el access vive en memoria y se
+  recupera con refresh silencioso; el middleware ya no confía en una cookie manipulable. CSRF cubierto
+  por `SameSite=Strict` + `Authorization: Bearer` en el resto. Tests: cookie flow del backend,
+  cliente modo cookie, `session.test.ts` y `middleware.test.ts` en web.
 
 ## Decisiones de negocio aplicadas (v2.3)
 
@@ -72,29 +80,26 @@ estado real. Todo entró en PRs chicos (uno por bloque), en orden de prioridad, 
 
 ## Resultados de tests (exactos, en `main`)
 
-- **Backend:** ruff ✅ · ruff format ✅ · mypy ✅ · import-linter 3/3 ✅ · **pytest 294 passed**.
-- **Frontend:** web **37** · móvil **20** · api-client **5** (vitest). typecheck/lint/build ✅ en
+- **Backend:** ruff ✅ · ruff format ✅ · mypy ✅ · import-linter 3/3 ✅ · **pytest 297 passed**.
+- **Frontend:** web **41** · móvil **20** · api-client **7** (vitest). typecheck/lint/build ✅ en
   web y móvil. Cliente OpenAPI regenerado y determinista (freshness gate).
 - **Restore:** restauración sin errores; 46 tablas y conteos idénticos; `alembic_version`
   `e1f3b9c7a840`; `UPDATE` de `tarjeta_app` sobre `registro_auditoria` ⇒ *permission denied*.
 
 ## Pendientes / riesgos que requieren decisión humana
 
-1. **P1-A — sesión web con cookie HttpOnly (seguridad).** Hoy el refresh vive en `localStorage`
-   (robable por XSS). Llevarlo a cookie `HttpOnly`/`Secure`/`SameSite` es un cambio **transversal**
-   (backend: login/mfa/refresh/logout/activar-perfil; cliente; web: `api.ts`/`session.ts`/
-   middleware) con **decisiones de diseño**: (a) cookie HttpOnly para web vs. cuerpo para móvil
-   (que usa almacén seguro nativo); (b) estrategia CSRF (SameSite=Strict en la cookie de refresh, o
-   token anti-CSRF); (c) refresh silencioso al cargar la web. Por su alcance se dejó como decisión
-   (evitar refactor de medio módulo sin acuerdo). **Recomendación:** cookie de refresh
-   `HttpOnly; Secure; SameSite=Strict`, access token en memoria (no `localStorage`), refresh
-   silencioso al montar; el resto de endpoints siguen con `Authorization: Bearer` (inmunes a CSRF).
-2. **Plugin nativo de almacén seguro (P1-B).** El seam y la migración están listos y testeados;
+*(P1-A quedó implementado; ya no está en esta lista.)*
+
+1. **Plugin nativo de almacén seguro (P1-B).** El seam y la migración están listos y testeados;
    falta elegir/cablear el plugin de Keychain/Keystore (Capacitor 8) en el bootstrap nativo.
-3. **Proveedores reales** (padrón, notificaciones, imágenes IA): sin elegir; las guardas de prod
+2. **Proveedores reales** (padrón, notificaciones, imágenes IA): sin elegir; las guardas de prod
    bloquean el arranque hasta configurarlos.
-4. **Canal de notificaciones:** no existe (ni push/SMS/email real). Define qué se puede prometer al
+3. **Canal de notificaciones:** no existe (ni push/SMS/email real). Define qué se puede prometer al
    lanzar. Detalle en `estado-funcional.md`.
-5. **Tiles del mapa:** bloqueante de lanzamiento sin responsable.
-6. **Backup en producción:** repetir la prueba contra la infraestructura real y, sobre todo,
+4. **Tiles del mapa:** bloqueante de lanzamiento sin responsable.
+5. **Backup en producción:** repetir la prueba contra la infraestructura real y, sobre todo,
    respaldar la **clave de cifrado de campos** (sin ella el DNI/CUIL es irrecuperable).
+6. **Topología de despliegue web/API (P1-A).** La cookie de refresh es `Secure` fuera de `dev` y
+   `SameSite=Strict`. Si la web y la API quedan en dominios distintos, definir `Domain`/proxy para
+   que la cookie se comparta (y que el middleware la vea). Opcional a futuro: token anti-CSRF además
+   de `SameSite`.

@@ -1,9 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 // Protección real de rutas de comercio y municipio (reemplaza el placeholder del PASO 02).
-// La cookie solo indica presencia de sesión; la validez del token la valida la API.
+// §12 P1-A: se mira la presencia de la cookie HttpOnly de refresh (que el middleware sí puede leer
+// en el servidor y JS no puede falsificar), no una cookie manipulable. Es comodidad, no seguridad:
+// la validez del token la valida siempre la API.
 export function middleware(req: NextRequest) {
-  const logueado = req.cookies.get('tarjeta_sesion')?.value === '1';
+  const logueado = Boolean(req.cookies.get('tarjeta_refresh')?.value);
   if (!logueado) {
     const url = req.nextUrl.clone();
     url.pathname = '/login';

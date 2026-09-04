@@ -84,6 +84,17 @@ Los cinco necesitan test por cada camino (criterio de aceptación explícito).
   prueba de sesión; revisar CSRF; mantener rotación; migrar/limpiar lo guardado.
 - **Riesgo:** robo de refresh por XSS.
 - **Falta test:** login no deja el refresh accesible a JS; middleware no confía en cookie falsificable.
+- **Resuelto (decisión aprobada por el usuario).** Backend + cliente (PR #30) y web:
+  - El refresh viaja en cookie `HttpOnly; Secure; SameSite=Strict` (la web pide "modo cookie" con
+    header `X-Auth-Mode: cookie`); ya **no** se devuelve al cuerpo ni toca `localStorage`.
+  - El access token es de vida corta y vive **en memoria**; al recargar se recupera con un
+    **refresh silencioso** contra la cookie (coalescido). Rotación intacta.
+  - **CSRF:** el resto de endpoints usan `Authorization: Bearer` (inmunes); `SameSite=Strict`
+    cubre `/auth/refresh`. Sin token anti-CSRF extra (se dejó anotado como opción a futuro).
+  - El middleware ya no confía en una cookie manipulable: mira la presencia de la cookie HttpOnly
+    de refresh (comodidad; la API valida siempre).
+  - Tests: backend cookie flow (`test_identidad_api.py`), cliente modo cookie (`index.test.ts`),
+    web `session.test.ts` (refresh silencioso, coalescing, fallo 401) y `middleware.test.ts`.
 
 ### P1-B · Tokens móviles en `Preferences`
 - **Archivo:** `apps/mobile/src/lib/session.ts:10-11` (access+refresh en `@capacitor/preferences`).
@@ -279,7 +290,7 @@ Queda anotado (sin evidencia nueva en esta PR, riesgo bajo con la arquitectura a
 - **Almacén seguro móvil (P1-B):** el seam y la migración están listos y testeados; falta elegir y
   cablear el plugin nativo de Keychain/Keystore (compatible con Capacitor 8) en el bootstrap. Hasta
   entonces, en dev web el fallback usa Preferences.
-- **Sesión web con cookie HttpOnly (P1-A):** cambio transversal (backend + cliente + web) con
-  decisiones de diseño (cookie HttpOnly/SameSite vs. cuerpo, estrategia CSRF, refresh silencioso al
-  cargar). Ver el informe del PASO 12: se dejó como decisión por su alcance (evitar refactor de
-  medio módulo sin acuerdo).
+- **Sesión web con cookie HttpOnly (P1-A):** *implementado* (PR #30 backend/cliente + PR web). Queda
+  una decisión de despliegue: si la web y la API van en dominios distintos, definir `Domain`/proxy
+  para compartir la cookie de refresh (`Secure` fuera de dev, `SameSite=Strict`). Opción a futuro:
+  token anti-CSRF además de `SameSite`.

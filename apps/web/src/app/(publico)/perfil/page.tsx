@@ -6,7 +6,7 @@ import type { Dispositivo, PersonaMe } from '@tarjeta/api-client';
 import { Button, Card, CardContent, CardHeader, CardTitle, NivelBadge } from '@tarjeta/ui';
 import { api } from '@/lib/api';
 import { esSesionVencida, mensajeDeError } from '@/lib/errores';
-import { getRefreshToken, limpiarSesion } from '@/lib/session';
+import { limpiarAccessToken } from '@/lib/session';
 
 export default function PerfilPage() {
   const router = useRouter();
@@ -43,15 +43,12 @@ export default function PerfilPage() {
   }
 
   async function salir(): Promise<void> {
-    const refresh = getRefreshToken();
-    if (refresh) {
-      try {
-        await api.logout(refresh);
-      } catch {
-        // ignore
-      }
+    try {
+      await api.logout(); // el refresh viaja en la cookie HttpOnly; el server la revoca y la borra
+    } catch {
+      // ignore
     }
-    limpiarSesion();
+    limpiarAccessToken();
     router.push('/login');
   }
 

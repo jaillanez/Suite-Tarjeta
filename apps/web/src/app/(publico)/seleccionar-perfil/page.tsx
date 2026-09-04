@@ -6,7 +6,7 @@ import type { Perfil } from '@tarjeta/api-client';
 import { Button } from '@tarjeta/ui';
 import { api } from '@/lib/api';
 import { esSesionVencida, mensajeDeError } from '@/lib/errores';
-import { guardarSesion } from '@/lib/session';
+import { guardarAccessToken } from '@/lib/session';
 
 const DESTINO: Record<string, string> = {
   CIUDADANO: '/beneficios',
@@ -33,7 +33,7 @@ export default function SeleccionarPerfilPage() {
     setError(null);
     try {
       const tokens = await api.activarPerfil(clave);
-      guardarSesion(tokens.access_token, tokens.refresh_token);
+      guardarAccessToken(tokens.access_token);
       router.push(DESTINO[tipo] ?? '/');
     } catch (err) {
       if (esSesionVencida(err)) router.push('/login');
