@@ -18,9 +18,12 @@ from tarjeta.modules.comercios.api.deps import ActorComercio, requiere_comercio
 from tarjeta.modules.comercios.domain.roles import Permiso as PermisoComercio
 from tarjeta.modules.gobierno.api.deps import Actor, requiere
 from tarjeta.modules.gobierno.domain.roles import Permiso
+from tarjeta.modules.grupo.domain.tipos import EstadoMiembro, ModoBilletera
+from tarjeta.modules.grupo.infrastructure.repositories import SqlAlchemyGrupoRepository
 from tarjeta.modules.puntos.application.consulta import ConsultaBilleteras
 from tarjeta.modules.puntos.application.inventario import CanjearInventario, GestionInventario
 from tarjeta.modules.puntos.application.municipales import AcreditarPuntosMunicipales
+from tarjeta.modules.puntos.domain.moneda import TipoTitular
 from tarjeta.modules.puntos.infrastructure.composition import construir_puertos_puntos
 from tarjeta.shared.api.auth import SesionDep
 from tarjeta.shared.api.dependencies import SessionDep
@@ -30,6 +33,18 @@ router = APIRouter(prefix="/api/v1/puntos", tags=["puntos"])
 
 def _puertos(session: SessionDep):  # type: ignore[no-untyped-def]
     return construir_puertos_puntos(session)
+
+
+async def _owner(session: SessionDep, id_persona: str) -> tuple[TipoTitular, str]:
+    """En modo COMÚN la billetera visible es el pozo del grupo; si no, la personal (§10.5)."""
+    grupos = SqlAlchemyGrupoRepository(session)
+    miembro = await grupos.miembro_de(id_persona)
+    if miembro is None or miembro.estado is not EstadoMiembro.ACTIVO:
+        return (TipoTitular.PERSONA, id_persona)
+    grupo = await grupos.obtener(miembro.id_grupo)
+    if grupo is None or not grupo.activo or grupo.modo_billetera is not ModoBilletera.COMUN:
+        return (TipoTitular.PERSONA, id_persona)
+    return (TipoTitular.GRUPO, str(grupo.id))
 
 
 # ------------------------------------------------------------------ schemas
@@ -114,7 +129,8 @@ class Mensaje(BaseModel):
 
 @router.get("/billeteras", response_model=BilleterasOut)
 async def mis_billeteras(sesion: SesionDep, session: SessionDep) -> BilleterasOut:
-    r = await ConsultaBilleteras(_puertos(session)).resumen(sesion.id_persona)
+    tipo_titular, id_titular = await _owner(session, sesion.id_persona)
+    r = await ConsultaBilleteras(_puertos(session)).resumen(id_titular, tipo_titular=tipo_titular)
     return BilleterasOut(
         pc=[BilleteraPCOut(id_comercio=s.id_comercio, saldo=s.saldo) for s in r.pc], pm=r.pm
     )
@@ -127,8 +143,9 @@ async def mis_movimientos(
     tipo_moneda: str = "PM",
     id_comercio: str | None = None,
 ) -> list[MovimientoOut]:
+    tipo_titular, id_titular = await _owner(session, sesion.id_persona)
     movs = await ConsultaBilleteras(_puertos(session)).movimientos(
-        sesion.id_persona, tipo_moneda=tipo_moneda, id_comercio=id_comercio
+        id_titular, tipo_moneda=tipo_moneda, id_comercio=id_comercio, tipo_titular=tipo_titular
     )
     return [
         MovimientoOut(
@@ -146,7 +163,10 @@ async def mis_movimientos(
 async def mis_lotes_por_vencer(
     sesion: SesionDep, session: SessionDep, dias: int = 30
 ) -> list[LotePorVencerOut]:
-    lotes = await ConsultaBilleteras(_puertos(session)).por_vencer(sesion.id_persona, dias=dias)
+    tipo_titular, id_titular = await _owner(session, sesion.id_persona)
+    lotes = await ConsultaBilleteras(_puertos(session)).por_vencer(
+        id_titular, dias=dias, tipo_titular=tipo_titular
+    )
     return [
         LotePorVencerOut(
             tipo_moneda=x.tipo_moneda,
@@ -169,8 +189,12 @@ async def catalogo(sesion: SesionDep, session: SessionDep) -> list[ItemOut]:
 async def canjear_inventario(
     id_item: str, sesion: SesionDep, session: SessionDep
 ) -> ComprobanteOut:
+    tipo_titular, id_titular = await _owner(session, sesion.id_persona)
     c = await CanjearInventario(_puertos(session)).ejecutar(
-        id_persona=sesion.id_persona, id_item=id_item
+        id_persona=sesion.id_persona,
+        id_item=id_item,
+        tipo_titular=tipo_titular,
+        id_titular=id_titular,
     )
     return ComprobanteOut(
         id=str(c.id),

@@ -12,14 +12,14 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tarjeta.config import Settings
+from tarjeta.herencia import recalcular_miembros, recalcular_persona
 from tarjeta.modules.ciudadania.application import handlers as ciudadania
 from tarjeta.modules.ciudadania.infrastructure.repositories import (
-    SqlAlchemyExcepcionRepository,
-    SqlAlchemyHistorialNivelRepository,
     SqlAlchemyPerfilCiudadanoRepository,
 )
 from tarjeta.modules.gobierno.application.auditoria_consumer import consumir_evento
 from tarjeta.modules.gobierno.application.sync_agente import desactivar_agente
+from tarjeta.modules.grupo.infrastructure.repositories import SqlAlchemyGrupoRepository
 from tarjeta.modules.padron.application import consultar as padron
 from tarjeta.modules.padron.infrastructure.composition import construir_cliente
 from tarjeta.modules.padron.infrastructure.repositories import SqlAlchemyEstadoPadronRepository
@@ -59,14 +59,46 @@ def build_dispatcher(settings: Settings) -> EventDispatcher:
         )
 
     async def on_estado_padron_actualizado(payload: dict[str, Any], session: AsyncSession) -> None:
-        await ciudadania.recalcular_nivel(
-            perfiles=SqlAlchemyPerfilCiudadanoRepository(session),
-            historial=SqlAlchemyHistorialNivelRepository(session),
-            excepciones=SqlAlchemyExcepcionRepository(session),
-            outbox=SqlAlchemyOutbox(session),
-            id_persona=EntityId.from_str(str(payload["id_persona"])),
-            al_dia=bool(payload["al_dia"]),
+        # Recalcula el nivel propio considerando la herencia del grupo (§10.4). Si es titular y su
+        # nivel cambia, se emite NivelCambiado y el handler de abajo propaga a los miembros.
+        await recalcular_persona(
+            session,
+            settings,
+            str(payload["id_persona"]),
             motivo="cálculo automático",
+            al_dia=bool(payload["al_dia"]),
+        )
+
+    async def on_nivel_cambiado(payload: dict[str, Any], session: AsyncSession) -> None:
+        # Si quien cambió de nivel es titular de un grupo activo, se recalculan sus miembros.
+        grupo = await SqlAlchemyGrupoRepository(session).por_titular(str(payload["id_persona"]))
+        if grupo is not None:
+            await recalcular_miembros(
+                session, settings, str(grupo.id), motivo="herencia: cambió el titular"
+            )
+
+    async def on_miembro_agregado(payload: dict[str, Any], session: AsyncSession) -> None:
+        await recalcular_persona(
+            session, settings, str(payload["id_persona"]), motivo="ingreso a grupo"
+        )
+
+    async def on_miembro_salio(payload: dict[str, Any], session: AsyncSession) -> None:
+        await recalcular_persona(
+            session, settings, str(payload["id_persona"]), motivo="salida de grupo"
+        )
+
+    async def on_grupo_disuelto(payload: dict[str, Any], session: AsyncSession) -> None:
+        for id_persona in [*payload.get("id_miembros", []), payload["id_titular"]]:
+            await recalcular_persona(
+                session, settings, str(id_persona), motivo="disolución del grupo"
+            )
+
+    async def on_titular_sucedido(payload: dict[str, Any], session: AsyncSession) -> None:
+        await recalcular_persona(
+            session, settings, str(payload["id_titular_anterior"]), motivo="sucesión de titular"
+        )
+        await recalcular_miembros(
+            session, settings, str(payload["id_grupo"]), motivo="sucesión de titular"
         )
 
     async def on_estado_padron_para_puntos(payload: dict[str, Any], session: AsyncSession) -> None:
@@ -79,6 +111,7 @@ def build_dispatcher(settings: Settings) -> EventDispatcher:
             base_por_cien=settings.puntos_base_por_cien,
             valor_punto=settings.puntos_valor_peso,
             pm_al_dia=settings.pm_al_dia,
+            generacion_pm_activa=settings.ff_generacion_pm,
         )
         periodo = datetime.now(UTC).strftime("%Y-%m")
         await AcreditarPuntosMunicipales(construir_puertos_puntos(session, cfg)).acreditar_al_dia(
@@ -102,4 +135,10 @@ def build_dispatcher(settings: Settings) -> EventDispatcher:
     dispatcher.subscribe("SolicitudActualizarEstado", on_solicitud_actualizar)
     # §06.0.B: revocar el perfil municipal en identidad desactiva al agente en gobierno.
     dispatcher.subscribe("PerfilMunicipalRevocado", desactivar_agente)
+    # §10.4: herencia de nivel del grupo familiar, recalculada por evento.
+    dispatcher.subscribe("NivelCambiado", on_nivel_cambiado)
+    dispatcher.subscribe("MiembroAgregado", on_miembro_agregado)
+    dispatcher.subscribe("MiembroSalio", on_miembro_salio)
+    dispatcher.subscribe("GrupoDisuelto", on_grupo_disuelto)
+    dispatcher.subscribe("TitularSucedido", on_titular_sucedido)
     return dispatcher

@@ -34,13 +34,17 @@ async def recalcular_nivel(
     id_persona: EntityId,
     al_dia: bool,
     motivo: str,
+    hereda_black: bool = False,
 ) -> None:
-    """Consume EstadoPadronActualizado: recalcula el nivel del perfil."""
+    """Recalcula el nivel del perfil. `hereda_black` lo aporta el composition root según el
+    grupo familiar (§10.4); por defecto False conserva el comportamiento sin grupo."""
     perfil = await perfiles.obtener(id_persona)
     if perfil is None:
         return
     hay_exc = await excepciones.hay_black_vigente(id_persona, datetime.now(UTC))
-    hist = perfil.recalcular(al_dia=al_dia, excepcion_black_vigente=hay_exc, motivo=motivo)
+    hist = perfil.recalcular(
+        al_dia=al_dia, excepcion_black_vigente=hay_exc, hereda_black=hereda_black, motivo=motivo
+    )
     await perfiles.guardar(perfil)
     if hist is not None:
         await historial.agregar(hist)

@@ -38,18 +38,23 @@ class OrigenPuntos(StrEnum):
 # (Postgres trata cada NULL como distinto en un índice único).
 COMERCIO_MUNICIPAL = ""
 
-# Única mecánica que otorga puntos al comercio; las demás dan descuento en pesos (§09.4).
+# Mecánica cuyo "valor" es el reparto en puntos que el comercio define en la promoción; las demás
+# dan descuento en pesos (§09.4). El valor se interpreta como puntos por cada 100 pesos de compra.
 MULTIPLICADOR_PUNTOS = "MULTIPLICADOR_PUNTOS"
 
 
 def puntos_comercio_por_canje(
-    mecanica: str, valor: int, monto: int, *, base_por_cien: int = 1
+    mecanica: str, valor: int, monto: int, *, base_por_cien: int = 0
 ) -> int:
-    """PC que acredita un canje según la mecánica de la promoción.
+    """PC que acredita un canje (§10.0.A).
 
-    Base: `base_por_cien` puntos por cada 100 pesos de `monto`, escalada por el multiplicador
-    (`valor` viene x100: 200 = 2x). Solo `MULTIPLICADOR_PUNTOS` otorga puntos. Enteros (trunca).
+    Los PC salen **únicamente del reparto configurado en la promoción**: la mecánica
+    `MULTIPLICADOR_PUNTOS` lleva `valor` = puntos por cada 100 pesos de compra. `base_por_cien` es
+    una acreditación automática opcional (por defecto 0: el comercio no paga puntos que no eligió).
+    Enteros (trunca).
     """
-    if mecanica != MULTIPLICADOR_PUNTOS or monto <= 0 or valor <= 0:
+    if monto <= 0:
         return 0
-    return (monto * base_por_cien * valor) // (100 * 100)
+    base = (monto * base_por_cien) // 100
+    reparto = (monto * valor) // 100 if (mecanica == MULTIPLICADOR_PUNTOS and valor > 0) else 0
+    return base + reparto

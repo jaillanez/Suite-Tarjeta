@@ -186,6 +186,26 @@ class SqlAlchemyTransaccionRepository:
             por_promocion={str(pid): int(desc) for pid, desc in por_promo},
         )
 
+    async def resumen_persona_desde(
+        self, id_persona: str, desde: datetime
+    ) -> tuple[int, int, int, int, int]:
+        fila = (
+            await self._s.execute(
+                select(
+                    func.count(),
+                    func.coalesce(func.sum(TransaccionModel.monto_bruto), 0),
+                    func.coalesce(func.sum(TransaccionModel.descuento), 0),
+                    func.coalesce(func.sum(TransaccionModel.puntos_ciudadano), 0),
+                    func.coalesce(func.sum(TransaccionModel.puntos_consumidos), 0),
+                ).where(
+                    TransaccionModel.id_persona == id_persona,
+                    TransaccionModel.estado == EstadoTransaccion.APLICADA.value,
+                    TransaccionModel.confirmada_en >= desde,
+                )
+            )
+        ).one()
+        return (int(fila[0]), int(fila[1]), int(fila[2]), int(fila[3]), int(fila[4]))
+
 
 class SqlAlchemyComprobanteSecuencia:
     def __init__(self, session: AsyncSession) -> None:

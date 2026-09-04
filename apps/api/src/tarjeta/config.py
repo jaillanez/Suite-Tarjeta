@@ -101,10 +101,11 @@ class Settings(BaseSettings):
 
     # Parámetros del programa (§13 de la especificación)
     puntos_vencimiento_meses: int = 24
-    # Puntos (PASO 09): acumulación base y valor del punto al pagar (ordena la caja, §09.4).
-    puntos_base_por_cien: int = 1  # puntos base por cada 100 pesos, antes del multiplicador
+    # Puntos (PASO 09/10): los PC salen SOLO del reparto de la promoción (§10.0.A), por eso la
+    # acreditación automática base arranca en cero.
+    puntos_base_por_cien: int = 0  # acreditación automática por cada 100 pesos (0 = desactivada)
     puntos_valor_peso: int = 1  # pesos que vale un punto al pagar con puntos
-    pm_al_dia: int = 50  # PM por estar al día (regla activa, §09.5)
+    pm_al_dia: int = 50  # PM por estar al día (regla, §09.5)
     grupo_max_miembros: int = 6
     grupo_cooldown_dias: int = 90
     grupo_max_altas_anuales: int = 4
@@ -116,6 +117,9 @@ class Settings(BaseSettings):
 
     # Feature flags
     ff_canje_contra_tasas: bool = False  # requiere ordenanza, apagado
+    # §10.0.B: la generación de PM queda apagada hasta que el municipio cargue inventario real
+    # (juntar puntos contra un catálogo vacío frustra más que no tenerlos).
+    ff_generacion_pm: bool = False
     ff_generacion_ia: bool = True
     ff_publicacion_redes: bool = True
     # §05.0.B: puerta de canje explícita. Con la auto-verificación actual todos quedan

@@ -48,7 +48,12 @@ class AcreditarPuntosMunicipales:
     # --- variantes sin commit (dispatcher de eventos) -----------------------
 
     async def acreditar_al_dia(self, *, id_persona: str, periodo: str) -> int:
-        """Regla activa: PM por estar al día. Idempotente por período (año-mes)."""
+        """PM por estar al día. Idempotente por período (año-mes).
+
+        §10.0.B: no genera nada mientras la feature flag de generación de PM esté apagada (no se
+        promete algo que el municipio todavía no puede cumplir sin inventario)."""
+        if not self.p.config.generacion_pm_activa:
+            return 0
         return await self._acreditar(
             id_persona=id_persona,
             puntos=self.p.config.pm_al_dia,

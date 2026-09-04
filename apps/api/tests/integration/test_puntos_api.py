@@ -211,7 +211,7 @@ async def test_anulacion_revierte_con_compensatorio_sin_editar_original(
             id_titular=persona,
             id_comercio=comercio,
             mecanica="MULTIPLICADOR_PUNTOS",
-            valor=200,
+            valor=2,
             monto=1000,
         )
         await s.commit()
@@ -238,7 +238,7 @@ async def test_anulacion_con_puntos_ya_gastados_deja_saldo_negativo(
             id_titular=persona,
             id_comercio=comercio,
             mecanica="MULTIPLICADOR_PUNTOS",
-            valor=200,
+            valor=2,
             monto=1000,
         )
         await s.commit()
@@ -339,7 +339,7 @@ async def test_reintento_no_acredita_dos_veces(sm: async_sessionmaker) -> None:
                 id_titular=persona,
                 id_comercio=comercio,
                 mecanica="MULTIPLICADOR_PUNTOS",
-                valor=200,
+                valor=2,
                 monto=1000,
             )
             await s.commit()
@@ -471,21 +471,38 @@ async def test_inventario_sin_saldo_no_entrega(sm: async_sessionmaker) -> None:
 # --------------------------------------------------------------- PM por estar al día
 
 
+def _p_pm(session):  # type: ignore[no-untyped-def]
+    # Puertos con la generación de PM encendida (§10.0.B: apagada por defecto).
+    from tarjeta.modules.puntos.application.deps import PuntosConfig
+
+    return construir_puertos_puntos(session, PuntosConfig(generacion_pm_activa=True))
+
+
 async def test_pm_por_estar_al_dia_es_idempotente_por_periodo(sm: async_sessionmaker) -> None:
     persona = str(uuid.uuid4())
     async with sm() as s:
-        n1 = await AcreditarPuntosMunicipales(_p(s)).por_estar_al_dia(
+        n1 = await AcreditarPuntosMunicipales(_p_pm(s)).por_estar_al_dia(
             id_persona=persona, periodo="2026-09"
         )
     async with sm() as s:
-        n2 = await AcreditarPuntosMunicipales(_p(s)).por_estar_al_dia(
+        n2 = await AcreditarPuntosMunicipales(_p_pm(s)).por_estar_al_dia(
             id_persona=persona, periodo="2026-09"
         )
     async with sm() as s:
-        n3 = await AcreditarPuntosMunicipales(_p(s)).por_estar_al_dia(
+        n3 = await AcreditarPuntosMunicipales(_p_pm(s)).por_estar_al_dia(
             id_persona=persona, periodo="2026-10"
         )
     assert n1 == 50 and n2 == 0 and n3 == 50  # una vez por período
+
+
+async def test_pm_no_se_genera_con_la_flag_apagada(sm: async_sessionmaker) -> None:
+    # §10.0.B: con la generación de PM apagada (default), estar al día no acredita nada.
+    persona = str(uuid.uuid4())
+    async with sm() as s:
+        n = await AcreditarPuntosMunicipales(_p(s)).por_estar_al_dia(
+            id_persona=persona, periodo="2026-09"
+        )
+    assert n == 0
 
 
 # --------------------------------------------------------------- feature flag canje contra tasas

@@ -873,6 +873,193 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/grupo/crear": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Crear Grupo */
+    post: operations["crear_grupo_api_v1_grupo_crear_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/disolver": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Disolver */
+    post: operations["disolver_api_v1_grupo_disolver_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/invitacion/{token}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Ver Invitacion */
+    get: operations["ver_invitacion_api_v1_grupo_invitacion__token__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/invitacion/{token}/aceptar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Aceptar Invitacion */
+    post: operations["aceptar_invitacion_api_v1_grupo_invitacion__token__aceptar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/invitar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Invitar */
+    post: operations["invitar_api_v1_grupo_invitar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/mi-grupo": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Mi Grupo */
+    get: operations["mi_grupo_api_v1_grupo_mi_grupo_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/miembros/{id_persona}/reactivar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Reactivar Miembro */
+    post: operations["reactivar_miembro_api_v1_grupo_miembros__id_persona__reactivar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/miembros/{id_persona}/suspender": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Suspender Miembro */
+    post: operations["suspender_miembro_api_v1_grupo_miembros__id_persona__suspender_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/miembros/{id_persona}/tope": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Fijar Tope */
+    post: operations["fijar_tope_api_v1_grupo_miembros__id_persona__tope_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/modo": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Cambiar Modo */
+    post: operations["cambiar_modo_api_v1_grupo_modo_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/grupo/salir": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Salir */
+    post: operations["salir_api_v1_grupo_salir_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/padron/mi-estado": {
     parameters: {
       query?: never;
@@ -1996,6 +2183,25 @@ export interface components {
       /** Tipo */
       tipo: string;
     };
+    /** ConsumoMes */
+    ConsumoMes: {
+      /** Monto */
+      monto: number;
+      /** Operaciones */
+      operaciones: number;
+      /** Puntos Acreditados */
+      puntos_acreditados: number;
+      /** Puntos Usados */
+      puntos_usados: number;
+    };
+    /** CrearIn */
+    CrearIn: {
+      /**
+       * Modo Billetera
+       * @default COMUN
+       */
+      modo_billetera: string;
+    };
     /** DecisionIn */
     DecisionIn: {
       /**
@@ -2147,6 +2353,15 @@ export interface components {
        */
       hasta: string;
     };
+    /** GrupoInvitacionOut */
+    GrupoInvitacionOut: {
+      /** Texto Declaracion */
+      texto_declaracion: string;
+      /** Token */
+      token: string;
+      /** Vence En */
+      vence_en: string;
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -2187,6 +2402,17 @@ export interface components {
       token?: string | null;
       /** Via */
       via: string;
+    };
+    /** InvitacionDetalleOut */
+    InvitacionDetalleOut: {
+      /** Id Grupo */
+      id_grupo: string;
+      /** Texto Declaracion */
+      texto_declaracion: string;
+      /** Vence En */
+      vence_en: string;
+      /** Vigente */
+      vigente: boolean;
     };
     /** InvitacionOut */
     InvitacionOut: {
@@ -2330,6 +2556,41 @@ export interface components {
       /** Tiene Tarjeta Fisica */
       tiene_tarjeta_fisica: boolean;
     };
+    /** MiGrupoOut */
+    MiGrupoOut: {
+      /**
+       * Alertas
+       * @default []
+       */
+      alertas: {
+        [key: string]: string;
+      }[];
+      /** Es Titular */
+      es_titular: boolean;
+      /** Id Grupo */
+      id_grupo?: string | null;
+      /**
+       * Miembros
+       * @default []
+       */
+      miembros: components["schemas"]["MiembroOut"][];
+      /** Modo Billetera */
+      modo_billetera?: string | null;
+      /** Sin Grupo */
+      sin_grupo: boolean;
+    };
+    /** MiembroOut */
+    MiembroOut: {
+      consumo_mes: components["schemas"]["ConsumoMes"];
+      /** Estado */
+      estado: string;
+      /** Id Persona */
+      id_persona: string;
+      /** Rol */
+      rol: string;
+      /** Tope Mensual */
+      tope_mensual: number | null;
+    };
     /** ModeracionIn */
     ModeracionIn: {
       /** Descripcion */
@@ -2343,6 +2604,11 @@ export interface components {
       motivo: string;
       /** Titulo */
       titulo?: string | null;
+    };
+    /** ModoIn */
+    ModoIn: {
+      /** Modo Billetera */
+      modo_billetera: string;
     };
     /** MovimientoOut */
     MovimientoOut: {
@@ -2813,6 +3079,11 @@ export interface components {
        * @default bearer
        */
       token_type: string;
+    };
+    /** TopeIn */
+    TopeIn: {
+      /** Tope Mensual */
+      tope_mensual?: number | null;
     };
     /** TransaccionOut */
     TransaccionOut: {
@@ -4721,6 +4992,384 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["RecaudacionOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  crear_grupo_api_v1_grupo_crear_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CrearIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  disolver_api_v1_grupo_disolver_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  ver_invitacion_api_v1_grupo_invitacion__token__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        token: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InvitacionDetalleOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  aceptar_invitacion_api_v1_grupo_invitacion__token__aceptar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        token: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  invitar_api_v1_grupo_invitar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["GrupoInvitacionOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mi_grupo_api_v1_grupo_mi_grupo_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MiGrupoOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reactivar_miembro_api_v1_grupo_miembros__id_persona__reactivar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_persona: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  suspender_miembro_api_v1_grupo_miembros__id_persona__suspender_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_persona: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  fijar_tope_api_v1_grupo_miembros__id_persona__tope_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path: {
+        id_persona: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TopeIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cambiar_modo_api_v1_grupo_modo_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ModoIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  salir_api_v1_grupo_salir_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Mensaje"];
         };
       };
       /** @description Validation Error */

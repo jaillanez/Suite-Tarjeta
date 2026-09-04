@@ -24,13 +24,17 @@ _ORIGEN = OrigenPuntos.INDIVIDUAL
 _AHORA = datetime.now(UTC)
 
 
-def test_puntos_por_canje_solo_multiplicador() -> None:
-    # 2x sobre base 1 por 100 pesos => 2% de 1000 = 20.
-    assert puntos_comercio_por_canje("MULTIPLICADOR_PUNTOS", 200, 1000) == 20
-    # Otras mecánicas no otorgan puntos (dan descuento en pesos).
+def test_puntos_por_canje_solo_del_reparto() -> None:
+    # §10.0.A: los PC salen SOLO del reparto de la promoción; valor = puntos por 100 pesos.
+    assert puntos_comercio_por_canje("MULTIPLICADOR_PUNTOS", 2, 1000) == 20
+    # Sin componente de puntos (otra mecánica) no acredita nada, aunque haya descuento en pesos.
     assert puntos_comercio_por_canje("PORCENTAJE", 20, 1000) == 0
     assert puntos_comercio_por_canje("MULTIPLICADOR_PUNTOS", 0, 1000) == 0
-    assert puntos_comercio_por_canje("MULTIPLICADOR_PUNTOS", 200, 0) == 0
+    assert puntos_comercio_por_canje("MULTIPLICADOR_PUNTOS", 2, 0) == 0
+    # La base automática está apagada por defecto (base_por_cien=0).
+    assert puntos_comercio_por_canje("PORCENTAJE", 20, 1000, base_por_cien=0) == 0
+    # Si el municipio la encendiera, se sumaría a cualquier operación.
+    assert puntos_comercio_por_canje("PORCENTAJE", 20, 1000, base_por_cien=1) == 10
 
 
 def test_billetera_pm_usa_centinela_municipal() -> None:

@@ -8,7 +8,7 @@ from datetime import UTC, date, datetime
 from tarjeta.modules.puntos.domain.catalogo import ComprobanteInventario, ItemCatalogo
 from tarjeta.modules.puntos.domain.errors import ItemNoDisponible, StockAgotado
 from tarjeta.modules.puntos.domain.events import InventarioCanjeado
-from tarjeta.modules.puntos.domain.moneda import TipoMoneda
+from tarjeta.modules.puntos.domain.moneda import TipoMoneda, TipoTitular
 from tarjeta.shared.domain.types import EntityId
 
 from .contabilidad import Contabilidad
@@ -53,7 +53,14 @@ class CanjearInventario:
         self.p = puertos
         self.conta = Contabilidad(puertos)
 
-    async def ejecutar(self, *, id_persona: str, id_item: str) -> ComprobanteInventario:
+    async def ejecutar(
+        self,
+        *,
+        id_persona: str,
+        id_item: str,
+        tipo_titular: TipoTitular = TipoTitular.PERSONA,
+        id_titular: str | None = None,
+    ) -> ComprobanteInventario:
         item = await self.p.catalogo.obtener(EntityId.from_str(id_item))
         hoy = datetime.now(UTC).date()
         if item is None or not item.disponible(hoy):
@@ -62,8 +69,10 @@ class CanjearInventario:
         if not await self.p.catalogo.reservar_stock(item.id):
             raise StockAgotado("Sin stock para este ítem.")
         # Consumo de PM (FIFO, exige saldo completo). Si no alcanza, rollback (incluye el stock).
+        # En modo COMÚN los PM salen del pozo del grupo (§10.5).
         await self.conta.consumir(
-            id_titular=id_persona,
+            tipo_titular=tipo_titular,
+            id_titular=id_titular or id_persona,
             tipo_moneda=TipoMoneda.PM,
             id_comercio=None,
             puntos=item.costo_pm,

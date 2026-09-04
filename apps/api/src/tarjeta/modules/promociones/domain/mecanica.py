@@ -10,7 +10,7 @@ class Mecanica(StrEnum):
     MONTO_FIJO = "MONTO_FIJO"  # valor = monto en pesos
     DOS_POR_UNO = "DOS_POR_UNO"  # valor ignorado
     PRECIO_ESPECIAL = "PRECIO_ESPECIAL"  # valor = precio final
-    MULTIPLICADOR_PUNTOS = "MULTIPLICADOR_PUNTOS"  # valor = multiplicador (x100, ej 200 = 2x)
+    MULTIPLICADOR_PUNTOS = "MULTIPLICADOR_PUNTOS"  # valor = puntos por cada 100 pesos (reparto)
     CUPON_UNICO = "CUPON_UNICO"  # valor = % o monto según se configure; un uso por persona
     COMBO = "COMBO"  # valor = precio del combo
 

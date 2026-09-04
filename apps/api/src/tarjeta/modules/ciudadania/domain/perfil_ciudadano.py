@@ -63,15 +63,36 @@ class PerfilCiudadano(AggregateRoot):
         return cls(**kwargs)  # type: ignore[arg-type]
 
     def recalcular(
-        self, *, al_dia: bool, excepcion_black_vigente: bool, motivo: str
+        self,
+        *,
+        al_dia: bool,
+        excepcion_black_vigente: bool,
+        hereda_black: bool = False,
+        motivo: str,
     ) -> HistorialNivel | None:
-        """Recalcula el nivel. Devuelve el registro de histórico si cambió, o None."""
-        nuevo = calcular_nivel(al_dia=al_dia, excepcion_black_vigente=excepcion_black_vigente)
+        """Recalcula nivel y origen. Devuelve el registro de histórico si cambió el nivel, o None.
+
+        §10.4: el mérito propio (al día o excepción) manda; si no lo hay pero el grupo hereda
+        Black, el nivel es BLACK con origen HEREDADO_GRUPO. Un miembro Black por mérito propio no
+        se pisa cuando cae el titular (su `al_dia` sigue dándole PROPIO).
+        """
+        if calcular_nivel(al_dia=al_dia, excepcion_black_vigente=excepcion_black_vigente) is (
+            Nivel.BLACK
+        ):
+            nuevo, origen = Nivel.BLACK, NivelOrigen.PROPIO
+        elif hereda_black:
+            nuevo, origen = Nivel.BLACK, NivelOrigen.HEREDADO_GRUPO
+        else:
+            nuevo, origen = Nivel.PLATINO, NivelOrigen.PROPIO
         self.fecha_ultimo_calculo = datetime.now(UTC)
-        if nuevo == self._nivel:
-            return None
+        cambio_nivel = nuevo != self._nivel
         anterior = self._nivel
         self._nivel = nuevo
+        self.nivel_origen = (
+            origen  # se persiste aunque no cambie el nivel (p. ej. PROPIO->HEREDADO)
+        )
+        if not cambio_nivel:
+            return None
         self.record_event(
             NivelCambiado(
                 id_persona=str(self.id),
