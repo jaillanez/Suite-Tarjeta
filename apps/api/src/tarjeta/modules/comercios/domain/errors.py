@@ -30,6 +30,12 @@ class PermisoComercioDenegado(PermissionDeniedError):
     code = "permiso_comercio_denegado"
 
 
+class ComercioNoHabilitado(PermissionDeniedError):
+    """§12.1: el comercio no está aprobado; solo puede usar funciones de solicitud."""
+
+    code = "comercio_no_habilitado"
+
+
 class InvitacionInvalida(ValidationError):
     code = "invitacion_invalida"
 

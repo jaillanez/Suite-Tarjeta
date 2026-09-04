@@ -15,10 +15,11 @@ from zoneinfo import ZoneInfo
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
+from tarjeta.gating import filtrar_promos_habilitadas
 from tarjeta.modules.ciudadania.infrastructure.repositories import (
     SqlAlchemyPerfilCiudadanoRepository,
 )
-from tarjeta.modules.comercios.api.deps import ActorComercio, requiere_comercio
+from tarjeta.modules.comercios.api.deps import ActorComercio, requiere_comercio_habilitado
 from tarjeta.modules.comercios.domain.roles import Permiso as PermisoComercio
 from tarjeta.modules.comercios.infrastructure.repositories import SqlAlchemySucursalRepository
 from tarjeta.modules.gobierno.api.deps import Actor, requiere
@@ -199,7 +200,7 @@ async def crear_promocion(
     body: PromocionIn,
     session: SessionDep,
     actor: Annotated[
-        ActorComercio, Depends(requiere_comercio(PermisoComercio.PROMOCION_GESTIONAR))
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.PROMOCION_GESTIONAR))
     ],
 ) -> Mensaje:
     # §07.2: el alcance por sucursal solo admite sucursales del propio comercio y activas.
@@ -235,7 +236,7 @@ async def crear_promocion(
 async def listar_promociones(
     session: SessionDep,
     actor: Annotated[
-        ActorComercio, Depends(requiere_comercio(PermisoComercio.PROMOCION_GESTIONAR))
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.PROMOCION_GESTIONAR))
     ],
 ) -> list[PromocionOut]:
     promos = await construir_puertos_promociones(session).promociones.listar_por_comercio(
@@ -250,7 +251,7 @@ async def editar_condiciones(
     body: CondicionesIn,
     session: SessionDep,
     actor: Annotated[
-        ActorComercio, Depends(requiere_comercio(PermisoComercio.PROMOCION_GESTIONAR))
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.PROMOCION_GESTIONAR))
     ],
 ) -> Mensaje:
     await GestionPromociones(construir_puertos_promociones(session)).editar_condiciones(
@@ -269,7 +270,7 @@ async def publicar_promocion(
     id_promocion: str,
     session: SessionDep,
     actor: Annotated[
-        ActorComercio, Depends(requiere_comercio(PermisoComercio.PROMOCION_GESTIONAR))
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.PROMOCION_GESTIONAR))
     ],
 ) -> Mensaje:
     est, ver = await _umbrales(session)
@@ -287,7 +288,7 @@ async def pausar_promocion(
     id_promocion: str,
     session: SessionDep,
     actor: Annotated[
-        ActorComercio, Depends(requiere_comercio(PermisoComercio.PROMOCION_GESTIONAR))
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.PROMOCION_GESTIONAR))
     ],
 ) -> Mensaje:
     await GestionPromociones(construir_puertos_promociones(session)).pausar(
@@ -301,7 +302,7 @@ async def reanudar_promocion(
     id_promocion: str,
     session: SessionDep,
     actor: Annotated[
-        ActorComercio, Depends(requiere_comercio(PermisoComercio.PROMOCION_GESTIONAR))
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.PROMOCION_GESTIONAR))
     ],
 ) -> Mensaje:
     await GestionPromociones(construir_puertos_promociones(session)).reanudar(
@@ -315,7 +316,7 @@ async def duplicar_promocion(
     id_promocion: str,
     session: SessionDep,
     actor: Annotated[
-        ActorComercio, Depends(requiere_comercio(PermisoComercio.PROMOCION_GESTIONAR))
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.PROMOCION_GESTIONAR))
     ],
 ) -> Mensaje:
     nuevo = await GestionPromociones(construir_puertos_promociones(session)).duplicar(
@@ -419,6 +420,8 @@ async def buscar(
             ids_sucursal=ids,
         )
     )
+    # §12.1: solo promos de comercios aprobados/activos.
+    promos = await filtrar_promos_habilitadas(session, promos)
     return [_promo_out(p) for p in promos]
 
 
@@ -426,9 +429,10 @@ async def buscar(
 async def feed(sesion: SesionDep, session: SessionDep) -> FeedOut:
     nivel = await _nivel(session, sesion.id_persona)
     desc = Descubrimiento(construir_puertos_promociones(session))
-    nuevos = await desc.nuevas_esta_semana()
-    exclusivos = await desc.exclusivas_black()
-    vencen = await desc.vencen_pronto()
+    # §12.1: en todos los carriles del feed, solo comercios aprobados/activos.
+    nuevos = await filtrar_promos_habilitadas(session, await desc.nuevas_esta_semana())
+    exclusivos = await filtrar_promos_habilitadas(session, await desc.exclusivas_black())
+    vencen = await filtrar_promos_habilitadas(session, await desc.vencen_pronto())
     # §3.5: si el vecino es Platino, las exclusivas Black llegan BLOQUEADAS con el % visible.
     es_platino = nivel != "BLACK"
     return FeedOut(
@@ -453,6 +457,7 @@ async def resolver(
     promos = await MotorResolucion(construir_puertos_promociones(session)).resolver(
         nivel=nivel, id_sucursal=id_sucursal, momento_local=ahora, monto=monto
     )
+    promos = await filtrar_promos_habilitadas(session, promos)  # §12.1
     return [_promo_out(p) for p in promos]
 
 

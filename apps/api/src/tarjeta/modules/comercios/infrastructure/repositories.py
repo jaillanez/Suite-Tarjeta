@@ -11,6 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tarjeta.modules.comercios.domain.comercio import (
+    ESTADOS_HABILITADOS,
     Comercio,
     EstadoComercio,
     EvidenciaConvenio,
@@ -218,10 +219,15 @@ class SqlAlchemySucursalRepository:
     ) -> list[SucursalCercana]:
         ref = _punto(lat, lon)
         dist = ST_Distance(SucursalModel.ubicacion, ref).label("dist")
+        # §12.1: solo aparecen sucursales ACTIVAS de comercios APROBADOS/ACTIVOS (no de una
+        # solicitud en trámite o de un comercio suspendido).
+        habilitados = [e.value for e in ESTADOS_HABILITADOS]
         stmt = (
             select(SucursalModel, dist)
+            .join(ComercioModel, ComercioModel.id == SucursalModel.id_comercio)
             .where(ST_DWithin(SucursalModel.ubicacion, ref, radio_m))
             .where(SucursalModel.estado == EstadoSucursal.ACTIVA.value)
+            .where(ComercioModel.estado.in_(habilitados))
             .order_by(dist)
             .limit(limite)
         )

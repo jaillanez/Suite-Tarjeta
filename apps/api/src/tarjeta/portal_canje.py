@@ -17,6 +17,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from tarjeta.config import Settings, get_settings
+from tarjeta.gating import filtrar_promos_habilitadas
 from tarjeta.modules.canje.application.deps import CanjePuertos
 from tarjeta.modules.canje.application.operaciones import (
     AnularOperacion,
@@ -43,7 +44,7 @@ from tarjeta.modules.canje.infrastructure.tokens import FirmadorTokenCiudadano
 from tarjeta.modules.ciudadania.infrastructure.repositories import (
     SqlAlchemyPerfilCiudadanoRepository,
 )
-from tarjeta.modules.comercios.api.deps import ActorComercio, requiere_comercio
+from tarjeta.modules.comercios.api.deps import ActorComercio, requiere_comercio_habilitado
 from tarjeta.modules.comercios.domain.roles import Permiso as PermisoComercio
 from tarjeta.modules.comercios.domain.roles import RolComercio
 from tarjeta.modules.gobierno.application.parametria import ParametriaService
@@ -391,6 +392,8 @@ async def _opciones(
     promos = await MotorResolucion(construir_puertos_promociones(session)).resolver(
         nivel=nivel, id_sucursal=id_sucursal, momento_local=ahora, monto=monto
     )
+    # §12.1: no se ofrecen promos de comercios no aprobados/suspendidos.
+    promos = await filtrar_promos_habilitadas(session, promos)
     base = settings.puntos_base_por_cien
     entradas = [
         PromoParaCaja(
@@ -425,7 +428,9 @@ async def resolver(
     session: SessionDep,
     settings: SettingsDep,
     redis: RedisDep,
-    _: Annotated[ActorComercio, Depends(requiere_comercio(PermisoComercio.CANJE_OPERAR))],
+    _: Annotated[
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.CANJE_OPERAR))
+    ],
 ) -> ResolverOut:
     via = ViaCanje(body.via)
     id_persona, nivel = await _resolver_ciudadano(
@@ -463,7 +468,9 @@ async def iniciar(
     session: SessionDep,
     settings: SettingsDep,
     redis: RedisDep,
-    actor: Annotated[ActorComercio, Depends(requiere_comercio(PermisoComercio.CANJE_OPERAR))],
+    actor: Annotated[
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.CANJE_OPERAR))
+    ],
 ) -> TransaccionOut:
     via = ViaCanje(body.via)
     # §08.4: idempotencia ANTES de consumir el token: un reintento con la misma clave devuelve
@@ -549,7 +556,9 @@ async def rechazar_ciudadano(
 @router.get("/comercio/pendientes", response_model=list[TransaccionOut])
 async def pendientes_comercio(
     session: SessionDep,
-    actor: Annotated[ActorComercio, Depends(requiere_comercio(PermisoComercio.CANJE_OPERAR))],
+    actor: Annotated[
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.CANJE_OPERAR))
+    ],
 ) -> list[TransaccionOut]:
     pend = await _puertos(session).transacciones.pendientes_de_comercio(str(actor.id_comercio))
     # Solo las que confirma el comercio (ciudadano_escanea / tarjeta_fisica).
@@ -560,7 +569,9 @@ async def pendientes_comercio(
 async def estado_operacion(
     id_transaccion: str,
     session: SessionDep,
-    actor: Annotated[ActorComercio, Depends(requiere_comercio(PermisoComercio.CANJE_OPERAR))],
+    actor: Annotated[
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.CANJE_OPERAR))
+    ],
 ) -> TransaccionOut:
     t = await _puertos(session).transacciones.obtener(EntityId.from_str(id_transaccion))
     if t is None or t.id_comercio != str(actor.id_comercio):
@@ -572,7 +583,9 @@ async def estado_operacion(
 async def confirmar_comercio(
     id_transaccion: str,
     session: SessionDep,
-    _: Annotated[ActorComercio, Depends(requiere_comercio(PermisoComercio.CANJE_OPERAR))],
+    _: Annotated[
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.CANJE_OPERAR))
+    ],
 ) -> TransaccionOut:
     t = await DecidirOperacion(_puertos(session)).confirmar(
         id_transaccion=id_transaccion, por=Confirmador.CAJERO
@@ -588,7 +601,9 @@ async def anular(
     id_transaccion: str,
     body: DecisionIn,
     session: SessionDep,
-    actor: Annotated[ActorComercio, Depends(requiere_comercio(PermisoComercio.CANJE_OPERAR))],
+    actor: Annotated[
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.CANJE_OPERAR))
+    ],
 ) -> Mensaje:
     ventana = await ParametriaService(construir_puertos_gobierno(session)).obtener(
         "anulacion_ventana_minutos"
@@ -634,7 +649,9 @@ async def sincronizar(
     body: SincronizarIn,
     session: SessionDep,
     settings: SettingsDep,
-    _: Annotated[ActorComercio, Depends(requiere_comercio(PermisoComercio.CANJE_OPERAR))],
+    _: Annotated[
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.CANJE_OPERAR))
+    ],
 ) -> dict[str, Any]:
     encoladas = [
         OperacionEncolada(
@@ -679,7 +696,9 @@ async def sincronizar(
 async def resumen_turno(
     session: SessionDep,
     settings: SettingsDep,
-    actor: Annotated[ActorComercio, Depends(requiere_comercio(PermisoComercio.TURNO_OPERAR))],
+    actor: Annotated[
+        ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.TURNO_OPERAR))
+    ],
 ) -> dict[str, Any]:
     from tarjeta.modules.comercios.infrastructure.repositories import SqlAlchemyTurnoRepository
 

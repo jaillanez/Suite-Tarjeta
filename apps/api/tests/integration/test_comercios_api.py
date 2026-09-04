@@ -131,6 +131,16 @@ async def test_adhesion_ok_y_mi_comercio(client: AsyncClient) -> None:
 # --------------------------------------------------------------- sucursales PostGIS
 
 
+async def _activar_comercio(client: AsyncClient, id_comercio: str) -> None:
+    # §12.1: el comercio solo aparece en el mapa una vez aprobado/activo.
+    agente = str(uuid.uuid4())
+    await _seed_agente(agente, "ADMINISTRADOR")
+    hm = _headers(_token(agente, "MUNICIPAL"))
+    await client.post(f"/api/v1/portal-comercio/comercios/{id_comercio}/tomar", headers=hm)
+    r = await client.post(f"/api/v1/portal-comercio/comercios/{id_comercio}/aprobar", headers=hm)
+    assert r.status_code == 200, r.text
+
+
 async def test_cercania_ordena_por_distancia(client: AsyncClient) -> None:
     id_persona, r = await _adherir(client, comerciante=True)
     id_comercio = r.json()["id_comercio"]
@@ -144,6 +154,7 @@ async def test_cercania_ordena_por_distancia(client: AsyncClient) -> None:
     id_lejos = (await client.post("/api/v1/comercios/sucursales", headers=h, json=lejos)).json()[
         "mensaje"
     ]
+    await _activar_comercio(client, id_comercio)
 
     r = await client.get(
         "/api/v1/comercios/cercanas",

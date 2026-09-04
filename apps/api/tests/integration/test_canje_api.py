@@ -32,9 +32,15 @@ from tarjeta.modules.canje.application.operaciones import (  # noqa: E402
 from tarjeta.modules.canje.domain.ports import ReservaPromocion  # noqa: E402
 from tarjeta.modules.canje.domain.transaccion import Confirmador, ViaCanje  # noqa: E402
 from tarjeta.modules.canje.infrastructure.composition import construir_puertos_canje  # noqa: E402
+from tarjeta.modules.comercios.domain.comercio import (  # noqa: E402
+    Comercio,
+    EstadoComercio,
+    EvidenciaConvenio,
+)
 from tarjeta.modules.comercios.domain.roles import RolComercio  # noqa: E402
 from tarjeta.modules.comercios.domain.usuario import UsuarioComercio  # noqa: E402
 from tarjeta.modules.comercios.infrastructure.repositories import (  # noqa: E402
+    SqlAlchemyComercioRepository,
     SqlAlchemyUsuarioComercioRepository,
 )
 from tarjeta.modules.promociones.domain.errors import TopeAgotado  # noqa: E402
@@ -355,9 +361,10 @@ def _h(t: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {t}"}
 
 
-async def _registrar(client: AsyncClient) -> str:
-    # DNI par => al día => BLACK (regla determinística del padrón simulado).
-    dni = str(random.randrange(10_000_000, 39_999_999, 2))
+async def _registrar(client: AsyncClient, *, par: bool = True) -> str:
+    # DNI par => al día => BLACK; impar => no al día => PLATINO (padrón simulado determinístico).
+    inicio = 10_000_000 if par else 10_000_001
+    dni = str(random.randrange(inicio, 39_999_999, 2))
     r = await client.post(
         "/api/v1/auth/registro",
         json={
@@ -382,6 +389,20 @@ async def _seed_cajero_y_promo(sm: async_sessionmaker) -> tuple[str, str, str, s
     id_sucursal = str(uuid.uuid4())
     cajero_persona = str(uuid.uuid4())
     async with sm() as s:
+        # §12.1: el comercio debe existir y estar habilitado (ACTIVA) para operar canjes.
+        comercio = Comercio(
+            id=EntityId.from_str(id_comercio),
+            cuit=str(uuid.uuid4().int)[:11],
+            razon_social="Comercio Test SA",
+            nombre_fantasia="La Nona",
+            rubro="gastronomia",
+            logo_url="",
+            id_responsable=EntityId.new(),
+            estado=EstadoComercio.ACTIVA,
+            convenio=EvidenciaConvenio(version="v1", fecha=datetime.now(UTC), ip="1.1.1.1"),
+            creado_en=datetime.now(UTC),
+        )
+        await SqlAlchemyComercioRepository(s).agregar(comercio)
         usuario = UsuarioComercio.crear(
             id_comercio=EntityId.from_str(id_comercio),
             id_persona=EntityId.from_str(cajero_persona),
@@ -459,3 +480,28 @@ async def test_flujo_http_completo_y_sin_pii(client: AsyncClient, sm: async_sess
         bajo = cuerpo_txt.lower()
         for prohibido in _PROHIBIDOS:
             assert prohibido not in bajo, f"'{prohibido}' aparece en {cuerpo_txt[:200]}"
+
+
+async def test_ciudadano_platino_canjea(client: AsyncClient, sm: async_sessionmaker) -> None:
+    # §12.1: un ciudadano con al_dia=false (PLATINO) canjea con normalidad.
+    ciudadano = await _registrar(client, par=False)
+    id_comercio, id_sucursal, cajero_persona, pid = await _seed_cajero_y_promo(sm)
+    h_caj = _h(_token(cajero_persona, f"COMERCIO:{id_comercio}"))
+    h_ciu = _h(_token(ciudadano, "CIUDADANO"))
+    qr = (await client.get("/api/v1/canje/mis-tokens", headers=h_ciu)).json()[0]["token"]
+    cuerpo = {
+        "via": "CAJERO_ESCANEA",
+        "monto": 1000,
+        "id_sucursal": id_sucursal,
+        "clave_idempotencia": f"pl-{uuid.uuid4()}",
+        "id_promocion": pid,
+        "token": qr,
+    }
+    r = await client.post("/api/v1/canje/iniciar", headers=h_caj, json=cuerpo)
+    assert r.status_code == 200, r.text
+    op = r.json()
+    assert op["nivel_aplicado"] == "PLATINO"
+    assert op["total_pagar"] == 900  # 10% Platino de 1000
+    r = await client.post(f"/api/v1/canje/{op['id']}/confirmar", headers=h_ciu)
+    assert r.status_code == 200, r.text
+    assert r.json()["estado"] == "APLICADA"
