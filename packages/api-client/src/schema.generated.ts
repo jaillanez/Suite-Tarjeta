@@ -3165,7 +3165,10 @@ export interface components {
     };
     /** RefreshRequest */
     RefreshRequest: {
-      /** Refresh Token */
+      /**
+       * Refresh Token
+       * @default
+       */
       refresh_token: string;
     };
     /** RegistroAuditoriaOut */

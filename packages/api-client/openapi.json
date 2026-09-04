@@ -2540,13 +2540,11 @@
       "RefreshRequest": {
         "properties": {
           "refresh_token": {
+            "default": "",
             "title": "Refresh Token",
             "type": "string"
           }
         },
-        "required": [
-          "refresh_token"
-        ],
         "title": "RefreshRequest",
         "type": "object"
       },

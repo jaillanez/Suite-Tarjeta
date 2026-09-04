@@ -40,7 +40,8 @@ class MfaVerificarRequest(BaseModel):
 
 
 class RefreshRequest(BaseModel):
-    refresh_token: str
+    # Vacío cuando el cliente opera en modo cookie (el refresh viaja en la cookie HttpOnly).
+    refresh_token: str = ""
 
 
 class RecuperarRequest(BaseModel):

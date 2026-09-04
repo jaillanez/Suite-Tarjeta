@@ -14,6 +14,12 @@ export interface ApiClientOptions {
   getToken?: () => string | null | Promise<string | null>;
   maxRetries?: number;
   retryBaseMs?: number;
+  /**
+   * §12 P1-A. 'cookie' (web): el refresh viaja en una cookie HttpOnly; se envían credenciales y el
+   * header `X-Auth-Mode: cookie`. 'body' (móvil, por defecto): el refresh va en el cuerpo y se
+   * guarda en el almacén seguro del SO.
+   */
+  authMode?: 'cookie' | 'body';
 }
 
 /** Error normalizado para la UI. */
@@ -44,7 +50,8 @@ export interface ReadyResponse {
 }
 
 export function createApiClient(options: ApiClientOptions) {
-  const { baseUrl, getToken, maxRetries = 3, retryBaseMs = 300 } = options;
+  const { baseUrl, getToken, maxRetries = 3, retryBaseMs = 300, authMode = 'body' } = options;
+  const modoCookie = authMode === 'cookie';
 
   async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const url = `${baseUrl.replace(/\/$/, '')}${path}`;
@@ -53,6 +60,9 @@ export function createApiClient(options: ApiClientOptions) {
 
     const token = getToken ? await getToken() : null;
     if (token) headers.set('authorization', `Bearer ${token}`);
+    // Modo cookie: el refresh viaja en la cookie HttpOnly; hay que mandar credenciales y avisar.
+    if (modoCookie) headers.set('x-auth-mode', 'cookie');
+    const credentials: RequestCredentials = modoCookie ? 'include' : 'same-origin';
 
     // P0 (§12.2-A): SOLO se reintentan métodos idempotentes. Reintentar un POST/PUT/DELETE cuya
     // respuesta se perdió puede aplicar dos veces la operación (p. ej. un canje = doble descuento).
@@ -64,7 +74,7 @@ export function createApiClient(options: ApiClientOptions) {
     let lastError: unknown;
     for (let attempt = 0; attempt <= maxIntentos; attempt++) {
       try {
-        const res = await fetch(url, { ...init, headers });
+        const res = await fetch(url, { ...init, headers, credentials });
         if (res.ok) {
           if (res.status === 204) return undefined as T;
           return (await res.json()) as T;
@@ -125,8 +135,9 @@ export function createApiClient(options: ApiClientOptions) {
       post<LoginResult>('/api/v1/auth/login', { dni, password }),
     mfaVerificar: (mfa_token: string, codigo: string) =>
       post<LoginResult>('/api/v1/auth/mfa/verificar', { mfa_token, codigo }),
-    refresh: (refresh_token: string) => post<Tokens>('/api/v1/auth/refresh', { refresh_token }),
-    logout: (refresh_token: string) => post<Mensaje>('/api/v1/auth/logout', { refresh_token }),
+    // En modo cookie el refresh viaja en la cookie: se llama sin argumento.
+    refresh: (refresh_token = '') => post<Tokens>('/api/v1/auth/refresh', { refresh_token }),
+    logout: (refresh_token = '') => post<Mensaje>('/api/v1/auth/logout', { refresh_token }),
     perfiles: () => request<Perfil[]>('/api/v1/auth/perfiles'),
     activarPerfil: (clave: string) =>
       post<Tokens>(`/api/v1/auth/perfiles/${encodeURIComponent(clave)}/activar`),
