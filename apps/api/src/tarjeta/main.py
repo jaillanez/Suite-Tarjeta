@@ -104,16 +104,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/health", tags=["health"])
     async def health() -> dict[str, str]:
+        # Liveness: el proceso está vivo. No toca la base ni expone nada del entorno.
         return {"status": "ok"}
 
-    @app.get("/health/db", tags=["health"])
-    async def health_db(session: SessionDep) -> dict[str, str]:
-        result = await session.execute(text("SELECT uuidv7() AS uuid, version() AS server_version"))
-        row = result.mappings().one()
-        return {
-            "uuid": str(row["uuid"]),
-            "server_version": str(row["server_version"]),
-        }
+    @app.get("/health/ready", tags=["health"])
+    async def health_ready(session: SessionDep) -> dict[str, str]:
+        # Readiness: hay conexión a la base. §12.3-D: NO se expone la versión del motor en un
+        # endpoint público (era fingerprinting para explotación dirigida).
+        await session.execute(text("SELECT 1"))
+        return {"status": "ready"}
 
     return app
 
