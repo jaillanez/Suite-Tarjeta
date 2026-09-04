@@ -12,6 +12,7 @@ from alembic import context
 from sqlalchemy import create_engine
 
 from tarjeta.config import get_settings
+from tarjeta.modules.canje.infrastructure import models as _canje_models  # noqa: F401
 from tarjeta.modules.ciudadania.infrastructure import models as _ciudadania_models  # noqa: F401
 from tarjeta.modules.comercios.infrastructure import models as _comercios_models  # noqa: F401
 from tarjeta.modules.gobierno.infrastructure import models as _gobierno_models  # noqa: F401

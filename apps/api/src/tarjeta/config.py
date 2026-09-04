@@ -77,6 +77,12 @@ class Settings(BaseSettings):
     cajero_pin_bloqueo_seg: int = 300
     sesion_cajero_timeout_minutos: int = 30
 
+    # Canje (§08): confirmación del ciudadano, comprobante y límites del modo sin conexión.
+    canje_confirmacion_ttl_seg: int = 90
+    comprobante_prefijo: str = "RIV"
+    canje_offline_monto_max: int = 50000
+    canje_offline_max_operaciones: int = 50
+
     # OTP
     otp_length: int = 6
     otp_ttl_seconds: int = 300

@@ -249,6 +249,30 @@ export function createApiClient(options: ApiClientOptions) {
       }),
     cargaMasivaComercios: (contenido: string, confirmar: boolean) =>
       post<CargaMasivaResultado>('/api/v1/portal-comercio/carga-masiva', { contenido, confirmar }),
+    // --- canje (PASO 08) ---
+    misTokensCanje: () => request<TokenOut[]>('/api/v1/canje/mis-tokens'),
+    generarCodigoCanje: () => post<S['CodigoOut']>('/api/v1/canje/codigo'),
+    resolverCanje: (body: S['ResolverIn']) => post<ResolverOut>('/api/v1/canje/resolver', body),
+    iniciarCanje: (body: S['IniciarIn']) => post<TransaccionOut>('/api/v1/canje/iniciar', body),
+    misPendientesCanje: () => request<TransaccionOut[]>('/api/v1/canje/mis-pendientes'),
+    confirmarCanje: (id: string) =>
+      post<TransaccionOut>(`/api/v1/canje/${encodeURIComponent(id)}/confirmar`),
+    rechazarCanje: (id: string) =>
+      post<Mensaje>(`/api/v1/canje/${encodeURIComponent(id)}/rechazar`),
+    pendientesComercioCanje: () =>
+      request<TransaccionOut[]>('/api/v1/canje/comercio/pendientes'),
+    estadoOperacionCanje: (id: string) =>
+      request<TransaccionOut>(`/api/v1/canje/comercio/operacion/${encodeURIComponent(id)}`),
+    confirmarComercioCanje: (id: string) =>
+      post<TransaccionOut>(`/api/v1/canje/comercio/${encodeURIComponent(id)}/confirmar`),
+    anularCanje: (id: string, motivo: string) =>
+      post<Mensaje>(`/api/v1/canje/${encodeURIComponent(id)}/anular`, { motivo }),
+    disputarCanje: (id: string, motivo: string) =>
+      post<Mensaje>(`/api/v1/canje/${encodeURIComponent(id)}/disputar`, { motivo }),
+    calificarCanje: (id: string, estrellas: number) =>
+      post<Mensaje>(`/api/v1/canje/${encodeURIComponent(id)}/calificar`, { estrellas }),
+    historialCanje: () => request<TransaccionOut[]>('/api/v1/canje/historial'),
+    resumenTurnoCanje: () => request<ResumenTurno>('/api/v1/canje/turno/resumen'),
     // --- promociones (PASO 07) ---
     crearPromocion: (body: S['PromocionIn']) =>
       post<Mensaje>('/api/v1/portal-comercio/promociones', body),
@@ -443,5 +467,18 @@ export type PromocionFeedOut = S['PromocionFeedOut'];
 export type FichaPublicaOut = S['FichaPublicaOut'];
 export type FeedOut = S['FeedOut'];
 export type PromocionIn = S['PromocionIn'];
+
+// canje (PASO 08)
+export type TokenOut = S['TokenOut'];
+export type TransaccionOut = S['TransaccionOut'];
+export type ResolverOut = S['ResolverOut'];
+export type OpcionOut = S['OpcionOut'];
+
+export interface ResumenTurno {
+  operaciones: number;
+  monto_bruto: number;
+  descuento: number;
+  por_promocion: Record<string, number>;
+}
 
 export type ApiClient = ReturnType<typeof createApiClient>;

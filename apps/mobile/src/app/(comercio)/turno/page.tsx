@@ -24,8 +24,10 @@ export default function TurnoPage() {
   async function cerrar(): Promise<void> {
     setMsg(null);
     try {
-      const r = await api.cerrarTurno();
-      setResumen(r.resumen);
+      // Cierre con datos reales del canje (§08.7): operaciones, bruto, descuento, por promo.
+      const real = await api.resumenTurnoCanje();
+      await api.cerrarTurno();
+      setResumen({ ...real });
       setTurnoAbierto(null);
     } catch (e) {
       setMsg(e instanceof ApiError ? e.message : 'No se pudo cerrar el turno.');
