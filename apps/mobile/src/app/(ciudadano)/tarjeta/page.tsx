@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { EstadoCiudadano, TokenOut, TransaccionOut } from '@tarjeta/api-client';
 import { Button, type Nivel, TarjetaCredencial } from '@tarjeta/ui';
+import { QrToken } from '@/components/QrToken';
 import { api } from '@/lib/api';
 
 const municipio = process.env.NEXT_PUBLIC_MUNICIPIO_NOMBRE ?? 'Municipio';
@@ -128,8 +129,8 @@ export default function TarjetaPage() {
       ) : (
         <div className="rounded-lg border border-border p-4 text-center">
           <p className="text-sm text-muted-foreground">Mostrá este código en la caja</p>
-          {/* En la app real esto se renderiza como QR; el token rota cada 45 s. */}
-          <p className="mt-2 break-all font-mono text-xs">{tokenActual ?? '…'}</p>
+          {/* §12.2-B: QR escaneable (no texto plano). El token rota cada 45 s. */}
+          <QrToken token={tokenActual} />
           <div className="mt-3">
             <Button size="sm" variant="outline" onClick={generarCodigo}>
               Generar código de 6 dígitos
