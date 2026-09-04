@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { TarjetaCredencial } from '@tarjeta/ui';
 import { HealthStatus } from '@/components/HealthStatus';
 
 const municipio = process.env.NEXT_PUBLIC_MUNICIPIO_NOMBRE ?? 'Municipio';
@@ -11,12 +10,12 @@ export default function Home() {
         <h1 className="text-lg font-semibold">Tarjeta de Beneficios</h1>
         <HealthStatus />
       </div>
-      <TarjetaCredencial
-        nombre="Vecino de ejemplo"
-        numero="4000123456789010"
-        nivel="PLATINO"
-        municipio={municipio}
-      />
+      {/* Landing previa al login: no se muestra una credencial de ejemplo (no aparentar datos
+          reales). La tarjeta real vive en /tarjeta una vez iniciada la sesión. */}
+      <p className="text-sm text-muted-foreground">
+        Beneficios del municipio de {municipio}. Iniciá sesión para ver tu tarjeta y tus
+        descuentos.
+      </p>
       <nav className="grid gap-3" aria-label="Accesos">
         <Link className="rounded-lg border border-border p-4" href="/inicio">
           Entrar como ciudadano

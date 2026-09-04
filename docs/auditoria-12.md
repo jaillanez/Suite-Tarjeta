@@ -171,6 +171,13 @@ Queda anotado (sin evidencia nueva en esta PR, riesgo bajo con la arquitectura a
   `(publico)/comercio/[slug]`, `campania/[slug]`, `(municipal)/campanias`).
 - **Esperado:** completar o marcar con claridad como no disponible. No aparentar terminado.
 - **Riesgo:** una pantalla que finge datos reales es peor que una vacía.
+- **Resuelto (parcial):** `apps/mobile/src/app/page.tsx` ya no muestra una credencial de ejemplo
+  con PAN inventado (landing previa al login con texto honesto). `tarjeta` móvil usa el nombre real
+  del titular (`api.me()`) en vez de `"Titular"` fijo. Web `mi-estado` dejó de inventar
+  "12 beneficios".
+- **Pendiente:** placeholders "En construcción (PASO 02)" en `(ciudadano)/inicio`, `/mapa`,
+  `(municipal)/operacion`, `(publico)/comercio/[slug]`, `campania/[slug]`, `(municipal)/campanias`,
+  y la "Pantalla de ejemplo" del landing web — completar o rotular sin ambigüedad (bloque siguiente).
 
 ### P2-C · Manejo de errores del frontend
 - **Archivos:** `catch { push('/login') }` en `(publico)/{registro,perfil,mi-estado,seleccionar-perfil}`
@@ -185,8 +192,12 @@ Queda anotado (sin evidencia nueva en esta PR, riesgo bajo con la arquitectura a
   disfraza un 500 de límite diario), `seleccionar-perfil` y `registro` (verificación de celular).
   Tests: `errores.test.ts` (clasificador por código) y `perfil/page.test.tsx` (401 ⇒ login;
   500 ⇒ error + reintentar, sin redirigir).
-- **Pendiente (móvil):** mismo helper para `apps/mobile` y, en particular, que el error durante la
-  **confirmación de canje** se muestre y no se ignore (PR siguiente del bloque).
+- **Resuelto (móvil):** `apps/mobile/src/lib/errores.ts` (mismo clasificador). Aplicado en
+  `tarjeta`, `mi-estado` y `seleccionar-perfil`. **Crítico:** `confirmar()`/`rechazar()` del canje
+  ya no corrían sin `try/catch` (un fallo se perdía en silencio); ahora muestran el error y dejan la
+  operación pendiente para reintentar. Tests: `errores.test.ts` y
+  `tarjeta/page.test.tsx` (confirmar con 409 ⇒ muestra el error y sigue pendiente; éxito ⇒ aviso de
+  descuento aplicado).
 
 ---
 

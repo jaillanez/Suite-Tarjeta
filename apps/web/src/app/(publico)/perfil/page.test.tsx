@@ -2,7 +2,7 @@
 // muestra el error con opción de reintentar, en vez de disfrazar todo de "sesión vencida".
 
 import { ApiError } from '@tarjeta/api-client';
-import { render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const push = vi.hoisted(() => vi.fn());
@@ -22,6 +22,7 @@ const apiMock = api as unknown as {
 };
 
 afterEach(() => {
+  cleanup();
   vi.clearAllMocks();
 });
 

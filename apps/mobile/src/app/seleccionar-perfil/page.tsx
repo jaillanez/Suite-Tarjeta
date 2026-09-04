@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Perfil } from '@tarjeta/api-client';
 import { api } from '@/lib/api';
+import { esSesionVencida, mensajeDeError } from '@/lib/errores';
 import { guardarPerfilActivo, guardarSesion } from '@/lib/session';
 
 // Selector de contexto (§11.2): cambio de un toque, sin volver a iniciar sesión.
@@ -22,7 +23,10 @@ export default function SeleccionarPerfilPage() {
     api
       .perfiles()
       .then(setPerfiles)
-      .catch(() => router.push('/login'));
+      .catch((err: unknown) => {
+        if (esSesionVencida(err)) router.push('/login');
+        else setError(mensajeDeError(err));
+      });
   }, [router]);
 
   async function activar(clave: string, tipo: string): Promise<void> {
@@ -32,8 +36,9 @@ export default function SeleccionarPerfilPage() {
       await guardarSesion(tokens.access_token, tokens.refresh_token);
       await guardarPerfilActivo(clave);
       router.push(DESTINO[tipo] ?? '/inicio');
-    } catch {
-      setError('No pudimos activar ese perfil.');
+    } catch (err) {
+      if (esSesionVencida(err)) router.push('/login');
+      else setError(mensajeDeError(err));
     }
   }
 
