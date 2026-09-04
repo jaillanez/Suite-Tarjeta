@@ -5,20 +5,24 @@ import { useRouter } from 'next/navigation';
 import type { EstadoCiudadano, EstadoPadron } from '@tarjeta/api-client';
 import { Button, type Nivel, NivelBadge } from '@tarjeta/ui';
 import { api } from '@/lib/api';
+import { esSesionVencida, mensajeDeError } from '@/lib/errores';
 
 export default function MiEstadoPage() {
   const router = useRouter();
   const [estado, setEstado] = useState<EstadoCiudadano | null>(null);
   const [padron, setPadron] = useState<EstadoPadron | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
+    setError(null);
     try {
       const [e, p] = await Promise.all([api.miEstado(), api.estadoPadron()]);
       setEstado(e);
       setPadron(p);
-    } catch {
-      router.push('/login');
+    } catch (err) {
+      if (esSesionVencida(err)) router.push('/login');
+      else setError(mensajeDeError(err));
     }
   }, [router]);
 
@@ -31,9 +35,20 @@ export default function MiEstadoPage() {
     try {
       await api.actualizarEstado();
       await cargar();
-    } catch {
-      setMsg('Alcanzaste el máximo de actualizaciones por hoy.');
+    } catch (err) {
+      setMsg(mensajeDeError(err));
     }
+  }
+
+  if (error && !estado) {
+    return (
+      <main className="mx-auto max-w-md space-y-3 p-4" role="alert">
+        <p className="text-sm text-destructive">{error}</p>
+        <Button size="sm" variant="outline" onClick={() => void cargar()}>
+          Reintentar
+        </Button>
+      </main>
+    );
   }
 
   if (!estado) {

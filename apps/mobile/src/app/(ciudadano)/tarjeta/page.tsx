@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { EstadoCiudadano, TokenOut, TransaccionOut } from '@tarjeta/api-client';
+import type { EstadoCiudadano, PersonaMe, TokenOut, TransaccionOut } from '@tarjeta/api-client';
 import { Button, type Nivel, TarjetaCredencial } from '@tarjeta/ui';
 import { QrToken } from '@/components/QrToken';
 import { api } from '@/lib/api';
+import { esSesionVencida, mensajeDeError } from '@/lib/errores';
 
 const municipio = process.env.NEXT_PUBLIC_MUNICIPIO_NOMBRE ?? 'Municipio';
 
@@ -17,6 +18,7 @@ function tokenVigente(lote: TokenOut[]): string | null {
 
 export default function TarjetaPage() {
   const router = useRouter();
+  const [me, setMe] = useState<PersonaMe | null>(null);
   const [estado, setEstado] = useState<EstadoCiudadano | null>(null);
   const [lote, setLote] = useState<TokenOut[]>([]);
   const [tokenActual, setTokenActual] = useState<string | null>(null);
@@ -24,14 +26,21 @@ export default function TarjetaPage() {
   const [pendiente, setPendiente] = useState<TransaccionOut | null>(null);
   const [usarPuntos, setUsarPuntos] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
     try {
-      const [e, tokens] = await Promise.all([api.miEstado(), api.misTokensCanje()]);
+      const [m, e, tokens] = await Promise.all([
+        api.me(),
+        api.miEstado(),
+        api.misTokensCanje(),
+      ]);
+      setMe(m);
       setEstado(e);
       setLote(tokens); // pregenerados para 2 h: sirven aunque después no haya señal
-    } catch {
-      router.push('/login');
+    } catch (err) {
+      if (esSesionVencida(err)) router.push('/login');
+      else setError(mensajeDeError(err));
     }
   }, [router]);
 
@@ -64,32 +73,65 @@ export default function TarjetaPage() {
 
   async function confirmar(): Promise<void> {
     if (!pendiente) return;
+    setError(null);
+    setMsg(null);
     const puntos = Math.max(0, Number(usarPuntos) || 0);
-    const aplicada = await api.confirmarCanje(pendiente.id, puntos);
-    setPendiente(null);
-    setUsarPuntos('');
-    const usados = aplicada.puntos_consumidos;
-    setMsg(usados > 0 ? `¡Aplicado! Usaste ${usados} puntos.` : '¡Descuento aplicado!');
+    try {
+      const aplicada = await api.confirmarCanje(pendiente.id, puntos);
+      setPendiente(null);
+      setUsarPuntos('');
+      const usados = aplicada.puntos_consumidos;
+      setMsg(usados > 0 ? `¡Aplicado! Usaste ${usados} puntos.` : '¡Descuento aplicado!');
+    } catch (err) {
+      // §12.5: el error al confirmar NO se ignora. Se mantiene la operación pendiente para reintentar.
+      if (esSesionVencida(err)) router.push('/login');
+      else setError(mensajeDeError(err));
+    }
   }
 
   async function rechazar(): Promise<void> {
     if (!pendiente) return;
-    await api.rechazarCanje(pendiente.id);
-    setPendiente(null);
+    setError(null);
+    try {
+      await api.rechazarCanje(pendiente.id);
+      setPendiente(null);
+    } catch (err) {
+      if (esSesionVencida(err)) router.push('/login');
+      else setError(mensajeDeError(err));
+    }
   }
 
   async function generarCodigo(): Promise<void> {
-    const r = await api.generarCodigoCanje();
-    setCodigo(r.codigo);
+    setError(null);
+    try {
+      const r = await api.generarCodigoCanje();
+      setCodigo(r.codigo);
+    } catch (err) {
+      if (esSesionVencida(err)) router.push('/login');
+      else setError(mensajeDeError(err));
+    }
+  }
+
+  if (error && !estado) {
+    return (
+      <main className="mx-auto max-w-md space-y-3 p-4" role="alert">
+        <p className="text-sm text-destructive">{error}</p>
+        <Button variant="outline" onClick={() => void cargar()}>
+          Reintentar
+        </Button>
+      </main>
+    );
   }
 
   if (!estado) return <p className="p-4 text-muted-foreground">Cargando…</p>;
+
+  const nombreTitular = me ? `${me.nombre} ${me.apellido}`.trim() : '';
 
   return (
     <main className="mx-auto max-w-md space-y-4 p-4">
       <h1 className="text-lg font-semibold">Mi tarjeta</h1>
       <TarjetaCredencial
-        nombre="Titular"
+        nombre={nombreTitular || '—'}
         numero={estado.numero_tarjeta}
         nivel={estado.nivel as Nivel}
         municipio={municipio}
@@ -125,6 +167,11 @@ export default function TarjetaPage() {
               Rechazar
             </Button>
           </div>
+          {error ? (
+            <p className="mt-2 text-sm text-destructive" role="alert">
+              {error}
+            </p>
+          ) : null}
         </div>
       ) : (
         <div className="rounded-lg border border-border p-4 text-center">
@@ -143,6 +190,11 @@ export default function TarjetaPage() {
       )}
 
       {msg ? <p className="text-sm text-green-600">{msg}</p> : null}
+      {error && !pendiente ? (
+        <p className="text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
       <p className="text-sm text-muted-foreground">Estado: {estado.estado_tarjeta}</p>
     </main>
   );
