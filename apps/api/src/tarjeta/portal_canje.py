@@ -583,12 +583,14 @@ async def estado_operacion(
 async def confirmar_comercio(
     id_transaccion: str,
     session: SessionDep,
-    _: Annotated[
+    actor: Annotated[
         ActorComercio, Depends(requiere_comercio_habilitado(PermisoComercio.CANJE_OPERAR))
     ],
 ) -> TransaccionOut:
     t = await DecidirOperacion(_puertos(session)).confirmar(
-        id_transaccion=id_transaccion, por=Confirmador.CAJERO
+        id_transaccion=id_transaccion,
+        por=Confirmador.CAJERO,
+        id_comercio=str(actor.id_comercio),
     )
     return _out(t)
 
@@ -610,7 +612,10 @@ async def anular(
     )
     es_admin = actor.rol is RolComercio.ADMIN_COMERCIO
     await AnularOperacion(_puertos(session), ventana_minutos=ventana).ejecutar(
-        id_transaccion=id_transaccion, motivo=body.motivo, es_admin=es_admin
+        id_transaccion=id_transaccion,
+        motivo=body.motivo,
+        es_admin=es_admin,
+        id_comercio=str(actor.id_comercio),
     )
     return Mensaje(mensaje="Operación anulada; se revirtió el descuento y el cupo.")
 

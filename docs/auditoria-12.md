@@ -116,6 +116,39 @@ Los cinco necesitan test por cada camino (criterio de aceptación explícito).
   libro). A revisar y cubrir con test donde falte evidencia; documentar en el informe cada punto.
 - **Falta test:** casos de IDOR (recurso de otro comercio) y de reuso donde no haya cobertura.
 
+#### Resultado de la auditoría (PR P1-E)
+
+Verificado **con evidencia** (protección ya existente + test que la prueba):
+- **Doble confirmación de canje:** guardado por la máquina de estados del dominio
+  (`Transaccion.confirmar` exige `PENDIENTE_CONFIRMACION`; `anular` exige `APLICADA`) —
+  `tests/unit/test_canje.py` (`test_no_se_anula_lo_no_aplicado`, confirmación por parte incorrecta,
+  confirmación vencida).
+- **Doble consumo/acreditación de puntos:** `tests/integration/test_puntos_api.py`
+  (`test_reintento_no_acredita_dos_veces`, `test_concurrencia_consumo_no_deja_saldo_imposible`,
+  `test_vencimiento_idempotente`, `test_pm_por_estar_al_dia_es_idempotente_por_periodo`).
+- **Reuso de código/token (nonce QR):** `redis SET nonce NX` en `_resolver_ciudadano`; probado en
+  `test_flujo_http_completo_y_sin_pii` (mismo QR + otra clave ⇒ 409 `TokenYaUsado`).
+- **Confirmaciones vencidas:** `test_confirmacion_vencida_no_aplica`, `test_expiracion_libera_reserva`.
+- **Reuso de refresh:** rotación + revocación en cadena — `test_identidad_api.py::test_refresh_rotacion_y_reuso`.
+- **Escalamiento de permisos:** `requiere_comercio_habilitado` (rol + estado) y
+  `test_identidad_api.py::test_perfil_no_asignado_403`.
+- **IDOR de lectura de operación:** `GET /comercio/operacion/{id}` ya filtraba por `id_comercio`.
+
+Corregido en esta PR (**hallazgo real, con test**):
+- **IDOR de escritura entre comercios.** `POST /comercio/{id}/confirmar` y `POST /{id}/anular`
+  no verificaban que la operación perteneciera al comercio autenticado: un cajero de otro comercio
+  podía **confirmar** o **anular** (revirtiendo descuento y puntos) una operación ajena.
+  Fix: `DecidirOperacion.confirmar` y `AnularOperacion.ejecutar` reciben `id_comercio` y responden
+  `NotFoundError` (sin filtrar existencia) ante un dueño distinto; los endpoints pasan
+  `actor.id_comercio`. Tests: `test_confirmar_de_otro_comercio_es_inexistente`,
+  `test_anular_de_otro_comercio_es_inexistente` (con control positivo del dueño).
+
+Queda anotado (sin evidencia nueva en esta PR, riesgo bajo con la arquitectura actual):
+- **Idempotencia de consumidores del outbox / jobs en varias réplicas.** El outbox se drena con
+  `FOR UPDATE SKIP LOCKED` y marca entregado en la misma transacción, y los consumidores contables
+  son idempotentes por `id_transaccion` (dedup del libro). No se agregó un test específico de
+  “misma entrega dos veces” a nivel dispatcher; se recomienda para una próxima iteración.
+
 ### P1-F · Gating de comercio no aprobado (regla BR-2..BR-5)
 - Ver la tabla de arriba. Agregar el filtro por estado del comercio en mapa, búsqueda/feed/motor y
   operación de canje, con **un test por camino**.

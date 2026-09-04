@@ -53,6 +53,7 @@ from tarjeta.modules.promociones.infrastructure.composition import (  # noqa: E4
 from tarjeta.modules.promociones.infrastructure.repositories import (  # noqa: E402
     SqlAlchemyPromocionRepository,
 )
+from tarjeta.shared.domain.errors import NotFoundError  # noqa: E402
 from tarjeta.shared.domain.types import EntityId  # noqa: E402
 
 PASSWORD = "contrasena-larga-123"
@@ -258,6 +259,88 @@ async def test_anulacion_revierte_tope(sm: async_sessionmaker) -> None:
     async with sm() as s:
         promo = await construir_puertos_promociones(s).promociones.obtener(EntityId.from_str(pid))
         assert promo is not None and promo.usos_totales == 0  # tope revertido
+
+
+# --------------------------------------------------------------- P1-E: IDOR entre comercios
+
+
+async def _iniciar_para(
+    sm: async_sessionmaker, *, suc: str, pid: str, persona: str, id_comercio: str, via: ViaCanje
+):
+    async with sm() as s:
+        return await _iniciar_caso(_canje(s)).ejecutar(
+            id_persona=persona,
+            nivel="BLACK",
+            id_comercio=id_comercio,
+            id_sucursal=suc,
+            id_cajero=str(uuid.uuid4()),
+            id_promocion=pid,
+            mecanica="PORCENTAJE",
+            valor=20,
+            monto=1000,
+            via=via,
+            clave_idempotencia=f"idor-{uuid.uuid4()}",
+        )
+
+
+async def test_anular_de_otro_comercio_es_inexistente(sm: async_sessionmaker) -> None:
+    # §12-P1-E (IDOR): un comercio no puede anular la operación aplicada de otro comercio.
+    suc = str(uuid.uuid4())
+    pid = await _promo_activa(sm, id_sucursal=suc, tope_total=100)
+    persona = str(uuid.uuid4())
+    comercio_a = str(uuid.uuid4())
+    t = await _iniciar_para(
+        sm, suc=suc, pid=pid, persona=persona, id_comercio=comercio_a, via=ViaCanje.CAJERO_ESCANEA
+    )
+    async with sm() as s:
+        await DecidirOperacion(_canje(s)).confirmar(
+            id_transaccion=str(t.id), por=Confirmador.CIUDADANO, id_actor=persona
+        )
+    # Otro comercio: no la ve (se responde como inexistente, sin filtrar su existencia).
+    async with sm() as s:
+        with pytest.raises(NotFoundError):
+            await AnularOperacion(_canje(s), ventana_minutos=15).ejecutar(
+                id_transaccion=str(t.id),
+                motivo="ajeno",
+                es_admin=False,
+                id_comercio=str(uuid.uuid4()),
+            )
+    # El comercio dueño sí puede (control positivo).
+    async with sm() as s:
+        await AnularOperacion(_canje(s), ventana_minutos=15).ejecutar(
+            id_transaccion=str(t.id), motivo="propia", es_admin=False, id_comercio=comercio_a
+        )
+    async with sm() as s:
+        tt = await _canje(s).transacciones.obtener(EntityId.from_str(str(t.id)))
+        assert tt is not None and tt.estado.value == "ANULADA"
+
+
+async def test_confirmar_de_otro_comercio_es_inexistente(sm: async_sessionmaker) -> None:
+    # §12-P1-E (IDOR): un comercio no puede confirmar la operación pendiente de otro comercio.
+    suc = str(uuid.uuid4())
+    pid = await _promo_activa(sm, id_sucursal=suc, tope_total=100)
+    persona = str(uuid.uuid4())
+    comercio_a = str(uuid.uuid4())
+    # CIUDADANO_ESCANEA => la confirma el CAJERO del comercio.
+    t = await _iniciar_para(
+        sm,
+        suc=suc,
+        pid=pid,
+        persona=persona,
+        id_comercio=comercio_a,
+        via=ViaCanje.CIUDADANO_ESCANEA,
+    )
+    assert t.confirmador is Confirmador.CAJERO
+    async with sm() as s:
+        with pytest.raises(NotFoundError):
+            await DecidirOperacion(_canje(s)).confirmar(
+                id_transaccion=str(t.id), por=Confirmador.CAJERO, id_comercio=str(uuid.uuid4())
+            )
+    async with sm() as s:
+        aplicada = await DecidirOperacion(_canje(s)).confirmar(
+            id_transaccion=str(t.id), por=Confirmador.CAJERO, id_comercio=comercio_a
+        )
+    assert aplicada.estado.value == "APLICADA"
 
 
 # --------------------------------------------------------------- offline (§08.5)
