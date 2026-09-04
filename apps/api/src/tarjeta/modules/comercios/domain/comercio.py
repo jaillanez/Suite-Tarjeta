@@ -40,6 +40,12 @@ _TRANSICIONES: dict[EstadoComercio, set[EstadoComercio]] = {
     EstadoComercio.BAJA: set(),
 }
 
+# §12.1: solo un comercio inscripto y APROBADO (o ya ACTIVO) aparece en búsquedas y en el mapa,
+# publica promociones utilizables, opera canjes y emite puntos. Solicitar ≠ estar publicado.
+ESTADOS_HABILITADOS: frozenset[EstadoComercio] = frozenset(
+    {EstadoComercio.APROBADA, EstadoComercio.ACTIVA}
+)
+
 
 @dataclass(frozen=True, slots=True)
 class EvidenciaConvenio:

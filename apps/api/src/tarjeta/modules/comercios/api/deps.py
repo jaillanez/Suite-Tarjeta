@@ -9,7 +9,8 @@ from fastapi import Depends
 
 from tarjeta.modules.comercios.application.deps import ComerciosPuertos
 from tarjeta.modules.comercios.application.permisos import exigir
-from tarjeta.modules.comercios.domain.errors import PermisoComercioDenegado
+from tarjeta.modules.comercios.domain.comercio import ESTADOS_HABILITADOS
+from tarjeta.modules.comercios.domain.errors import ComercioNoHabilitado, PermisoComercioDenegado
 from tarjeta.modules.comercios.domain.roles import Permiso
 from tarjeta.modules.comercios.domain.usuario import UsuarioComercio
 from tarjeta.modules.comercios.infrastructure.composition import construir_puertos_comercios
@@ -53,6 +54,24 @@ ActorComercioDep = Annotated[ActorComercio, Depends(actor_comercio)]
 def requiere_comercio(permiso: Permiso) -> Callable[..., Awaitable[ActorComercio]]:
     async def dep(actor: ActorComercioDep) -> ActorComercio:
         exigir(actor.rol, permiso)
+        return actor
+
+    return dep
+
+
+def requiere_comercio_habilitado(permiso: Permiso) -> Callable[..., Awaitable[ActorComercio]]:
+    """Como `requiere_comercio`, pero además exige que el comercio esté APROBADO/ACTIVO (§12.1).
+
+    Para las funciones operativas (operar canjes, publicar promociones, emitir puntos): un comercio
+    que solo inició la solicitud no puede usarlas hasta ser aprobado."""
+
+    async def dep(actor: ActorComercioDep, puertos: ComerciosPuertosDep) -> ActorComercio:
+        exigir(actor.rol, permiso)
+        comercio = await puertos.comercios.obtener(actor.id_comercio)
+        if comercio is None or comercio.estado not in ESTADOS_HABILITADOS:
+            raise ComercioNoHabilitado(
+                "El comercio todavía no está aprobado para operar en la plataforma."
+            )
         return actor
 
     return dep
