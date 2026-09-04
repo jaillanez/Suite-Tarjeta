@@ -1,41 +1,50 @@
 'use client';
 
-const ACCESS = 'tarjeta_access';
-const REFRESH = 'tarjeta_refresh';
+// §12 P1-A: la sesión web ya NO usa localStorage. El refresh token vive en una cookie HttpOnly
+// (la pone el backend, inaccesible a JS) y el access token, de vida corta, se guarda en memoria.
+// Al recargar la página se pierde el access en memoria: se recupera con un refresh silencioso
+// contra la cookie HttpOnly. No se guarda ninguna cookie manipulable como "prueba de sesión".
 
-export function guardarSesion(access: string, refresh: string): void {
-  try {
-    localStorage.setItem(ACCESS, access);
-    localStorage.setItem(REFRESH, refresh);
-    // Cookie mínima para que el middleware sepa que hay sesión (la validez real la valida la API).
-    document.cookie = 'tarjeta_sesion=1; path=/; SameSite=Lax';
-  } catch {
-    // almacenamiento no disponible
-  }
+const baseUrl = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000').replace(/\/$/, '');
+
+let accessToken: string | null = null;
+let refrescando: Promise<string | null> | null = null;
+
+export function guardarAccessToken(token: string): void {
+  accessToken = token;
 }
 
-export function limpiarSesion(): void {
-  try {
-    localStorage.removeItem(ACCESS);
-    localStorage.removeItem(REFRESH);
-    document.cookie = 'tarjeta_sesion=; path=/; Max-Age=0; SameSite=Lax';
-  } catch {
-    // ignore
-  }
+export function limpiarAccessToken(): void {
+  accessToken = null;
 }
 
-export function getAccessToken(): string | null {
+async function refrescar(): Promise<string | null> {
   try {
-    return localStorage.getItem(ACCESS);
+    const res = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include', // envía la cookie HttpOnly de refresh
+      headers: { 'content-type': 'application/json', 'x-auth-mode': 'cookie' },
+      body: '{}',
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { access_token: string };
+    accessToken = data.access_token;
+    return accessToken;
   } catch {
     return null;
   }
 }
 
-export function getRefreshToken(): string | null {
-  try {
-    return localStorage.getItem(REFRESH);
-  } catch {
-    return null;
+/**
+ * Devuelve el access token en memoria; si no hay (p. ej. tras recargar), intenta un refresh
+ * silencioso con la cookie HttpOnly. Coalesce las llamadas concurrentes en un único refresh.
+ */
+export async function obtenerAccessToken(): Promise<string | null> {
+  if (accessToken) return accessToken;
+  if (!refrescando) {
+    refrescando = refrescar().finally(() => {
+      refrescando = null;
+    });
   }
+  return refrescando;
 }

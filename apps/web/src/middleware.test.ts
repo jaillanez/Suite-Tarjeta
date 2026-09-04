@@ -19,7 +19,8 @@ const PRIVADAS = [
 
 function pedir(path: string, conSesion: boolean): NextRequest {
   const headers = new Headers();
-  if (conSesion) headers.set('cookie', 'tarjeta_sesion=1');
+  // §12 P1-A: la "presencia de sesión" es la cookie HttpOnly de refresh, no una manipulable.
+  if (conSesion) headers.set('cookie', 'tarjeta_refresh=un-refresh-token');
   return new NextRequest(`http://localhost${path}`, { headers });
 }
 

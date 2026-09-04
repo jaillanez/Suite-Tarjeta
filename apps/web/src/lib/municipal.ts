@@ -6,7 +6,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { limpiarSesion } from './session';
+import { api } from './api';
+import { limpiarAccessToken } from './session';
 
 export const TIMEOUT_MIN = Number(process.env.NEXT_PUBLIC_SESION_MUNICIPAL_MIN ?? 10);
 
@@ -31,7 +32,8 @@ export function useIdleLogout(min: number = TIMEOUT_MIN): { restanteSeg: number 
     const timer = window.setInterval(() => {
       const restante = Math.round((vence.current - Date.now()) / 1000);
       if (restante <= 0) {
-        limpiarSesion();
+        void api.logout(); // revoca el refresh en el server y borra la cookie HttpOnly
+        limpiarAccessToken();
         router.push('/login?motivo=timeout');
       } else if (restante <= 60) {
         setRestanteSeg(restante);

@@ -3,10 +3,10 @@
 import { type FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ApiError } from '@tarjeta/api-client';
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '@tarjeta/ui';
 import { api } from '@/lib/api';
-import { guardarSesion } from '@/lib/session';
+import { mensajeDeError } from '@/lib/errores';
+import { guardarAccessToken } from '@/lib/session';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,11 +31,12 @@ export default function LoginPage() {
       if (r.mfa_requerido && r.mfa_token) {
         setMfaToken(r.mfa_token);
       } else if (r.tokens) {
-        guardarSesion(r.tokens.access_token, r.tokens.refresh_token);
+        // El refresh quedó en la cookie HttpOnly; solo guardamos el access en memoria.
+        guardarAccessToken(r.tokens.access_token);
         continuar();
       }
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'No pudimos iniciar sesión.');
+      setError(mensajeDeError(err));
     } finally {
       setCargando(false);
     }
@@ -49,11 +50,11 @@ export default function LoginPage() {
     try {
       const r = await api.mfaVerificar(mfaToken, codigo);
       if (r.tokens) {
-        guardarSesion(r.tokens.access_token, r.tokens.refresh_token);
+        guardarAccessToken(r.tokens.access_token);
         continuar();
       }
-    } catch {
-      setError('Código inválido.');
+    } catch (err) {
+      setError(mensajeDeError(err));
     } finally {
       setCargando(false);
     }
