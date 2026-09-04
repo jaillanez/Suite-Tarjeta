@@ -5,7 +5,7 @@ from __future__ import annotations
 import dataclasses
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Depends, Request, Response, status
 
 from tarjeta.modules.identidad.application.activar_mfa import ActivarMfa
 from tarjeta.modules.identidad.application.cambiar_perfil import CambiarPerfil, ListarPerfiles
@@ -23,9 +23,11 @@ from tarjeta.modules.identidad.application.registrar_consentimiento import (
 )
 from tarjeta.modules.identidad.application.registrar_persona import RegistrarPersona
 from tarjeta.modules.identidad.application.verificar_celular import SolicitarOtp, VerificarCelular
+from tarjeta.shared.api.dependencies import SettingsDep
 from tarjeta.shared.domain.errors import NotFoundError
 from tarjeta.shared.domain.types import EntityId
 
+from .cookies import clear_refresh_cookie, leer_refresh, modo_cookie, set_refresh_cookie
 from .deps import ClaimsDep, HuellaDep, PuertosDep, get_ip, get_user_agent, require_verificada
 from .schemas import (
     DispositivoCrearRequest,
@@ -82,34 +84,57 @@ async def reenviar_otp(
 
 @router.post("/auth/login", response_model=LoginResponse)
 async def login(
-    body: LoginRequest, request: Request, puertos: PuertosDep, huella: HuellaDep
+    body: LoginRequest,
+    request: Request,
+    response: Response,
+    puertos: PuertosDep,
+    huella: HuellaDep,
+    settings: SettingsDep,
 ) -> LoginResponse:
     r = await IniciarSesion(puertos).ejecutar(
         dni=body.dni, password=body.password, ip=get_ip(request), huella=huella
     )
-    return _login_response(r)
+    return _login_response(r, request, response, settings)
 
 
 @router.post("/auth/mfa/verificar", response_model=LoginResponse)
 async def mfa_verificar(
-    body: MfaVerificarRequest, puertos: PuertosDep, huella: HuellaDep
+    body: MfaVerificarRequest,
+    request: Request,
+    response: Response,
+    puertos: PuertosDep,
+    huella: HuellaDep,
+    settings: SettingsDep,
 ) -> LoginResponse:
     r = await VerificarMfa(puertos).ejecutar(
         mfa_token=body.mfa_token, codigo=body.codigo, huella=huella
     )
-    return _login_response(r)
+    return _login_response(r, request, response, settings)
 
 
 @router.post("/auth/refresh", response_model=TokensResponse)
-async def refresh(body: RefreshRequest, puertos: PuertosDep, huella: HuellaDep) -> TokensResponse:
-    t = await RefrescarSesion(puertos).ejecutar(refresh_token=body.refresh_token, huella=huella)
-    return TokensResponse(access_token=t.access_token, refresh_token=t.refresh_token)
+async def refresh(
+    body: RefreshRequest,
+    request: Request,
+    response: Response,
+    puertos: PuertosDep,
+    huella: HuellaDep,
+    settings: SettingsDep,
+) -> TokensResponse:
+    t = await RefrescarSesion(puertos).ejecutar(
+        refresh_token=leer_refresh(request, body.refresh_token), huella=huella
+    )
+    return _tokens_response(t.access_token, t.refresh_token, request, response, settings)
 
 
 @router.post("/auth/logout", response_model=MensajeResponse)
-async def logout(body: RefreshRequest, puertos: PuertosDep) -> MensajeResponse:
-    await puertos.refresh.revocar(body.refresh_token)
+async def logout(
+    body: RefreshRequest, request: Request, response: Response, puertos: PuertosDep
+) -> MensajeResponse:
+    await puertos.refresh.revocar(leer_refresh(request, body.refresh_token))
     await puertos.uow.commit()
+    if modo_cookie(request):
+        clear_refresh_cookie(response)
     return MensajeResponse(mensaje="Sesión cerrada.")
 
 
@@ -139,12 +164,18 @@ async def perfiles(claims: ClaimsDep, puertos: PuertosDep) -> list[PerfilOut]:
 
 @router.post("/auth/perfiles/{clave}/activar", response_model=TokensResponse)
 async def activar_perfil(
-    clave: str, claims: ClaimsDep, puertos: PuertosDep, huella: HuellaDep
+    clave: str,
+    request: Request,
+    response: Response,
+    claims: ClaimsDep,
+    puertos: PuertosDep,
+    huella: HuellaDep,
+    settings: SettingsDep,
 ) -> TokensResponse:
     t = await CambiarPerfil(puertos).ejecutar(
         id_persona=claims.id_persona, clave_destino=clave, huella=huella
     )
-    return TokensResponse(access_token=t.access_token, refresh_token=t.refresh_token)
+    return _tokens_response(t.access_token, t.refresh_token, request, response, settings)
 
 
 # --- personas/me -------------------------------------------------------------
@@ -254,18 +285,31 @@ async def mfa_activar(claims: ClaimsDep, puertos: PuertosDep) -> MfaActivarRespo
     )
 
 
-def _login_response(r: object) -> LoginResponse:
+def _tokens_response(
+    access: str, refresh: str, request: Request, response: Response, settings: SettingsDep
+) -> TokensResponse:
+    """En modo cookie, el refresh va a la cookie HttpOnly y NO al cuerpo; si no, va al cuerpo."""
+    if modo_cookie(request):
+        set_refresh_cookie(response, refresh, settings)
+        return TokensResponse(access_token=access, refresh_token="")
+    return TokensResponse(access_token=access, refresh_token=refresh)
+
+
+def _login_response(
+    r: object, request: Request, response: Response, settings: SettingsDep
+) -> LoginResponse:
     from tarjeta.modules.identidad.application.dto import LoginResultado
 
     assert isinstance(r, LoginResultado)
+    tokens = (
+        _tokens_response(r.tokens.access_token, r.tokens.refresh_token, request, response, settings)
+        if r.tokens
+        else None
+    )
     return LoginResponse(
         mfa_requerido=r.mfa_requerido,
         perfiles=[PerfilOut(**dataclasses.asdict(p)) for p in r.perfiles],
         perfil_activo=r.perfil_activo,
-        tokens=(
-            TokensResponse(access_token=r.tokens.access_token, refresh_token=r.tokens.refresh_token)
-            if r.tokens
-            else None
-        ),
+        tokens=tokens,
         mfa_token=r.mfa_token,
     )

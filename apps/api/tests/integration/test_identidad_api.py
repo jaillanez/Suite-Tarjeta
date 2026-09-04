@@ -136,6 +136,53 @@ async def test_refresh_rotacion_y_reuso(client: AsyncClient) -> None:
     assert r.status_code == 401
 
 
+# --- §12 P1-A: sesión web con refresh en cookie HttpOnly -----------------------
+
+_COOKIE_HDR = {"X-Auth-Mode": "cookie"}
+
+
+async def test_login_modo_cookie_no_expone_refresh_en_cuerpo(client: AsyncClient) -> None:
+    dni = await _registrar(client)
+    r = await client.post(
+        "/api/v1/auth/login", json={"dni": dni, "password": PASSWORD}, headers=_COOKIE_HDR
+    )
+    assert r.status_code == 200, r.text
+    tokens = r.json()["tokens"]
+    assert tokens["access_token"]  # el access sí viaja (la web lo guarda en memoria)
+    assert tokens["refresh_token"] == ""  # el refresh NO se expone a JS
+    set_cookie = r.headers.get("set-cookie", "").lower()
+    assert "tarjeta_refresh=" in set_cookie
+    assert "httponly" in set_cookie
+    assert "samesite=strict" in set_cookie
+    assert client.cookies.get("tarjeta_refresh")  # quedó en el jar (HttpOnly)
+
+
+async def test_refresh_modo_cookie_usa_la_cookie_y_rota(client: AsyncClient) -> None:
+    dni = await _registrar(client)
+    await client.post(
+        "/api/v1/auth/login", json={"dni": dni, "password": PASSWORD}, headers=_COOKIE_HDR
+    )
+    # Cuerpo vacío: el refresh viaja en la cookie que el navegador reenvía.
+    r = await client.post("/api/v1/auth/refresh", json={}, headers=_COOKIE_HDR)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["access_token"]
+    assert body["refresh_token"] == ""  # sigue sin exponerse en el cuerpo
+    assert client.cookies.get("tarjeta_refresh")  # rotada
+
+
+async def test_logout_modo_cookie_borra_la_cookie(client: AsyncClient) -> None:
+    dni = await _registrar(client)
+    await client.post(
+        "/api/v1/auth/login", json={"dni": dni, "password": PASSWORD}, headers=_COOKIE_HDR
+    )
+    r = await client.post("/api/v1/auth/logout", json={}, headers=_COOKIE_HDR)
+    assert r.status_code == 200
+    # Tras el logout la sesión por cookie ya no sirve (revocada + cookie borrada).
+    r2 = await client.post("/api/v1/auth/refresh", json={}, headers=_COOKIE_HDR)
+    assert r2.status_code == 401
+
+
 async def test_perfil_no_asignado_403(client: AsyncClient) -> None:
     dni = await _registrar(client)
     tokens = await _login(client, dni)

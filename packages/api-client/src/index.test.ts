@@ -52,3 +52,42 @@ describe('reintentos del cliente', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 });
+
+// §12 P1-A: modo cookie para la sesión web.
+const jsonOk = (obj: unknown) =>
+  new Response(JSON.stringify(obj), {
+    status: 200,
+    headers: { 'content-type': 'application/json' },
+  });
+
+describe('modo cookie (P1-A)', () => {
+  it('envía credenciales y el header X-Auth-Mode; el cuerpo no lleva el refresh real', async () => {
+    const fn = vi.fn((_url: string, _init?: RequestInit) =>
+      Promise.resolve(jsonOk({ access_token: 'a', refresh_token: '' })),
+    );
+    vi.stubGlobal('fetch', fn);
+    const api = createApiClient({ baseUrl: 'http://test', authMode: 'cookie' });
+
+    await api.refresh(); // sin argumento: el refresh viaja en la cookie
+
+    const init = fn.mock.calls[0]?.[1];
+    expect(init?.credentials).toBe('include');
+    expect(new Headers(init?.headers).get('x-auth-mode')).toBe('cookie');
+    expect(JSON.parse(String(init?.body))).toEqual({ refresh_token: '' });
+  });
+
+  it('en modo body (por defecto) no manda credenciales include ni el header', async () => {
+    const fn = vi.fn((_url: string, _init?: RequestInit) =>
+      Promise.resolve(jsonOk({ access_token: 'a', refresh_token: 'r2' })),
+    );
+    vi.stubGlobal('fetch', fn);
+    const api = createApiClient({ baseUrl: 'http://test' });
+
+    await api.refresh('r1');
+
+    const init = fn.mock.calls[0]?.[1];
+    expect(init?.credentials).toBe('same-origin');
+    expect(new Headers(init?.headers).get('x-auth-mode')).toBeNull();
+    expect(JSON.parse(String(init?.body))).toEqual({ refresh_token: 'r1' });
+  });
+});
