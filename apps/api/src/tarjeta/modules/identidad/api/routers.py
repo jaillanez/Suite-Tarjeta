@@ -16,6 +16,10 @@ from tarjeta.modules.identidad.application.gestionar_dispositivos import (
     RevocarDispositivo,
 )
 from tarjeta.modules.identidad.application.iniciar_sesion import IniciarSesion, VerificarMfa
+from tarjeta.modules.identidad.application.recuperar_password import (
+    ConfirmarRecuperacion,
+    SolicitarRecuperacion,
+)
 from tarjeta.modules.identidad.application.refrescar_sesion import RefrescarSesion
 from tarjeta.modules.identidad.application.registrar_consentimiento import (
     ListarConsentimientos,
@@ -40,6 +44,7 @@ from .schemas import (
     PerfilOut,
     PersonaMeResponse,
     PersonaPatchRequest,
+    RecuperarConfirmarRequest,
     RecuperarRequest,
     ReenviarOtpRequest,
     RefreshRequest,
@@ -142,10 +147,19 @@ async def logout(
     "/auth/recuperar", status_code=status.HTTP_202_ACCEPTED, response_model=MensajeResponse
 )
 async def recuperar(body: RecuperarRequest, puertos: PuertosDep) -> MensajeResponse:
-    # §04.0.B: recuperación por email (sin SMS). El envío de email todavía no está cableado
-    # (no hay proveedor); el endpoint nunca revela si el email existe.
-    _ = body.email
+    # §04.0.B: recuperación por email. Nunca revela si el email existe (anti-enumeración).
+    # El envío real depende del proveedor (EMAIL_PROVEEDOR); en dev se escribe al log.
+    await SolicitarRecuperacion(puertos).ejecutar(email=body.email)
     return MensajeResponse(mensaje="Si la cuenta existe, enviamos instrucciones por email.")
+
+
+@router.post("/auth/recuperar/confirmar", response_model=MensajeResponse)
+async def recuperar_confirmar(
+    body: RecuperarConfirmarRequest, puertos: PuertosDep
+) -> MensajeResponse:
+    # Cambia la contraseña con un token de un solo uso y cierra todas las sesiones abiertas.
+    await ConfirmarRecuperacion(puertos).ejecutar(token=body.token, password=body.password)
+    return MensajeResponse(mensaje="Contraseña actualizada. Iniciá sesión con la nueva.")
 
 
 @router.get("/canje/puerta", response_model=MensajeResponse)

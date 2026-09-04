@@ -2511,6 +2511,24 @@
         "title": "ReclamoIn",
         "type": "object"
       },
+      "RecuperarConfirmarRequest": {
+        "properties": {
+          "password": {
+            "title": "Password",
+            "type": "string"
+          },
+          "token": {
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "password"
+        ],
+        "title": "RecuperarConfirmarRequest",
+        "type": "object"
+      },
       "RecuperarRequest": {
         "properties": {
           "email": {
@@ -3720,6 +3738,47 @@
           }
         },
         "summary": "Recuperar",
+        "tags": [
+          "identidad"
+        ]
+      }
+    },
+    "/api/v1/auth/recuperar/confirmar": {
+      "post": {
+        "operationId": "recuperar_confirmar_api_v1_auth_recuperar_confirmar_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecuperarConfirmarRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Recuperar Confirmar",
         "tags": [
           "identidad"
         ]

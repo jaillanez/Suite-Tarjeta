@@ -10,10 +10,15 @@ from tarjeta.modules.identidad.application.deps import Puertos
 from tarjeta.shared.infrastructure.crypto import FieldCipher
 from tarjeta.shared.infrastructure.database import SqlAlchemyUnitOfWork
 from tarjeta.shared.infrastructure.outbox import SqlAlchemyOutbox
-from tarjeta.shared.infrastructure.redis_stores import RedisAlmacenOtp, RedisRateLimiter
+from tarjeta.shared.infrastructure.redis_stores import (
+    RedisAlmacenOtp,
+    RedisAlmacenReset,
+    RedisRateLimiter,
+)
 
 from .adapters import MfaCifrado, TextosLegalesSql
 from .argon2_hasher import Argon2Hasher
+from .email_consola import EmailConsola
 from .jwt_generador import JwtGenerador
 from .otp_consola import OtpConsola
 from .refresh_store import SqlAlchemyAlmacenRefresh
@@ -56,6 +61,8 @@ def construir_puertos(session: AsyncSession, settings: Settings, redis: Redis) -
         envio_otp=OtpConsola(environment=settings.environment),
         almacen_otp=RedisAlmacenOtp(redis),
         rate_limiter=RedisRateLimiter(redis),
+        emisor_email=EmailConsola(environment=settings.environment),
+        almacen_reset=RedisAlmacenReset(redis),
         password_min_length=settings.password_min_length,
         otp_length=settings.otp_length,
         otp_ttl_seg=settings.otp_ttl_seconds,
@@ -63,4 +70,6 @@ def construir_puertos(session: AsyncSession, settings: Settings, redis: Redis) -
         otp_max_solicitudes_hora=settings.otp_max_solicitudes_por_hora,
         rate_limit_login=settings.rate_limit_login_por_minuto,
         rate_limit_registro=settings.rate_limit_registro_por_hora,
+        reset_ttl_seg=settings.reset_ttl_seconds,
+        reset_max_solicitudes_hora=settings.reset_max_solicitudes_por_hora,
     )

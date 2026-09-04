@@ -68,6 +68,14 @@ class SqlAlchemyPersonaRepository:
         ).scalar_one_or_none()
         return model_to_persona(model, self._cipher) if model else None
 
+    async def obtener_por_email(self, email: str) -> Persona | None:
+        model = (
+            await self._session.execute(
+                select(PersonaModel).where(PersonaModel.email == email.strip().lower())
+            )
+        ).scalar_one_or_none()
+        return model_to_persona(model, self._cipher) if model else None
+
     async def existe_dni(self, dni: str) -> bool:
         return bool(
             await self._session.scalar(

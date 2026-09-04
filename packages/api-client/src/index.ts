@@ -138,6 +138,9 @@ export function createApiClient(options: ApiClientOptions) {
     // En modo cookie el refresh viaja en la cookie: se llama sin argumento.
     refresh: (refresh_token = '') => post<Tokens>('/api/v1/auth/refresh', { refresh_token }),
     logout: (refresh_token = '') => post<Mensaje>('/api/v1/auth/logout', { refresh_token }),
+    recuperar: (email: string) => post<Mensaje>('/api/v1/auth/recuperar', { email }),
+    recuperarConfirmar: (token: string, password: string) =>
+      post<Mensaje>('/api/v1/auth/recuperar/confirmar', { token, password }),
     perfiles: () => request<Perfil[]>('/api/v1/auth/perfiles'),
     activarPerfil: (clave: string) =>
       post<Tokens>(`/api/v1/auth/perfiles/${encodeURIComponent(clave)}/activar`),

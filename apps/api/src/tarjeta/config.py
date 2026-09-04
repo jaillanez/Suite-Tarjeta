@@ -89,6 +89,13 @@ class Settings(BaseSettings):
     otp_max_intentos: int = 5
     otp_max_solicitudes_por_hora: int = 5
 
+    # Recuperación de cuenta por email (§04.0.B). El proveedor NO se elige acá: "consola" por
+    # defecto (dev, escribe al log); el real exige credenciales. En prod, el arranque se bloquea
+    # si sigue en "consola".
+    email_proveedor: Literal["consola", "real"] = "consola"
+    reset_ttl_seconds: int = 3600  # 1 h de validez del token de recuperación
+    reset_max_solicitudes_por_hora: int = 5
+
     # MFA
     mfa_issuer: str = "Tarjeta de Beneficios"
 

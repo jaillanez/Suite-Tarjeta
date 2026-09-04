@@ -25,6 +25,7 @@ def _settings(**over: object) -> Settings:
         "padron_api_key": SecretStr("k"),
         "padron_modo": "real",
         "contenido_proveedor": "real",
+        "email_proveedor": "real",
         "jwt_secret": SecretStr(_JWT_OK),
         "field_pepper": SecretStr("pepper"),
         "field_encryption_key": SecretStr(_CLAVE_OK),
@@ -50,6 +51,11 @@ def test_prod_bloquea_padron_simulado() -> None:
 def test_prod_bloquea_imagenes_simuladas() -> None:
     with pytest.raises(ArranqueInseguro, match="imágenes"):
         validar_arranque(_settings(contenido_proveedor="simulacion"))
+
+
+def test_prod_bloquea_email_simulado() -> None:
+    with pytest.raises(ArranqueInseguro, match="email"):
+        validar_arranque(_settings(email_proveedor="consola"))
 
 
 def test_prod_bloquea_jwt_debil() -> None:
