@@ -98,6 +98,29 @@ async def test_registro_login_me(client: AsyncClient) -> None:
     assert body["estado_identidad"] == "VERIFICADA"  # auto-verificado en esta etapa
 
 
+async def test_registro_queda_autodeclarada(client: AsyncClient) -> None:
+    # §12.2-C: el alta por la app queda AUTODECLARADA (nunca RENAPER, que está fuera de alcance).
+    dni = await _registrar(client)
+    tokens = await _login(client, dni)
+    me = (
+        await client.get(
+            "/api/v1/personas/me", headers={"Authorization": f"Bearer {tokens['access_token']}"}
+        )
+    ).json()
+    engine = create_async_engine(str(get_settings().database_url))
+    try:
+        async with engine.connect() as c:
+            metodo = (
+                await c.execute(
+                    text("SELECT metodo_verificacion FROM persona WHERE id = :id"),
+                    {"id": me["id"]},
+                )
+            ).scalar_one()
+    finally:
+        await engine.dispose()
+    assert metodo == "AUTODECLARADA"
+
+
 async def test_login_no_filtra_usuario_inexistente(client: AsyncClient) -> None:
     r = await client.post("/api/v1/auth/login", json={"dni": "99999999", "password": "x"})
     assert r.status_code == 401

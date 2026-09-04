@@ -17,7 +17,6 @@ from .argon2_hasher import Argon2Hasher
 from .jwt_generador import JwtGenerador
 from .otp_consola import OtpConsola
 from .refresh_store import SqlAlchemyAlmacenRefresh
-from .renaper_stub import RenaperStub
 from .repositories import (
     SqlAlchemyConsentimientoRepository,
     SqlAlchemyCredencialRepository,
@@ -57,7 +56,6 @@ def construir_puertos(session: AsyncSession, settings: Settings, redis: Redis) -
         envio_otp=OtpConsola(environment=settings.environment),
         almacen_otp=RedisAlmacenOtp(redis),
         rate_limiter=RedisRateLimiter(redis),
-        verificador=RenaperStub(resultado=settings.renaper_stub_resultado),
         password_min_length=settings.password_min_length,
         otp_length=settings.otp_length,
         otp_ttl_seg=settings.otp_ttl_seconds,

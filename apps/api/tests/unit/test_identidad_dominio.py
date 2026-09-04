@@ -42,16 +42,16 @@ def test_registrar_emite_evento_y_estado_pendiente() -> None:
 
 def test_verificar_identidad_habilita_canje() -> None:
     p = _persona()
-    p.verificar_identidad(MetodoVerificacion.RENAPER)
+    p.verificar_identidad(MetodoVerificacion.AUTODECLARADA)
     assert p.estado_identidad is EstadoIdentidad.VERIFICADA
     assert p.puede_canjear
 
 
 def test_transicion_invalida_lanza_domain_error() -> None:
     p = _persona()
-    p.verificar_identidad(MetodoVerificacion.RENAPER)
+    p.verificar_identidad(MetodoVerificacion.AUTODECLARADA)
     with pytest.raises(TransicionIdentidadInvalida):
-        p.verificar_identidad(MetodoVerificacion.RENAPER)  # ya verificada
+        p.verificar_identidad(MetodoVerificacion.AUTODECLARADA)  # ya verificada
     with pytest.raises(TransicionIdentidadInvalida):
         p.reintentar_identidad()  # no está rechazada
 
@@ -68,7 +68,7 @@ def test_suspender_solo_desde_verificada() -> None:
     p = _persona()
     with pytest.raises(TransicionIdentidadInvalida):
         p.suspender("fraude")
-    p.verificar_identidad(MetodoVerificacion.RENAPER)
+    p.verificar_identidad(MetodoVerificacion.AUTODECLARADA)
     p.suspender("fraude")
     assert p.estado_identidad is EstadoIdentidad.SUSPENDIDA
     p.reactivar()

@@ -30,7 +30,9 @@ class EstadoIdentidad(StrEnum):
 
 
 class MetodoVerificacion(StrEnum):
-    RENAPER = "RENAPER"
+    # §3.1 (v2.3): el alta por la app es autodeclarada; RENAPER quedó fuera de alcance. Los otros
+    # dos reflejan validaciones reforzadas reales (mostrador / proceso documental).
+    AUTODECLARADA = "AUTODECLARADA"
     DOCUMENTAL = "DOCUMENTAL"
     PRESENCIAL = "PRESENCIAL"
 

@@ -107,9 +107,6 @@ class Settings(BaseSettings):
     rate_limit_login_por_minuto: int = 10
     rate_limit_registro_por_hora: int = 5  # reforzado: única contención sin OTP (§04.0.B)
 
-    # Verificador de identidad de prueba (RENAPER stub)
-    renaper_stub_resultado: Literal["aprobado", "rechazado", "revision"] = "aprobado"
-
     # Parámetros del programa (§13 de la especificación)
     puntos_vencimiento_meses: int = 24
     # Puntos (PASO 09/10): los PC salen SOLO del reparto de la promoción (§10.0.A), por eso la
@@ -133,8 +130,9 @@ class Settings(BaseSettings):
     ff_generacion_pm: bool = False
     ff_generacion_ia: bool = True
     ff_publicacion_redes: bool = True
-    # §05.0.B: puerta de canje explícita. Con la auto-verificación actual todos quedan
-    # VERIFICADA; el día que haya verificación real, se prende este flag.
+    # §12.2-C: se conserva APAGADA y sin afectar canjes. Registro abierto + identidad AUTODECLARADA
+    # (§3.1 v2.3): canjear no exige identidad verificada. El día que exista verificación reforzada
+    # (PRESENCIAL/DOCUMENTAL) para ciertas operaciones futuras, se podrá prender.
     ff_exigir_identidad_verificada: bool = False
 
     model_config = SettingsConfigDict(env_file=".env", env_prefix="TARJETA_", extra="ignore")
