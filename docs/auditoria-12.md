@@ -91,6 +91,16 @@ Los cinco necesitan test por cada camino (criterio de aceptación explícito).
   `Preferences` solo para no sensibles (perfil activo). Migrar lo ya guardado.
 - **Riesgo:** credenciales legibles en el dispositivo.
 - **Falta test:** el helper de sesión usa el almacén seguro.
+- **Resuelto (seam + migración + tests):** `apps/mobile/src/lib/almacen-seguro.ts` es el puerto por
+  el que la sesión guarda access/refresh; `session.ts` ya no los escribe en Preferences y **migra**
+  de forma transparente cualquier token legacy que hubiera quedado ahí (lo mueve al almacén seguro y
+  lo borra del inseguro). Perfil activo y huella (no sensibles) siguen en Preferences.
+  Tests: `session.test.ts` (guarda en el seguro y no en Preferences; migra legacy; limpia ambos).
+- **Decisión pendiente (build nativo):** cablear el adaptador concreto de Keychain/Keystore con
+  `configurarAlmacenSeguro(...)` en el bootstrap nativo (elegir un plugin de secure-storage
+  compatible con Capacitor 8). El fallback por defecto usa Preferences y es **solo para dev web**
+  (avisa por consola). CI no compila el proyecto nativo, así que esta parte se verifica en el
+  dispositivo. Ver §"Riesgos que requieren decisión humana".
 
 ### P1-C · Middleware de rutas incompleto (web)
 - **Archivo:** `apps/web/middleware.ts` (matcher sin `/agentes`, `/aprobaciones`, `/auditoria`,
@@ -260,3 +270,10 @@ Queda anotado (sin evidencia nueva en esta PR, riesgo bajo con la arquitectura a
 - **Tiles del mapa:** bloqueante de lanzamiento sin responsable.
 - **Canal de notificaciones:** brecha estructural; define qué se puede prometer al lanzar.
 - **Backup/restore:** hay que validar la infraestructura real de producción, no solo el compose local.
+- **Almacén seguro móvil (P1-B):** el seam y la migración están listos y testeados; falta elegir y
+  cablear el plugin nativo de Keychain/Keystore (compatible con Capacitor 8) en el bootstrap. Hasta
+  entonces, en dev web el fallback usa Preferences.
+- **Sesión web con cookie HttpOnly (P1-A):** cambio transversal (backend + cliente + web) con
+  decisiones de diseño (cookie HttpOnly/SameSite vs. cuerpo, estrategia CSRF, refresh silencioso al
+  cargar). Ver el informe del PASO 12: se dejó como decisión por su alcance (evitar refactor de
+  medio módulo sin acuerdo).
