@@ -13,6 +13,8 @@ export function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
+// §12.3-C: política centralizada por espacio de nombres de rutas. Toda ruta privada nueva se
+// suma acá; la API igual valida siempre (el middleware es comodidad, no seguridad).
 export const config = {
   matcher: [
     // Portal comercio
@@ -21,6 +23,8 @@ export const config = {
     '/usuarios/:path*',
     '/caja/:path*',
     '/reportes/:path*',
+    '/mi-comercio/:path*',
+    '/contenido/:path*',
     // Portal municipal
     '/comercios/:path*',
     '/ciudadanos/:path*',
@@ -28,5 +32,14 @@ export const config = {
     '/campanias/:path*',
     '/tablero/:path*',
     '/parametria/:path*',
+    '/agentes/:path*',
+    '/aprobaciones/:path*',
+    '/auditoria/:path*',
+    '/puntos/:path*',
+    '/piezas/:path*',
+    // Ciudadano autenticado
+    '/perfil/:path*',
+    '/seleccionar-perfil/:path*',
+    '/mi-estado/:path*',
   ],
 };

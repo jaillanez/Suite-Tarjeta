@@ -13072,9 +13072,9 @@
         ]
       }
     },
-    "/health/db": {
+    "/health/ready": {
       "get": {
-        "operationId": "health_db_health_db_get",
+        "operationId": "health_ready_health_ready_get",
         "responses": {
           "200": {
             "content": {
@@ -13083,7 +13083,7 @@
                   "additionalProperties": {
                     "type": "string"
                   },
-                  "title": "Response Health Db Health Db Get",
+                  "title": "Response Health Ready Health Ready Get",
                   "type": "object"
                 }
               }
@@ -13091,7 +13091,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Health Db",
+        "summary": "Health Ready",
         "tags": [
           "health"
         ]

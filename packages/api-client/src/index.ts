@@ -39,9 +39,8 @@ export interface HealthResponse {
   status: string;
 }
 
-export interface HealthDbResponse {
-  uuid: string;
-  server_version: string;
+export interface ReadyResponse {
+  status: string;
 }
 
 export function createApiClient(options: ApiClientOptions) {
@@ -116,7 +115,7 @@ export function createApiClient(options: ApiClientOptions) {
   return {
     request,
     health: () => request<HealthResponse>('/health'),
-    healthDb: () => request<HealthDbResponse>('/health/db'),
+    ready: () => request<ReadyResponse>('/health/ready'),
     // --- auth ---
     registro: (body: RegistroBody) => post<Mensaje>('/api/v1/auth/registro', body),
     verificarCelular: (celular: string, codigo: string) =>

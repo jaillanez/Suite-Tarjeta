@@ -2171,15 +2171,15 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/health/db": {
+  "/health/ready": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Health Db */
-    get: operations["health_db_health_db_get"];
+    /** Health Ready */
+    get: operations["health_ready_health_ready_get"];
     put?: never;
     post?: never;
     delete?: never;
@@ -8127,7 +8127,7 @@ export interface operations {
       };
     };
   };
-  health_db_health_db_get: {
+  health_ready_health_ready_get: {
     parameters: {
       query?: never;
       header?: never;

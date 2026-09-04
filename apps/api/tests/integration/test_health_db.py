@@ -1,14 +1,14 @@
-"""Integración: /health/db contra un PostgreSQL 18 real.
+"""Integración: liveness/readiness contra un PostgreSQL 18 real.
 
 En CI usa el *service container* (via `TARJETA_INTEGRATION_DATABASE_URL`). En local,
 si hay una base alcanzable la corre; si no, se saltea con un mensaje claro.
-Verifica la línea api → sesión async → base y que `uuidv7()` (nativo en PG 18) funcione.
+Verifica que `/health` no toque la base y que `/health/ready` confirme la conexión
+sin exponer la versión del motor (§12.3-D). El viejo `/health/db` ya no existe.
 """
 
 from __future__ import annotations
 
 import os
-import uuid
 from collections.abc import AsyncIterator
 
 import pytest
@@ -61,15 +61,21 @@ async def client() -> AsyncIterator[AsyncClient]:
     await engine.dispose()
 
 
-async def test_health(client: AsyncClient) -> None:
+async def test_health_liveness(client: AsyncClient) -> None:
     resp = await client.get("/health")
     assert resp.status_code == 200
     assert resp.json() == {"status": "ok"}
 
 
-async def test_health_db(client: AsyncClient) -> None:
-    resp = await client.get("/health/db")
+async def test_health_readiness_no_expone_version(client: AsyncClient) -> None:
+    # §12.3-D: readiness confirma conexión pero NO expone la versión del motor.
+    resp = await client.get("/health/ready")
     assert resp.status_code == 200
-    body = resp.json()
-    uuid.UUID(body["uuid"])  # uuidv7() devuelve un UUID válido
-    assert "PostgreSQL 18" in body["server_version"]
+    assert resp.json() == {"status": "ready"}
+    assert "postgresql" not in resp.text.lower()
+
+
+async def test_health_db_ya_no_existe(client: AsyncClient) -> None:
+    # El endpoint que exponía version() se eliminó.
+    resp = await client.get("/health/db")
+    assert resp.status_code == 404
