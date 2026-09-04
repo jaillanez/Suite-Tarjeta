@@ -27,6 +27,7 @@ from tarjeta.portal_promociones import router as promociones_router
 from tarjeta.portal_puntos import router as puntos_router
 from tarjeta.shared.api.dependencies import SessionDep
 from tarjeta.shared.api.errors import register_error_handlers
+from tarjeta.shared.infrastructure.arranque import validar_arranque
 from tarjeta.shared.infrastructure.database import get_sessionmaker
 from tarjeta.shared.infrastructure.logging import configure_logging
 from tarjeta.shared.infrastructure.outbox import run_worker
@@ -36,6 +37,8 @@ _log = logging.getLogger("app")
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     cfg = settings or get_settings()
+    # §12.2-D: en prod, negarse a arrancar con simulaciones críticas o config insegura.
+    validar_arranque(cfg)
     configure_logging(cfg.debug)
     dispatcher = build_dispatcher(cfg)
 

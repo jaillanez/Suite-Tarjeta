@@ -108,7 +108,6 @@ def _puertos(
         envio_otp=None,  # type: ignore[arg-type]
         almacen_otp=None,  # type: ignore[arg-type]
         rate_limiter=None,  # type: ignore[arg-type]
-        verificador=None,  # type: ignore[arg-type]
     )
 
 

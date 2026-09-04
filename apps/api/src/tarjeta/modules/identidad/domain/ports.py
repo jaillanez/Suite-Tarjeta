@@ -70,18 +70,6 @@ class RateLimiter(Protocol):
     async def permitido(self, clave: str, limite: int, ventana_seg: int) -> bool: ...
 
 
-# --- verificación de identidad -----------------------------------------------
-@dataclass(frozen=True, slots=True)
-class ResultadoVerificacion:
-    aprobado: bool
-    requiere_revision: bool
-    metodo: str
-
-
-class VerificadorIdentidad(Protocol):
-    async def verificar(self, *, dni: str, cuil: str) -> ResultadoVerificacion: ...
-
-
 # --- repositorios ------------------------------------------------------------
 class PersonaRepository(Protocol):
     async def agregar(self, persona: Persona) -> None: ...

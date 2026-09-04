@@ -68,13 +68,12 @@ class RegistrarPersona:
             Credencial.crear(id_persona=persona.id, hash=p.hasher.hash(entrada.password))
         )
 
-        # §04.0.B: sin OTP ni RENAPER real, la identidad se acepta por auto-declaración de DNI
-        # en esta etapa (masa crítica). El stub decide el resultado por configuración; el
-        # reclamo de cuenta por alta presencial es el remedio ante suplantación (PASO 05).
-        resultado = await p.verificador.verificar(dni=str(dni), cuil="")
-        if resultado.aprobado:
-            persona.verificar_identidad(MetodoVerificacion.RENAPER)
-            await p.personas.guardar(persona)  # persistir el cambio de estado
+        # §3.1 (v2.3): registro ciudadano ABIERTO. La identidad es AUTODECLARADA — no se consulta
+        # RENAPER (fuera de alcance) ni se etiqueta como tal. La validación reforzada (PRESENCIAL /
+        # DOCUMENTAL) sube el estado más adelante; el reclamo por alta presencial es el remedio
+        # ante suplantación (PASO 05). El padrón solo asigna el nivel y nunca bloquea.
+        persona.verificar_identidad(MetodoVerificacion.AUTODECLARADA)
+        await p.personas.guardar(persona)  # persistir el cambio de estado
 
         eventos: list[DomainEvent] = list(persona.pull_events())
         for c in entrada.consentimientos:

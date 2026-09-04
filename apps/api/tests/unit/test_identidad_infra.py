@@ -11,7 +11,6 @@ import pytest
 from tarjeta.modules.identidad.infrastructure.argon2_hasher import Argon2Hasher
 from tarjeta.modules.identidad.infrastructure.jwt_generador import JwtGenerador
 from tarjeta.modules.identidad.infrastructure.otp_consola import OtpConsola
-from tarjeta.modules.identidad.infrastructure.renaper_stub import RenaperStub
 from tarjeta.modules.identidad.infrastructure.totp_pyotp import TotpPyotp
 from tarjeta.shared.domain.errors import AuthenticationError
 from tarjeta.shared.infrastructure.crypto import FieldCipher, search_hash
@@ -60,12 +59,6 @@ def test_totp_verifica_codigo() -> None:
     codigo = pyotp.TOTP(secreto).now()
     assert totp.verificar(secreto, codigo)
     assert "issuer=Test" in totp.uri(secreto, "20123456786")
-
-
-async def test_renaper_stub_resultados() -> None:
-    assert (await RenaperStub(resultado="aprobado").verificar(dni="1", cuil="2")).aprobado
-    assert (await RenaperStub(resultado="revision").verificar(dni="1", cuil="2")).requiere_revision
-    assert not (await RenaperStub(resultado="rechazado").verificar(dni="1", cuil="2")).aprobado
 
 
 async def test_otp_consola_solo_en_dev() -> None:

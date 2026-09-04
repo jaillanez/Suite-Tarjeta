@@ -19,7 +19,6 @@ from tarjeta.modules.identidad.domain.ports import (
     PersonaRepository,
     RateLimiter,
     TextosLegales,
-    VerificadorIdentidad,
 )
 from tarjeta.shared.application.unit_of_work import AbstractUnitOfWork
 
@@ -41,7 +40,6 @@ class Puertos:
     envio_otp: EnvioOtp
     almacen_otp: AlmacenOtp
     rate_limiter: RateLimiter
-    verificador: VerificadorIdentidad
     # configuración
     password_min_length: int = 10
     otp_length: int = 6
