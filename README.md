@@ -28,11 +28,22 @@ El **comercio absorbe el 100% del descuento** (el municipio no pone caja) y fija
 - **Comercio** — adhesión, sucursales, promociones, generación de creatividades con IA, caja (QR / código de 6 dígitos / navegador), reportes con benchmark de rubro.
 - **Municipal** — bandeja de comercios, ficha 360 de ciudadanos y comercios, moderación, campañas, tablero de gobierno, captación de comercios.
 
+## Reglas de negocio (especificación v2.3)
+
+- **Registro ciudadano abierto:** cualquier persona crea cuenta, recibe tarjeta y **canjea**. No
+  hace falta figurar en el padrón, estar al día ni verificar identidad. La identidad es
+  **autodeclarada** en el alta (**RENAPER está fuera de alcance**).
+- **El padrón solo asigna el nivel:** `al_dia = true` habilita Black; cualquier otro resultado
+  —o el padrón caído— deja Platino y **nunca bloquea ni degrada** el uso.
+- **El comercio sí se valida:** solo un comercio **inscripto y aprobado** aparece en búsquedas y en
+  el mapa, publica promociones utilizables, opera canjes y emite puntos. Solicitar ≠ estar publicado.
+- Estado real de cada módulo e integraciones pendientes: ver [`docs/estado-funcional.md`](docs/estado-funcional.md).
+
 ## Módulos
 
 | Módulo | Descripción |
 |---|---|
-| M1 · Ciudadano | Registro/verificación de identidad, motor de nivel, grupo familiar, tarjeta, descubrimiento, canje, billetera. |
+| M1 · Ciudadano | Registro abierto (identidad autodeclarada), motor de nivel (padrón solo para el nivel), grupo familiar, tarjeta, descubrimiento, canje, billetera. |
 | M2 · Comercio | Adhesión, sucursales, usuarios, promociones, creatividades con IA, caja, reportes. |
 | M3 · Administrador Municipal | Comercios, ciudadanos, moderación, campañas, parametría, tablero de gobierno. |
 | M4 · Redes sociales | Publicación en canales oficiales y propios, cola editorial, métricas. |
