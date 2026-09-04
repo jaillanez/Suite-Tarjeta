@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import type { Dispositivo, PersonaMe } from '@tarjeta/api-client';
 import { Button, Card, CardContent, CardHeader, CardTitle, NivelBadge } from '@tarjeta/ui';
 import { api } from '@/lib/api';
+import { esSesionVencida, mensajeDeError } from '@/lib/errores';
 import { getRefreshToken, limpiarSesion } from '@/lib/session';
 
 export default function PerfilPage() {
@@ -12,8 +13,10 @@ export default function PerfilPage() {
   const [me, setMe] = useState<PersonaMe | null>(null);
   const [dispositivos, setDispositivos] = useState<Dispositivo[]>([]);
   const [consentimientos, setConsentimientos] = useState<Record<string, boolean>>({});
+  const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
+    setError(null);
     try {
       const [m, d, c] = await Promise.all([
         api.me(),
@@ -23,8 +26,10 @@ export default function PerfilPage() {
       setMe(m);
       setDispositivos(d);
       setConsentimientos(c);
-    } catch {
-      router.push('/login');
+    } catch (err) {
+      // Solo una sesión vencida expulsa al login; el resto se muestra con opción de reintentar.
+      if (esSesionVencida(err)) router.push('/login');
+      else setError(mensajeDeError(err));
     }
   }, [router]);
 
@@ -48,6 +53,17 @@ export default function PerfilPage() {
     }
     limpiarSesion();
     router.push('/login');
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-3" role="alert">
+        <p className="text-sm text-destructive">{error}</p>
+        <Button variant="outline" onClick={() => void cargar()}>
+          Reintentar
+        </Button>
+      </div>
+    );
   }
 
   if (!me) {

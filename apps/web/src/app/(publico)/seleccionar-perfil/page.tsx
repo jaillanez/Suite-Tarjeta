@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import type { Perfil } from '@tarjeta/api-client';
 import { Button } from '@tarjeta/ui';
 import { api } from '@/lib/api';
+import { esSesionVencida, mensajeDeError } from '@/lib/errores';
 import { guardarSesion } from '@/lib/session';
 
 const DESTINO: Record<string, string> = {
@@ -22,7 +23,10 @@ export default function SeleccionarPerfilPage() {
     api
       .perfiles()
       .then(setPerfiles)
-      .catch(() => router.push('/login'));
+      .catch((err: unknown) => {
+        if (esSesionVencida(err)) router.push('/login');
+        else setError(mensajeDeError(err));
+      });
   }, [router]);
 
   async function activar(clave: string, tipo: string): Promise<void> {
@@ -31,8 +35,9 @@ export default function SeleccionarPerfilPage() {
       const tokens = await api.activarPerfil(clave);
       guardarSesion(tokens.access_token, tokens.refresh_token);
       router.push(DESTINO[tipo] ?? '/');
-    } catch {
-      setError('No pudimos activar ese perfil.');
+    } catch (err) {
+      if (esSesionVencida(err)) router.push('/login');
+      else setError(mensajeDeError(err));
     }
   }
 

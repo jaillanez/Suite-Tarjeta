@@ -2,9 +2,10 @@
 
 import { type FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ApiError, type RegistroBody } from '@tarjeta/api-client';
+import { type RegistroBody } from '@tarjeta/api-client';
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '@tarjeta/ui';
 import { api } from '@/lib/api';
+import { mensajeDeError } from '@/lib/errores';
 
 const OPCIONALES = [
   { tipo: 'COMUNICACIONES_COMERCIALES', label: 'Comunicaciones comerciales' },
@@ -38,18 +39,20 @@ export default function RegistroPage() {
       await api.registro(body);
       setCelularEnviado(f.celular);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'No pudimos registrarte.');
+      setError(mensajeDeError(err));
     }
   }
 
   async function onVerificar(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     if (!celularEnviado) return;
+    setError(null);
     try {
       await api.verificarCelular(celularEnviado, codigo);
       router.push('/login');
-    } catch {
-      setError('Código inválido.');
+    } catch (err) {
+      // Un código inválido (422) muestra el mensaje del backend; un 500/red no se disfraza de eso.
+      setError(mensajeDeError(err));
     }
   }
 
