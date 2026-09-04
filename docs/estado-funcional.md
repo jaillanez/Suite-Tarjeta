@@ -1,6 +1,7 @@
 # Estado funcional de la plataforma
 
 Qué es **real** y qué está **fingido**, sin ambigüedad. Se actualiza en cada paso.
+*Última actualización: cierre del PASO 12 (PRs #17–#31).*
 
 Clasificación: **Implementada** (funciona de punta a punta con integración real) · **Parcial**
 (funciona pero le falta una pieza) · **Simulada** (adaptador de simulación detrás de un puerto;
@@ -15,12 +16,12 @@ no llama a un servicio real) · **Pendiente** (no construida).
 
 | Módulo | Estado | Detalle / de qué depende para completarse |
 |---|---|---|
-| identidad | **Parcial** | Registro abierto, login, MFA (TOTP), dispositivos, perfiles: reales. **Verificación de identidad: autodeclarada** (no hay RENAPER; fuera de alcance, §12.2-C). Recuperación de cuenta: **pendiente** (necesita canal, ver Notificaciones). |
+| identidad | **Parcial** | Registro abierto, login, MFA (TOTP), dispositivos, perfiles: reales. Sesión web: refresh en **cookie HttpOnly** + access en memoria (§12 P1-A). **Verificación de identidad: autodeclarada** (no hay RENAPER; fuera de alcance, §12.2-C). Recuperación de cuenta: **pendiente** (necesita canal, ver Notificaciones). |
 | padron | **Simulada** | Puerto `ClientePadron` con cliente real y simulación. En dev/tests el simulador decide por paridad de DNI/CUIT; **en prod ese atajo está prohibido** y el arranque se bloquea con `padron_modo=simulacion`. Depende de: endpoint municipal real + credenciales. |
 | ciudadania | **Implementada** | Perfil, nivel (Platino/Black), tarjeta digital, historial de nivel. Tarjeta **física**: parcial (número emitido; no hay impresión/logística). |
 | comercios | **Implementada** | Adhesión (máquina de estados), sucursales con PostGIS, usuarios y roles, PIN de cajero atado a dispositivo, turnos, QR de comprobante en PDF. |
 | promociones | **Implementada** | Mecánicas, vigencia, topes atómicos, moderación por confianza, descubrimiento (pg_trgm + unaccent). |
-| canje | **Parcial** | Transacción, idempotencia, anulación, modo offline: reales. **Render del QR del ciudadano: pendiente** (hoy muestra el token en texto; §12.2-B). Confirmación **por consulta** (no hay push, ver Notificaciones). |
+| canje | **Parcial** | Transacción, idempotencia, anulación, modo offline: reales. Render del QR del ciudadano: **real** (QR escaneable, rota cada 45 s; §12.2-B). Confirmación **por consulta** (no hay push, ver Notificaciones). |
 | puntos | **Implementada** | Libro append-only PC/PM, FIFO por lote, inventario municipal, reserva atómica. **Generación de PM: apagada por flag** (`ff_generacion_pm`) hasta que haya inventario real. |
 | grupo | **Implementada** | Grupo familiar, herencia de nivel por evento, billetera común (pozo), sucesión, antifraude que solo observa. |
 | contenido | **Parcial** | Cuota atómica, editor, superposición de texto, moderación, almacén de objetos: reales. **Generación de imágenes: simulada** (`GeneradorSimulacion`); el adaptador real exige API key y aún no hay proveedor elegido. Almacén: **local** (dev); falta bucket de prod. |
@@ -40,6 +41,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 | Recuperación de cuenta | **Pendiente** | Sin flujo funcional | Canal (email/SMS) |
 | Generación de imágenes IA | **Simulada** | Fondos de color deterministas, sin red | Proveedor elegido + API key (ver `docs/costo-ia.md`) |
 | Almacén de objetos | **Parcial** | Disco local detrás de puerto | Bucket de producción |
+| Almacén seguro móvil (Keychain/Keystore) | **Parcial (seam)** | Seam + migración listos y testeados; **fallback a Preferences** (almacenamiento común) hasta cablear el plugin | Elegir/cablear plugin nativo (Capacitor 8) en el bootstrap. **Hasta entonces, en el dispositivo los tokens NO están en almacén seguro.** |
 | Tiles del mapa | **BLOQUEANTE** | Aviso "mapa no disponible" | **Generar tiles; sin responsable** (`docs/tiles-mapa.md`) |
 
 ---
@@ -69,3 +71,11 @@ Decisión humana requerida: elegir proveedor(es) de notificación define qué se
 - **Tiles del mapa** (§12.6-B): sin generar, **sin responsable asignado**. Arrastrado desde el PASO 07.
 - **Proveedores de prod sin elegir**: padrón, OTP/recuperación, imágenes IA. Las guardas de arranque
   (§12.2-D) impiden salir a producción con cualquiera en simulación.
+- **Recuperación de cuenta**: endpoint stub (202 sin enviar nada) hasta elegir el canal de email.
+- **Resguardo de la clave de cifrado de campos**: sin ella, el backup no alcanza — el DNI/CUIL queda
+  irrecuperable (`docs/restauracion-backup.md`).
+
+## Casi bloqueantes
+
+- **Almacén seguro móvil**: el seam está listo y probado, pero el plugin nativo de Keychain/Keystore
+  **no está cableado**; en el dispositivo los tokens siguen en almacenamiento común hasta hacerlo.
