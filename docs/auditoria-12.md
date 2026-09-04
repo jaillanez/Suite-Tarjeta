@@ -175,9 +175,11 @@ Queda anotado (sin evidencia nueva en esta PR, riesgo bajo con la arquitectura a
   con PAN inventado (landing previa al login con texto honesto). `tarjeta` móvil usa el nombre real
   del titular (`api.me()`) en vez de `"Titular"` fijo. Web `mi-estado` dejó de inventar
   "12 beneficios".
-- **Pendiente:** placeholders "En construcción (PASO 02)" en `(ciudadano)/inicio`, `/mapa`,
-  `(municipal)/operacion`, `(publico)/comercio/[slug]`, `campania/[slug]`, `(municipal)/campanias`,
-  y la "Pantalla de ejemplo" del landing web — completar o rotular sin ambigüedad (bloque siguiente).
+- **Resuelto (resto):** los placeholders "En construcción (PASO 02)" pasan a "Todavía no está
+  disponible" en lenguaje de usuario (sin jerga interna) en `(ciudadano)/inicio`, `/mapa`,
+  `(municipal)/operacion`, `(publico)/comercio/[slug]`, `campania/[slug]`, `(municipal)/campanias`.
+  El landing web ya no muestra "Vecino de ejemplo" ni un PAN realista: la tarjeta de la portada es
+  un **ejemplo ilustrativo** (número enmascarado, rotulado como tal). Cerrado P2-B.
 
 ### P2-C · Manejo de errores del frontend
 - **Archivos:** `catch { push('/login') }` en `(publico)/{registro,perfil,mi-estado,seleccionar-perfil}`
