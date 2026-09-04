@@ -193,6 +193,8 @@ jobs:
           fi
       - name: Lint
         run: pnpm lint
+      - name: Tests (vitest)
+        run: pnpm test
       - name: Build web
         run: pnpm --filter @tarjeta/web build
       - name: Build mobile (export estático)

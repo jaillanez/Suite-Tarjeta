@@ -55,16 +55,23 @@ export function createApiClient(options: ApiClientOptions) {
     const token = getToken ? await getToken() : null;
     if (token) headers.set('authorization', `Bearer ${token}`);
 
+    // P0 (§12.2-A): SOLO se reintentan métodos idempotentes. Reintentar un POST/PUT/DELETE cuya
+    // respuesta se perdió puede aplicar dos veces la operación (p. ej. un canje = doble descuento).
+    // La idempotencia de las mutaciones se garantiza en el backend por clave, no reintentando acá.
+    const metodo = (init.method ?? 'GET').toUpperCase();
+    const idempotente = metodo === 'GET' || metodo === 'HEAD';
+    const maxIntentos = idempotente ? maxRetries : 0;
+
     let lastError: unknown;
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    for (let attempt = 0; attempt <= maxIntentos; attempt++) {
       try {
         const res = await fetch(url, { ...init, headers });
         if (res.ok) {
           if (res.status === 204) return undefined as T;
           return (await res.json()) as T;
         }
-        // 5xx: reintentable; 4xx: error de negocio, no se reintenta.
-        if (res.status >= 500 && attempt < maxRetries) {
+        // 5xx: reintentable solo si el método es idempotente; 4xx: error de negocio, no se reintenta.
+        if (res.status >= 500 && attempt < maxIntentos) {
           await sleep(retryBaseMs * 2 ** attempt);
           continue;
         }
@@ -82,7 +89,7 @@ export function createApiClient(options: ApiClientOptions) {
       } catch (err) {
         if (err instanceof ApiError) throw err;
         lastError = err;
-        if (attempt < maxRetries) {
+        if (attempt < maxIntentos) {
           await sleep(retryBaseMs * 2 ** attempt);
           continue;
         }
