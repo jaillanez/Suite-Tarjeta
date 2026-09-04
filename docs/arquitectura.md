@@ -180,8 +180,13 @@ a los comercios con iPhone a activar Acceso Guiado a mano, o aceptar el bloqueo 
 
 ## Módulo `identidad` (PASO 03)
 
-Primer módulo con lógica de negocio: registro, verificación de celular, login, MFA,
+Primer módulo con lógica de negocio: registro **abierto**, verificación de celular, login, MFA,
 perfiles y dispositivos.
+
+> **v2.3 (PASO 12):** el registro es abierto y la identidad del alta por la app es
+> **`AUTODECLARADA`** — **RENAPER quedó fuera de alcance**, no se consulta ni se etiqueta como tal.
+> Los estados `PRESENCIAL` y `DOCUMENTAL` reflejan validaciones reforzadas reales. El padrón se usa
+> **solo para el nivel** y nunca bloquea el registro, la tarjeta ni el canje.
 
 ### Cifrado de datos personales (§8.3)
 

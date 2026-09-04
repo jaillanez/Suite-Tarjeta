@@ -199,6 +199,19 @@
 > (`docs/tiles-mapa.md`, responsable y fecha a asignar). El mapa muestra un aviso claro cuando
 > no cargan, pero **antes de producción hay que generarlos**.
 
+## Auditoría y corrección (PASO 12)
+
+La especificación pasó a **v2.3**. Regla autoritativa: **registro ciudadano abierto** (identidad
+`AUTODECLARADA`, **RENAPER fuera de alcance**), el **padrón solo asigna el nivel** (nunca bloquea ni
+degrada), y el **comercio se valida** (solo inscripto y aprobado publica u opera).
+
+- Informe de hallazgos priorizados: `docs/auditoria-12.md`.
+- Estado real de cada módulo e integraciones: `docs/estado-funcional.md`.
+- La app **se niega a arrancar en `prod`** con simulaciones críticas activas (padrón/OTP/IA), JWT
+  débil, cifrado inválido o CORS permisivo.
+- **Bloqueante de lanzamiento (arrastrado):** tiles del mapa sin generar y **sin responsable**.
+- **Mayor brecha estructural:** no hay canal de notificaciones real (push/SMS/email). Ver la matriz.
+
 ## CI (actualizado en PASO 02)
 | Tema | Definición |
 |---|---|

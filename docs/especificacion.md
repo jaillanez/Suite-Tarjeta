@@ -1,5 +1,5 @@
 # Tarjeta de Beneficios Municipal — Rivadavia
-## Especificación funcional detallada · v2.1
+## Especificación funcional detallada · v2.3
 
 **Decisiones tomadas:**
 - **Financiamiento:** el comercio absorbe el 100% del descuento. El municipio no aporta caja.
@@ -82,7 +82,7 @@ Persona
   email, celular (verificados: bool)
   domicilio {calle, nro, piso, depto, barrio, localidad, cp, lat, lng}
   estado_identidad: PENDIENTE | VERIFICADA | RECHAZADA | SUSPENDIDA
-  metodo_verificacion: RENAPER | PRESENCIAL | DOCUMENTAL
+  metodo_verificacion: AUTODECLARADA | PRESENCIAL | DOCUMENTAL
   fecha_alta, fecha_ultima_actividad
   consentimientos[] {tipo, version_TyC, fecha, ip}
   
@@ -322,31 +322,43 @@ MovimientoBilletera        // append-only, nunca se edita ni borra
 
 # PARTE 3 — M1 · Módulo Ciudadano
 
-## 3.1 Registro y verificación de identidad
+## 3.1 Registro ciudadano abierto y verificación de identidad (v2.3)
+
+**El registro ciudadano es abierto.** Cualquier persona crea cuenta, obtiene perfil, recibe
+tarjeta, navega beneficios y **canjea**. No es obligatorio figurar en el padrón, estar al día, ser
+contribuyente ni superar verificación alguna. El padrón **solo determina el nivel** (ver §3.2): no
+bloquea el registro, la tarjeta ni el uso.
 
 **Flujo:**
-1. Ingreso de DNI + CUIL + fecha de nacimiento + sexo.
-2. Consulta a padrón: ¿existe como contribuyente titular?
-3. Verificación de identidad — tres caminos:
-   - **RENAPER** (ideal): validación de datos + prueba de vida por selfie.
-   - **Documental**: foto frente y dorso del DNI + selfie, con revisión humana si el score es bajo.
-   - **Presencial**: el vecino va al municipio, el personal valida y activa la cuenta.
-4. Verificación de celular por OTP (obligatoria) y email (opcional).
+1. Ingreso de DNI + fecha de nacimiento (los demás datos son opcionales).
+2. **Identidad autodeclarada** en el alta por la app (`metodo_verificacion = AUTODECLARADA`). No hay
+   consulta a RENAPER: quedó **fuera de alcance**. La validación reforzada tiene dos caminos que
+   suben el estado de la identidad cuando ocurren:
+   - **Presencial** (`PRESENCIAL`): el vecino va al municipio, el personal valida y activa la cuenta.
+   - **Documental** (`DOCUMENTAL`): proceso documental con revisión humana.
+3. Consulta al padrón **solo para asignar el nivel** (asincrónica, no bloquea). Si no figura, o el
+   padrón está caído, queda Platino y el registro se completa igual.
+4. Verificación de celular por OTP (hoy **simulada**, ver `docs/estado-funcional.md`) y email (opcional).
 5. Creación de contraseña + biometría en el dispositivo.
 6. Aceptación de TyC y consentimientos **granulares y separados**:
    - Tratamiento de datos para operar el programa (obligatorio)
    - Comunicaciones comerciales (opcional)
    - Geolocalización para beneficios cercanos (opcional)
    - Uso de datos agregados y anonimizados para estadística municipal (opcional)
-7. Cálculo inicial de nivel.
+7. Cálculo inicial de nivel (Platino base; Black si el padrón dice `al_dia = true`).
 8. Emisión de tarjeta digital.
 
 **Criterios de aceptación:**
+- [ ] Cualquier persona se registra, recibe tarjeta y **puede canjear**, figure o no en el padrón.
+- [ ] Con el padrón caído, el registro se completa y nadie baja de nivel.
 - [ ] Un DNI ya registrado no puede registrarse de nuevo; ofrece recuperar cuenta.
-- [ ] Una cuenta sin verificar puede navegar beneficios pero **no canjear**.
-- [ ] El rechazo de identidad indica motivo y ofrece la vía presencial.
+- [ ] El registro por la app queda `AUTODECLARADA`; nunca afirma una verificación que no ocurrió.
 - [ ] Los consentimientos se guardan con versión de TyC, fecha e IP.
 - [ ] Rechazar los consentimientos opcionales no impide usar el programa.
+
+> **Comercios (distinto del ciudadano):** un comercio **inicia una solicitud** y solo puede
+> aparecer en búsquedas y en el mapa, publicar promociones utilizables, operar canjes y emitir
+> puntos una vez **inscripto y aprobado**. Solicitar no es lo mismo que estar publicado.
 
 ## 3.2 Motor de nivel: Platino vs Black
 
