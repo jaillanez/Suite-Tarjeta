@@ -103,9 +103,14 @@ class DecidirOperacion:
         id_transaccion: str,
         por: Confirmador,
         id_actor: str | None = None,
+        id_comercio: str | None = None,
         usar_puntos: int = 0,
     ) -> Transaccion:
         t = await self._cargar(id_transaccion)
+        # §12-P1-E (IDOR): un comercio solo confirma operaciones propias. Se responde como
+        # inexistente para no filtrar operaciones de otros comercios.
+        if id_comercio is not None and id_comercio != t.id_comercio:
+            raise NotFoundError("Operación inexistente.")
         # Si confirma el ciudadano, debe ser el titular de la operación.
         if por is Confirmador.CIUDADANO and id_actor is not None and id_actor != t.id_persona:
             raise ConfirmadorInvalido("Solo el titular puede confirmar su operación.")
@@ -171,9 +176,14 @@ class AnularOperacion:
         self.p = puertos
         self.ventana = ventana_minutos
 
-    async def ejecutar(self, *, id_transaccion: str, motivo: str, es_admin: bool) -> None:
+    async def ejecutar(
+        self, *, id_transaccion: str, motivo: str, es_admin: bool, id_comercio: str | None = None
+    ) -> None:
         t = await self.p.transacciones.obtener(EntityId.from_str(id_transaccion))
         if t is None:
+            raise NotFoundError("Operación inexistente.")
+        # §12-P1-E (IDOR): un comercio solo anula operaciones propias.
+        if id_comercio is not None and id_comercio != t.id_comercio:
             raise NotFoundError("Operación inexistente.")
         t.anular(motivo=motivo, ventana_minutos=self.ventana, es_admin=es_admin)
         if t.id_promocion:
