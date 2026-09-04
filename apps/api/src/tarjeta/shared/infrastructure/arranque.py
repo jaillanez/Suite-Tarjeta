@@ -41,6 +41,8 @@ def validar_arranque(settings: Settings) -> None:
         problemas.append("padrón en modo simulación (TARJETA_PADRON_MODO != real)")
     if settings.contenido_proveedor != "real":
         problemas.append("generación de imágenes en simulación (CONTENIDO_PROVEEDOR != real)")
+    if settings.email_proveedor != "real":
+        problemas.append("recuperación por email en simulación (EMAIL_PROVEEDOR != real)")
 
     # Secretos y cifrado.
     secreto = settings.jwt_secret.get_secret_value()

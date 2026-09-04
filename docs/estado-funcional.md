@@ -16,7 +16,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 
 | Módulo | Estado | Detalle / de qué depende para completarse |
 |---|---|---|
-| identidad | **Parcial** | Registro abierto, login, MFA (TOTP), dispositivos, perfiles: reales. Sesión web: refresh en **cookie HttpOnly** + access en memoria (§12 P1-A). **Verificación de identidad: autodeclarada** (no hay RENAPER; fuera de alcance, §12.2-C). Recuperación de cuenta: **pendiente** (necesita canal, ver Notificaciones). |
+| identidad | **Parcial** | Registro abierto, login, MFA (TOTP), dispositivos, perfiles: reales. Sesión web: refresh en **cookie HttpOnly** + access en memoria (§12 P1-A). **Verificación de identidad: autodeclarada** (no hay RENAPER; fuera de alcance, §12.2-C). Recuperación de cuenta por email: **flujo completo** (token de un solo uso, cierra sesiones); el **envío real espera proveedor** (`EMAIL_PROVEEDOR`, en dev por consola). |
 | padron | **Simulada** | Puerto `ClientePadron` con cliente real y simulación. En dev/tests el simulador decide por paridad de DNI/CUIT; **en prod ese atajo está prohibido** y el arranque se bloquea con `padron_modo=simulacion`. Depende de: endpoint municipal real + credenciales. |
 | ciudadania | **Implementada** | Perfil, nivel (Platino/Black), tarjeta digital, historial de nivel. Tarjeta **física**: parcial (número emitido; no hay impresión/logística). |
 | comercios | **Implementada** | Adhesión (máquina de estados), sucursales con PostGIS, usuarios y roles, PIN de cajero atado a dispositivo, turnos, QR de comprobante en PDF. |
@@ -38,7 +38,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 | Padrón municipal | **Simulada** | Veredicto por paridad de DNI/CUIT (solo dev/tests) | Endpoint real + credenciales |
 | Verificación de identidad (RENAPER) | **Fuera de alcance** | Autodeclaración en el alta | Decisión de negocio; no pedido |
 | OTP de celular | **Simulada** | Código por consola/log | Proveedor SMS |
-| Recuperación de cuenta | **Pendiente** | Sin flujo funcional | Canal (email/SMS) |
+| Recuperación de cuenta por email | **Simulada** | Flujo completo; el token se escribe al log en dev (`EmailConsola`) | Proveedor de email real (`EMAIL_PROVEEDOR=real`); la guarda de arranque bloquea prod en simulación |
 | Generación de imágenes IA | **Simulada** | Fondos de color deterministas, sin red | Proveedor elegido + API key (ver `docs/costo-ia.md`) |
 | Almacén de objetos | **Parcial** | Disco local detrás de puerto | Bucket de producción |
 | Almacén seguro móvil (Keychain/Keystore) | **Parcial** | Seam + migración + **plugin nativo cableado** (`capacitor-secure-storage-plugin` vía `AlmacenSeguroInit`, solo en dispositivo); en web dev, fallback a Preferences | Verificación en dispositivo (`cap:sync` + build nativo): CI no compila el proyecto nativo. |
@@ -58,7 +58,7 @@ resuelve por otro medio o queda pendiente:
 | Aviso de cambio de nivel | Visible al entrar a la app | **Parcial** |
 | Aviso de puntos por vencer | Visible en la billetera | **Parcial** |
 | Aviso de sucesión de titular | Aviso visible en la app (`aviso_grupo`) | **Parcial** |
-| Recuperación de cuenta | — | **Pendiente** |
+| Recuperación de cuenta | Token de un solo uso por email (consola en dev) | **Parcial** (falta proveedor real) |
 | Aviso al comercio por moderación | — | **Pendiente** |
 | Aviso por reuso de refresh token | — | **Pendiente** |
 
@@ -69,9 +69,10 @@ Decisión humana requerida: elegir proveedor(es) de notificación define qué se
 ## Bloqueantes de lanzamiento
 
 - **Tiles del mapa** (§12.6-B): sin generar, **sin responsable asignado**. Arrastrado desde el PASO 07.
-- **Proveedores de prod sin elegir**: padrón, OTP/recuperación, imágenes IA. Las guardas de arranque
-  (§12.2-D) impiden salir a producción con cualquiera en simulación.
-- **Recuperación de cuenta**: endpoint stub (202 sin enviar nada) hasta elegir el canal de email.
+- **Proveedores de prod sin elegir**: padrón, OTP, email (recuperación), imágenes IA. Las guardas de
+  arranque (§12.2-D) impiden salir a producción con cualquiera en simulación.
+- **Recuperación de cuenta**: el flujo está completo; falta el **proveedor de email real**
+  (`EMAIL_PROVEEDOR=real`) — la guarda de arranque bloquea prod hasta configurarlo.
 - **Resguardo de la clave de cifrado de campos**: sin ella, el backup no alcanza — el DNI/CUIL queda
   irrecuperable (`docs/restauracion-backup.md`).
 

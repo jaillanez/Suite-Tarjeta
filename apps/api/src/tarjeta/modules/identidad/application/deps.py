@@ -8,9 +8,11 @@ from tarjeta.modules.identidad.domain.ports import (
     AlmacenMfa,
     AlmacenOtp,
     AlmacenRefresh,
+    AlmacenReset,
     ConsentimientoRepository,
     CredencialRepository,
     DispositivoRepository,
+    EnviarEmail,
     EnvioOtp,
     GeneradorTokenAcceso,
     GeneradorTotp,
@@ -40,6 +42,8 @@ class Puertos:
     envio_otp: EnvioOtp
     almacen_otp: AlmacenOtp
     rate_limiter: RateLimiter
+    emisor_email: EnviarEmail
+    almacen_reset: AlmacenReset
     # configuración
     password_min_length: int = 10
     otp_length: int = 6
@@ -48,3 +52,5 @@ class Puertos:
     otp_max_solicitudes_hora: int = 5
     rate_limit_login: int = 10
     rate_limit_registro: int = 5
+    reset_ttl_seg: int = 3600
+    reset_max_solicitudes_hora: int = 5

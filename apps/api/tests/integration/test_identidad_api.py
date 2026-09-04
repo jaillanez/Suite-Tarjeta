@@ -183,6 +183,110 @@ async def test_logout_modo_cookie_borra_la_cookie(client: AsyncClient) -> None:
     assert r2.status_code == 401
 
 
+# --- recuperación de cuenta por email (§04.0.B) --------------------------------
+
+
+async def _registrar_con_email(client: AsyncClient, email: str) -> str:
+    dni = _dni()
+    r = await client.post(
+        "/api/v1/auth/registro",
+        json={
+            "dni": dni,
+            "fecha_nacimiento": "1990-05-20",
+            "password": PASSWORD,
+            "email": email,
+            "consentimientos": _consentimientos(),
+        },
+    )
+    assert r.status_code == 201, r.text
+    return dni
+
+
+def _capturar_email(monkeypatch: pytest.MonkeyPatch) -> dict[str, str]:
+    from tarjeta.modules.identidad.infrastructure.email_consola import EmailConsola
+
+    capturado: dict[str, str] = {}
+
+    async def _captura(self: object, email: str, asunto: str, cuerpo: str) -> None:
+        capturado["email"] = email
+        capturado["cuerpo"] = cuerpo
+
+    monkeypatch.setattr(EmailConsola, "enviar", _captura)
+    return capturado
+
+
+async def test_recuperacion_cambia_password_y_cierra_sesiones(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    capturado = _capturar_email(monkeypatch)
+    email = f"vecino-{random.randint(1, 1_000_000)}@example.com"
+    dni = await _registrar_con_email(client, email)
+    refresh_viejo = (await _login(client, dni))["refresh_token"]
+
+    # 1) Solicitar: siempre 202, y se "envía" el token por email (capturado en el test).
+    r = await client.post("/api/v1/auth/recuperar", json={"email": email})
+    assert r.status_code == 202
+    token = capturado["cuerpo"].rsplit(": ", 1)[1].strip()
+
+    # 2) Confirmar con la contraseña nueva.
+    nueva = "nueva-contrasena-999"
+    r = await client.post(
+        "/api/v1/auth/recuperar/confirmar", json={"token": token, "password": nueva}
+    )
+    assert r.status_code == 200, r.text
+
+    # El refresh anterior quedó revocado (se cerraron las sesiones).
+    r = await client.post("/api/v1/auth/refresh", json={"refresh_token": refresh_viejo})
+    assert r.status_code == 401
+    # La contraseña vieja ya no sirve; la nueva sí.
+    r = await client.post("/api/v1/auth/login", json={"dni": dni, "password": PASSWORD})
+    assert r.status_code == 401
+    r = await client.post("/api/v1/auth/login", json={"dni": dni, "password": nueva})
+    assert r.status_code == 200
+
+    # El token es de un solo uso: reutilizarlo falla.
+    r = await client.post(
+        "/api/v1/auth/recuperar/confirmar", json={"token": token, "password": "otra-larga-123"}
+    )
+    assert r.status_code == 422
+
+
+async def test_recuperar_no_revela_si_el_email_existe(client: AsyncClient) -> None:
+    r = await client.post("/api/v1/auth/recuperar", json={"email": "no-existe@example.com"})
+    assert r.status_code == 202
+    assert "instrucciones" in r.json()["mensaje"].lower()
+
+
+async def test_recuperar_token_invalido_falla(client: AsyncClient) -> None:
+    r = await client.post(
+        "/api/v1/auth/recuperar/confirmar",
+        json={"token": "token-inexistente", "password": "contrasena-larga-123"},
+    )
+    assert r.status_code == 422
+
+
+async def test_recuperar_password_debil_no_quema_el_token(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    capturado = _capturar_email(monkeypatch)
+    email = f"vecino-{random.randint(1, 1_000_000)}@example.com"
+    await _registrar_con_email(client, email)
+    await client.post("/api/v1/auth/recuperar", json={"email": email})
+    token = capturado["cuerpo"].rsplit(": ", 1)[1].strip()
+
+    # Contraseña muy corta: 422 y el token NO se consume.
+    r = await client.post(
+        "/api/v1/auth/recuperar/confirmar", json={"token": token, "password": "corta"}
+    )
+    assert r.status_code == 422
+    # El mismo token sigue sirviendo con una contraseña válida.
+    r = await client.post(
+        "/api/v1/auth/recuperar/confirmar",
+        json={"token": token, "password": "contrasena-valida-123"},
+    )
+    assert r.status_code == 200, r.text
+
+
 async def test_perfil_no_asignado_403(client: AsyncClient) -> None:
     dni = await _registrar(client)
     tokens = await _login(client, dni)

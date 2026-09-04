@@ -40,6 +40,29 @@ class RedisAlmacenOtp:
         return False
 
 
+class RedisAlmacenReset:
+    """Token de recuperación de un solo uso sobre Redis: token -> id_persona, con TTL.
+
+    Guarda el hash del token (no el token en claro) y lo consume atómicamente (GETDEL), de modo
+    que un token sirve una sola vez.
+    """
+
+    def __init__(self, redis: Redis) -> None:
+        self._redis = redis
+
+    def _key(self, token: str) -> str:
+        return f"reset:{_hash_codigo(token)}"
+
+    async def emitir(self, token: str, id_persona: str, ttl_seg: int) -> None:
+        await self._redis.set(self._key(token), id_persona, ex=ttl_seg)
+
+    async def consumir(self, token: str) -> str | None:
+        valor = await self._redis.getdel(self._key(token))
+        if valor is None:
+            return None
+        return valor.decode() if isinstance(valor, bytes) else str(valor)
+
+
 class RedisRateLimiter:
     def __init__(self, redis: Redis) -> None:
         self._redis = redis

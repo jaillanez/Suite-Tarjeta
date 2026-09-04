@@ -48,6 +48,11 @@ class RecuperarRequest(BaseModel):
     email: str
 
 
+class RecuperarConfirmarRequest(BaseModel):
+    token: str
+    password: str
+
+
 class TokensResponse(BaseModel):
     access_token: str
     refresh_token: str
