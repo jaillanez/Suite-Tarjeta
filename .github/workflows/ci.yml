@@ -17,6 +17,8 @@ jobs:
     outputs:
       api: ${{ steps.filter.outputs.api }}
       web: ${{ steps.filter.outputs.web }}
+      codigo: ${{ steps.filter.outputs.codigo }}
+      estado: ${{ steps.filter.outputs.estado }}
     steps:
       - uses: actions/checkout@v5
       - uses: dorny/paths-filter@v3
@@ -34,6 +36,15 @@ jobs:
               - 'pnpm-workspace.yaml'
               - 'pnpm-lock.yaml'
               - '.github/workflows/ci.yml'
+            # Código funcional: si cambia, la matriz de estado debe reflejarlo (gate docs_al_dia).
+            codigo:
+              - 'apps/api/src/**'
+              - 'apps/web/src/**'
+              - 'apps/web/middleware.ts'
+              - 'apps/mobile/src/**'
+              - 'packages/*/src/**'
+            estado:
+              - 'docs/estado-funcional.md'
 
   api:
     needs: changes
@@ -202,15 +213,40 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+  # Criterio de aceptación (como el lint o la cobertura): si cambia código funcional, la matriz de
+  # estado debe cambiar en el mismo PR. Escape: una línea `docs-al-dia: n/a — <razón>` en el cuerpo.
+  docs_al_dia:
+    needs: changes
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: docs/estado-funcional.md al día
+        env:
+          CODIGO: ${{ needs.changes.outputs.codigo }}
+          ESTADO: ${{ needs.changes.outputs.estado }}
+          CUERPO: ${{ github.event.pull_request.body }}
+        run: |
+          if [ "$CODIGO" != "true" ]; then
+            echo "Sin cambios de código funcional: no aplica."; exit 0
+          fi
+          if [ "$ESTADO" = "true" ]; then
+            echo "docs/estado-funcional.md actualizado en el PR."; exit 0
+          fi
+          if printf '%s' "$CUERPO" | grep -qiE '^[[:space:]]*docs-al-dia:[[:space:]]*(n/a|no aplica)'; then
+            echo "Opt-out declarado en la descripción del PR."; exit 0
+          fi
+          echo "::error::Cambió código funcional pero no docs/estado-funcional.md. Actualizá la matriz (y docs/lista-para-lanzar.md si cambió el estado de lanzamiento), o poné en la descripción del PR una línea 'docs-al-dia: n/a — <razón>'."
+          exit 1
+
   ci-ok:
-    needs: [changes, api, web]
+    needs: [changes, api, web, docs_al_dia]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       - name: Verificar resultados de los jobs
         run: |
-          echo "changes=${{ needs.changes.result }} api=${{ needs.api.result }} web=${{ needs.web.result }}"
-          for r in "${{ needs.changes.result }}" "${{ needs.api.result }}" "${{ needs.web.result }}"; do
+          echo "changes=${{ needs.changes.result }} api=${{ needs.api.result }} web=${{ needs.web.result }} docs_al_dia=${{ needs.docs_al_dia.result }}"
+          for r in "${{ needs.changes.result }}" "${{ needs.api.result }}" "${{ needs.web.result }}" "${{ needs.docs_al_dia.result }}"; do
             if [ "$r" = "failure" ] || [ "$r" = "cancelled" ]; then
               echo "::error::Un job del CI falló o fue cancelado"; exit 1
             fi
