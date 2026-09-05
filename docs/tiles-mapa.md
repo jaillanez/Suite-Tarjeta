@@ -4,10 +4,14 @@
 > aviso de "mapa no disponible"** (ya no un rectángulo en blanco). Antes de salir a producción
 > hay que generar y subir los tiles.
 >
-> **La generación ahora es un comando:** `scripts/generar-tiles.sh` (requiere Java 21+). Descarga
-> planetiler y el extracto, y produce el PMTiles. Igual falta **correrlo, subir el archivo al
-> hosting y apuntar `NEXT_PUBLIC_TILES_URL`** — y, si se usa PMTiles, agregar el adaptador del
-> front (ver "Nota sobre PMTiles"). El detalle manual de abajo queda como referencia.
+> **Ahora (§13.0):** para pruebas y uso local, el front usa por defecto el **servidor público de
+> OpenStreetMap** (`https://tile.openstreetmap.org/...`). Sirve para probar, **no** para producción
+> (la política de uso de OSM no lo permite). Antes de abrir al público hay que pasar a tiles propios.
+>
+> **La generación es un comando:** `scripts/generar-tiles.sh` (requiere Java 21+). Descarga
+> planetiler y el extracto, y produce el PMTiles. Falta **correrlo, subir el archivo al hosting y
+> apuntar `NEXT_PUBLIC_TILES_URL`** — y, si se usa PMTiles, agregar el adaptador del front (ver
+> "Nota sobre PMTiles"). El detalle manual de abajo queda como referencia.
 >
 > - **Estado:** PENDIENTE — bloqueante de lanzamiento (generación scriptada; falta ejecutar + hostear).
 > - **Responsable:** _(a asignar por el municipio)_.

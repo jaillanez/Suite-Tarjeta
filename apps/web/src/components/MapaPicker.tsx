@@ -1,15 +1,17 @@
 'use client';
 
-// Mapa con pin arrastrable (Leaflet). Los tiles salen de configuración y por defecto se
-// sirven como archivo estático desde el propio hosting (§07.0.A: no dependemos del tile
-// server público de OSM). Ver docs/tiles-mapa.md. Se carga solo en el cliente (SSR seguro).
+// Mapa con pin arrastrable (Leaflet). Se carga solo en el cliente (SSR seguro).
+// §13.0: por ahora los tiles salen del servidor público de OpenStreetMap (solo para pruebas y
+// uso local; su política NO permite producción). Antes de abrir al público se pasa a tiles
+// propios por configuración (NEXT_PUBLIC_TILES_URL), sin recompilar. Ver docs/tiles-mapa.md.
 
 import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 
-// URL de tiles configurable (sin recompilar). Por defecto, tiles propios estáticos.
-const TILES_URL = process.env.NEXT_PUBLIC_TILES_URL ?? '/tiles/{z}/{x}/{y}.png';
-const TILES_ATTR = process.env.NEXT_PUBLIC_TILES_ATTR ?? 'Mapa © OpenStreetMap · Municipio';
+// URL de tiles configurable (sin recompilar). Por defecto, OSM público (ver nota de arriba).
+const TILES_URL =
+  process.env.NEXT_PUBLIC_TILES_URL ?? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const TILES_ATTR = process.env.NEXT_PUBLIC_TILES_ATTR ?? '© OpenStreetMap contributors';
 
 interface Props {
   lat: number | null;
