@@ -44,7 +44,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 | Generación de imágenes IA | **Simulada** | Fondos de color deterministas, sin red | Proveedor elegido + API key (ver `docs/costo-ia.md`) |
 | Almacén de objetos | **Parcial** | Disco local detrás de puerto | Bucket de producción |
 | Almacén seguro móvil (Keychain/Keystore) | **Parcial** | Seam + migración + **plugin nativo cableado** (`capacitor-secure-storage-plugin` vía `AlmacenSeguroInit`, solo en dispositivo); en web dev, fallback a Preferences | Verificación en dispositivo (`cap:sync` + build nativo): CI no compila el proyecto nativo. |
-| Tiles del mapa | **Parcial** | §13.0: en dev/local usa el **OSM público** (por defecto). Para **producción** falta pasar a tiles propios (política de OSM): `scripts/generar-tiles.sh` (Java 21+) + hostear + `NEXT_PUBLIC_TILES_URL` (`docs/tiles-mapa.md`) |
+| Tiles del mapa | **Parcial** | §13.0/§14.1: en dev/local usa el **OSM público** (por defecto). En **producción falla cerrado**: sin `NEXT_PUBLIC_TILES_URL` propia, el mapa muestra "no disponible" y **no** cae al server público. Falta generar/hostear los tiles propios: `scripts/generar-tiles.sh` (Java 21+) (`docs/tiles-mapa.md`) |
 
 ---
 
@@ -70,10 +70,11 @@ Decisión humana requerida: elegir proveedor(es) de notificación define qué se
 
 ## Bloqueantes de lanzamiento
 
-- **Tiles del mapa** (§12.6-B): en dev/local ya se ve con el **OSM público** (§13.0). Para
-  **producción** hay que pasar a tiles propios (política de OSM): la generación es un comando
-  (`scripts/generar-tiles.sh`, Java 21+); falta **ejecutarla, hostear y apuntar
-  `NEXT_PUBLIC_TILES_URL`**. Sin responsable asignado. Arrastrado desde el PASO 07.
+- **Tiles del mapa** (§12.6-B): en dev/local ya se ve con el **OSM público** (§13.0); en
+  **producción falla cerrado** (§14.1): sin `NEXT_PUBLIC_TILES_URL` propia el mapa no carga (avisa)
+  y no usa el server público. Falta generar/hostear los tiles propios
+  (`scripts/generar-tiles.sh`, Java 21+) y apuntar `NEXT_PUBLIC_TILES_URL`. Sin responsable
+  asignado. Arrastrado desde el PASO 07.
 - **Proveedores de prod sin elegir**: padrón, OTP, email (recuperación), imágenes IA. Las guardas de
   arranque (§12.2-D) impiden salir a producción con cualquiera en simulación.
 - **Recuperación de cuenta**: el flujo está completo; falta el **proveedor de email real**

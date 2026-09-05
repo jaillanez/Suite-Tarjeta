@@ -4,9 +4,13 @@
 > aviso de "mapa no disponible"** (ya no un rectángulo en blanco). Antes de salir a producción
 > hay que generar y subir los tiles.
 >
-> **Ahora (§13.0):** para pruebas y uso local, el front usa por defecto el **servidor público de
-> OpenStreetMap** (`https://tile.openstreetmap.org/...`). Sirve para probar, **no** para producción
-> (la política de uso de OSM no lo permite). Antes de abrir al público hay que pasar a tiles propios.
+> **Ahora (§13.0 + §14.1):** en **desarrollo** el front usa por defecto el **servidor público de
+> OpenStreetMap** (`https://tile.openstreetmap.org/...`), sin configurar nada. En **producción**
+> **falla cerrado**: si no está configurada `NEXT_PUBLIC_TILES_URL` con tiles propios, el mapa
+> **no carga** (muestra "mapa no disponible") y **no** cae al server público — así no se filtra la
+> IP ni la zona que mira cada vecino a un tercero, ni se viola la política de OSM. La distinción es
+> por entorno de compilación (`NODE_ENV`), no por una bandera que se pueda olvidar
+> (`apps/web/src/lib/tiles.ts`, con test de las dos ramas).
 >
 > **La generación es un comando:** `scripts/generar-tiles.sh` (requiere Java 21+). Descarga
 > planetiler y el extracto, y produce el PMTiles. Falta **correrlo, subir el archivo al hosting y
