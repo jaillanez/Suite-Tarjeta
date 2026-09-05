@@ -1,23 +1,53 @@
 'use client';
 
-import { useState } from 'react';
-import { ApiError } from '@tarjeta/api-client';
+import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Store } from 'lucide-react';
+import { ApiError, type SucursalOut } from '@tarjeta/api-client';
+import { Button } from '@tarjeta/ui';
 import { CerrarSesion } from '@/components/CerrarSesion';
 import { api } from '@/lib/api';
 
 export default function TurnoPage() {
-  const [idSucursal, setIdSucursal] = useState('');
-  const [turnoAbierto, setTurnoAbierto] = useState<string | null>(null);
+  const router = useRouter();
+  const [sucursales, setSucursales] = useState<SucursalOut[] | null>(null); // null = cargando
+  const [activa, setActiva] = useState<SucursalOut | null>(null);
+  const [turnoAbierto, setTurnoAbierto] = useState(false);
   const [resumen, setResumen] = useState<Record<string, unknown> | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
 
-  async function abrir(): Promise<void> {
+  const cargar = useCallback(async () => {
+    try {
+      setSucursales(await api.listarSucursales());
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 401) {
+        router.push('/caja');
+        return;
+      }
+      setSucursales([]);
+      setMsg(e instanceof ApiError ? e.message : 'No se pudieron cargar las sucursales.');
+    }
+  }, [router]);
+
+  useEffect(() => {
+    void cargar();
+  }, [cargar]);
+
+  async function abrir(sucursal: SucursalOut): Promise<void> {
     setMsg(null);
     try {
-      const r = await api.abrirTurno(idSucursal.trim());
-      setTurnoAbierto(r.id);
+      await api.abrirTurno(sucursal.id);
+      setActiva(sucursal);
+      setTurnoAbierto(true);
       setResumen(null);
     } catch (e) {
+      // Ya había un turno abierto para este cajero: pasamos igual al estado "abierto".
+      if (e instanceof ApiError && e.status === 409) {
+        setActiva(sucursal);
+        setTurnoAbierto(true);
+        setMsg('Ya tenías un turno abierto.');
+        return;
+      }
       setMsg(e instanceof ApiError ? e.message : 'No se pudo abrir el turno.');
     }
   }
@@ -25,65 +55,85 @@ export default function TurnoPage() {
   async function cerrar(): Promise<void> {
     setMsg(null);
     try {
-      // Cierre con datos reales del canje (§08.7): operaciones, bruto, descuento, por promo.
       const real = await api.resumenTurnoCanje();
       await api.cerrarTurno();
       setResumen({ ...real });
-      setTurnoAbierto(null);
+      setTurnoAbierto(false);
+      setActiva(null);
     } catch (e) {
       setMsg(e instanceof ApiError ? e.message : 'No se pudo cerrar el turno.');
     }
   }
 
+  if (sucursales === null) {
+    return <p className="p-6 text-muted-foreground">Cargando…</p>;
+  }
+
   return (
-    <section className="mx-auto max-w-sm space-y-4 p-4">
+    <main className="mx-auto max-w-sm space-y-5 p-6">
       <h1 className="text-xl font-semibold">Turno</h1>
+
       {turnoAbierto ? (
-        <>
-          <p className="text-sm text-green-600">Turno abierto.</p>
+        <div className="space-y-3">
+          <div className="rounded-xl border border-primary bg-brand-50 p-4">
+            <p className="font-semibold text-brand-900">Turno abierto</p>
+            {activa ? (
+              <p className="text-sm text-brand-700">{activa.nombre}</p>
+            ) : null}
+          </div>
           <p className="text-sm text-muted-foreground">
-            La caja llega en el paso siguiente; por ahora el resumen queda vacío.
+            La caja (escaneo del QR del ciudadano) llega en el paso siguiente.
           </p>
-          <button
-            type="button"
-            onClick={cerrar}
-            className="w-full rounded-md border border-border px-4 py-3 font-medium"
-          >
+          <Button variant="outline" className="w-full" onClick={cerrar}>
             Cerrar turno
-          </button>
-        </>
+          </Button>
+        </div>
       ) : (
-        <>
-          <label className="block text-sm" htmlFor="suc">
-            Sucursal (ID)
-          </label>
-          <input
-            id="suc"
-            aria-label="Sucursal (ID)"
-            className="w-full rounded-md border border-border px-3 py-2"
-            value={idSucursal}
-            onChange={(e) => setIdSucursal(e.target.value)}
-          />
-          <button
-            type="button"
-            disabled={!idSucursal.trim()}
-            onClick={abrir}
-            className="w-full rounded-md bg-primary px-4 py-3 font-medium text-primary-foreground disabled:opacity-50"
-          >
-            Abrir turno
-          </button>
-        </>
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">Elegí la sucursal para abrir el turno.</p>
+          {sucursales.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Este comercio todavía no tiene sucursales cargadas.
+            </p>
+          ) : (
+            <ul className="space-y-3">
+              {sucursales.map((s) => (
+                <li key={s.id}>
+                  <button
+                    type="button"
+                    onClick={() => void abrir(s)}
+                    className="flex w-full items-center gap-4 rounded-xl border border-border bg-card p-4 text-left transition-colors active:bg-accent"
+                  >
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700">
+                      <Store className="size-5" aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold">{s.nombre}</span>
+                      {s.direccion ? (
+                        <span className="block truncate text-sm text-muted-foreground">
+                          {s.direccion}
+                        </span>
+                      ) : null}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
+
       {resumen ? (
         <div className="rounded-md border border-border p-3 text-sm">
           <p className="font-medium">Resumen del turno</p>
-          <pre className="mt-1 text-xs">{JSON.stringify(resumen, null, 2)}</pre>
+          <pre className="mt-1 overflow-x-auto text-xs">{JSON.stringify(resumen, null, 2)}</pre>
         </div>
       ) : null}
-      {msg ? <p className="text-sm text-destructive">{msg}</p> : null}
+      {msg ? <p className="text-sm text-muted-foreground">{msg}</p> : null}
+
       <div className="border-t border-border pt-4">
         <CerrarSesion />
       </div>
-    </section>
+    </main>
   );
 }

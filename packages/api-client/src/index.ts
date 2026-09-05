@@ -12,6 +12,12 @@ export interface ApiClientOptions {
   baseUrl: string;
   /** Devuelve el token de acceso (o null si no hay sesión). */
   getToken?: () => string | null | Promise<string | null>;
+  /**
+   * Huella del dispositivo. La sesión de cajero queda atada a la huella (§06.5), así que TODAS sus
+   * requests deben mandarla en `X-Device-Huella`. Enviarla siempre es inocuo para sesiones que no
+   * están atadas (ciudadano): el backend solo la exige si el token la lleva.
+   */
+  getHuella?: () => string | null | Promise<string | null>;
   maxRetries?: number;
   retryBaseMs?: number;
   /**
@@ -54,7 +60,8 @@ export interface ReadyResponse {
 }
 
 export function createApiClient(options: ApiClientOptions) {
-  const { baseUrl, getToken, maxRetries = 3, retryBaseMs = 300, authMode = 'body' } = options;
+  const { baseUrl, getToken, getHuella, maxRetries = 3, retryBaseMs = 300, authMode = 'body' } =
+    options;
   const modoCookie = authMode === 'cookie';
 
   async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -64,6 +71,12 @@ export function createApiClient(options: ApiClientOptions) {
 
     const token = getToken ? await getToken() : null;
     if (token) headers.set('authorization', `Bearer ${token}`);
+    // La huella del dispositivo va en toda request (la sesión de cajero está atada a ella). No pisa
+    // la que fijan explícitamente cajeroLista/cajeroLogin.
+    if (getHuella && !headers.has('x-device-huella')) {
+      const huella = await getHuella();
+      if (huella) headers.set('x-device-huella', huella);
+    }
     // Modo cookie: el refresh viaja en la cookie HttpOnly; hay que mandar credenciales y avisar.
     if (modoCookie) headers.set('x-auth-mode', 'cookie');
     const credentials: RequestCredentials = modoCookie ? 'include' : 'same-origin';
