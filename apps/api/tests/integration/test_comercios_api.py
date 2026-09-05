@@ -284,7 +284,7 @@ async def _nuevo_cajero(
     client: AsyncClient, *, admin: str, id_comercio: str, previos: set[str]
 ) -> tuple[str, str]:
     """Da de alta un cajero nuevo (invitación + registro + aceptación). Devuelve
-    (id_usuario, id_persona). `previos` son los id_usuario ya existentes, para identificar el nuevo."""
+    (id_usuario, id_persona). `previos` = id_usuario ya existentes, para hallar el nuevo."""
     h_admin = _headers(_token(admin, f"COMERCIO:{id_comercio}"))
     r = await client.post(
         "/api/v1/comercios/usuarios/invitar",
@@ -324,7 +324,12 @@ async def test_pin_no_funciona_desde_otro_dispositivo(client: AsyncClient, padro
     huella_ok, huella_otro = str(uuid.uuid4()), str(uuid.uuid4())
     # El encargado registra el PIN en el dispositivo registrado.
     await _registrar_pin(
-        client, admin=admin, id_comercio=id_comercio, id_usuario=id_usuario, huella=huella_ok, pin="1234"
+        client,
+        admin=admin,
+        id_comercio=id_comercio,
+        id_usuario=id_usuario,
+        huella=huella_ok,
+        pin="1234",
     )
     # Login de ese cajero desde otro dispositivo: no pertenece a esa huella -> 403.
     r = await client.post(
@@ -352,7 +357,12 @@ async def test_baja_cajero_revoca_sesiones(client: AsyncClient, padron) -> None:
     h_admin = _headers(_token(admin, f"COMERCIO:{id_comercio}"))
     huella = str(uuid.uuid4())  # única por test: la caja resuelve por huella
     await _registrar_pin(
-        client, admin=admin, id_comercio=id_comercio, id_usuario=id_usuario, huella=huella, pin="1234"
+        client,
+        admin=admin,
+        id_comercio=id_comercio,
+        id_usuario=id_usuario,
+        huella=huella,
+        pin="1234",
     )
     r = await client.post(
         "/api/v1/portal-comercio/cajero/login",
@@ -419,7 +429,12 @@ async def test_caja_rechaza_cajero_de_otra_huella(client: AsyncClient, padron) -
     id_comercio = r.json()["id_comercio"]
     id1, _ = await _nuevo_cajero(client, admin=admin, id_comercio=id_comercio, previos=set())
     await _registrar_pin(
-        client, admin=admin, id_comercio=id_comercio, id_usuario=id1, huella=str(uuid.uuid4()), pin="1234"
+        client,
+        admin=admin,
+        id_comercio=id_comercio,
+        id_usuario=id1,
+        huella=str(uuid.uuid4()),
+        pin="1234",
     )
     # El PIN es correcto, pero el cajero no pertenece a ESTA huella -> rechazo (no alcanza el PIN).
     r = await client.post(

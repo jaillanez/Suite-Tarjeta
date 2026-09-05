@@ -24,7 +24,6 @@ from tarjeta.modules.comercios.application.cajero import GestionCajero
 from tarjeta.modules.comercios.application.sucursales import GestionSucursales
 from tarjeta.modules.comercios.application.usuarios import GestionUsuarios
 from tarjeta.modules.comercios.domain.comercio import EstadoComercio
-from tarjeta.modules.comercios.domain.errors import DispositivoNoRegistrado, PinInvalido
 from tarjeta.modules.comercios.domain.ports import VerificadorComerciante
 from tarjeta.modules.comercios.domain.roles import Permiso as PermisoComercio
 from tarjeta.modules.comercios.infrastructure.composition import construir_puertos_comercios
@@ -41,7 +40,7 @@ from tarjeta.modules.identidad.infrastructure.repositories import SqlAlchemyPers
 from tarjeta.modules.padron.infrastructure.composition import construir_cliente
 from tarjeta.shared.api.auth import HuellaDep, SesionDep
 from tarjeta.shared.api.dependencies import RedisDep, SessionDep, SettingsDep
-from tarjeta.shared.domain.errors import NotFoundError
+from tarjeta.shared.domain.errors import DomainError, NotFoundError
 from tarjeta.shared.domain.types import EntityId
 from tarjeta.shared.infrastructure.crypto import FieldCipher
 
@@ -340,8 +339,10 @@ async def cajero_login(
     try:
         # login_pin valida que el id_usuario pertenezca a esta huella (exigir_dispositivo).
         cajero = await gestion.login_pin(id_usuario=body.id_usuario, pin=body.pin, huella=huella)
-    except (PinInvalido, DispositivoNoRegistrado, NotFoundError):
-        await _registrar_fallo_caja(redis, huella)  # al 3er fallo lanza 429
+    except DomainError:
+        # Cualquier fallo de autenticación (PIN, dispositivo, usuario) cuenta como intento del
+        # dispositivo; al tercero, _registrar_fallo_caja lanza 429. Si no, re-lanza el error.
+        await _registrar_fallo_caja(redis, huella)
         raise
     await _limpiar_intentos_caja(redis, huella)
     # Minta la sesión de comercio con los servicios de identidad (tokens + refresh).
