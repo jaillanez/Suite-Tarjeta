@@ -1,21 +1,84 @@
-# Padrón simulado (§13.1). Reemplaza al endpoint municipal mientras no esté disponible.
-# Cualquier DNI/CUIT que no figure acá devuelve false (sin error). Recarga en caliente: editá
-# este archivo y la próxima consulta usa los datos nuevos, sin reiniciar la API.
-#
-# Cuando el municipio entregue el endpoint real, pasar a modo real por configuración
-# (TARJETA_PADRON_MODO=real) sin tocar código. Ver docs/padron-simulado.md.
+# Padrón simulado (§13.1). Lo no listado devuelve false. Recarga en caliente.
+# Los CUIT de la precarga de comercios (§13.3) figuran acá como es_comerciante=true.
 
-# Ciudadanos: al_dia=true => nivel Black; false u omitido => Platino.
 contribuyentes:
-  - dni: "20123456"
-    al_dia: true
-  - dni: "27987654"
-    al_dia: false
-
-# Comercios: es_comerciante=true habilita la validación fiscal en la adhesión.
+- dni: '20123456'
+  al_dia: true
+- dni: '27987654'
+  al_dia: false
 comercios:
-  - cuit: "30712345678"
-    es_comerciante: true
-
-# Opcional: DNIs/CUITs que simulan el endpoint caído (para probar que el padrón no degrada).
+- cuit: '30712345678'
+  es_comerciante: true
+- cuit: '30655670561'
+  es_comerciante: true
+- cuit: '30005940401'
+  es_comerciante: true
+- cuit: '30103762111'
+  es_comerciante: true
+- cuit: '30331299451'
+  es_comerciante: true
+- cuit: '30936522871'
+  es_comerciante: true
+- cuit: '30363399261'
+  es_comerciante: true
+- cuit: '30880400211'
+  es_comerciante: true
+- cuit: '30076852191'
+  es_comerciante: true
+- cuit: '30019556331'
+  es_comerciante: true
+- cuit: '30672980161'
+  es_comerciante: true
+- cuit: '30437334541'
+  es_comerciante: true
+- cuit: '30805791431'
+  es_comerciante: true
+- cuit: '30270326291'
+  es_comerciante: true
+- cuit: '30533816411'
+  es_comerciante: true
+- cuit: '30768810321'
+  es_comerciante: true
+- cuit: '30251523751'
+  es_comerciante: true
+- cuit: '30835504991'
+  es_comerciante: true
+- cuit: '30750127311'
+  es_comerciante: true
+- cuit: '30995670441'
+  es_comerciante: true
+- cuit: '30780678911'
+  es_comerciante: true
+- cuit: '30126358891'
+  es_comerciante: true
+- cuit: '30845664451'
+  es_comerciante: true
+- cuit: '30061684521'
+  es_comerciante: true
+- cuit: '30976751951'
+  es_comerciante: true
+- cuit: '30559901621'
+  es_comerciante: true
+- cuit: '30238877831'
+  es_comerciante: true
+- cuit: '30383388761'
+  es_comerciante: true
+- cuit: '30452879151'
+  es_comerciante: true
+- cuit: '30524773621'
+  es_comerciante: true
+- cuit: '30741132051'
+  es_comerciante: true
+- cuit: '30467946641'
+  es_comerciante: true
+- cuit: '30608216131'
+  es_comerciante: true
+- cuit: '30660785561'
+  es_comerciante: true
+- cuit: '30779154431'
+  es_comerciante: true
+- cuit: '30094283541'
+  es_comerciante: true
+- cuit: '30897111781'
+  es_comerciante: true
 caidos: []

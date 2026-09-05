@@ -29,6 +29,10 @@ class ComercioModel(Base):
     convenio_fecha: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     convenio_ip: Mapped[str | None] = mapped_column(String(64), nullable=True)
     creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    # §13.3: precarga = sembrado por el comando de carga (no una adhesión real). Permite
+    # identificarlos y darlos de baja en bloque. `origen` guarda de dónde salió el dato y cuándo.
+    precarga: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    origen: Mapped[str | None] = mapped_column(String(300), nullable=True)
 
 
 class SucursalModel(Base):
