@@ -40,7 +40,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 | Padrón municipal | **Simulada** | Veredicto desde `datos/padron.yaml` con recarga en caliente (dev/tests); lo no listado es `false` | Endpoint real + credenciales (`docs/padron-simulado.md`) |
 | Verificación de identidad (RENAPER) | **Fuera de alcance** | Autodeclaración en el alta | Decisión de negocio; no pedido |
 | OTP de celular | **Simulada** | Código por consola/log | Proveedor SMS |
-| Recuperación de cuenta por email | **Simulada** | Flujo completo; el token se escribe al log en dev (`EmailConsola`) | Proveedor de email real (`EMAIL_PROVEEDOR=real`); la guarda de arranque bloquea prod en simulación |
+| Correo / recuperación de cuenta | **Parcial** | Flujo completo + **adaptador SMTP real cableado** (§15.2, `EmailReal`); en dev por consola. Comando `probar_email` para probar el envío | Cargar los datos SMTP en `config/produccion.env` y `EMAIL_PROVEEDOR=real`; la guarda de arranque bloquea prod en simulación |
 | Generación de imágenes IA | **Simulada** | Fondos de color deterministas, sin red | Proveedor elegido + API key (ver `docs/costo-ia.md`) |
 | Almacén de objetos | **Parcial** | Disco local detrás de puerto | Bucket de producción |
 | Almacén seguro móvil (Keychain/Keystore) | **Parcial** | Seam + migración + **plugin nativo cableado** (`capacitor-secure-storage-plugin` vía `AlmacenSeguroInit`, solo en dispositivo); en web dev, fallback a Preferences | Verificación en dispositivo (`cap:sync` + build nativo): CI no compila el proyecto nativo. |

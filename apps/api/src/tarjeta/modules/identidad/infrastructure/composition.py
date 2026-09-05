@@ -19,6 +19,7 @@ from tarjeta.shared.infrastructure.redis_stores import (
 from .adapters import MfaCifrado, TextosLegalesSql
 from .argon2_hasher import Argon2Hasher
 from .email_consola import EmailConsola
+from .email_real import EmailReal
 from .jwt_generador import JwtGenerador
 from .otp_consola import OtpConsola
 from .refresh_store import SqlAlchemyAlmacenRefresh
@@ -30,6 +31,19 @@ from .repositories import (
     SqlAlchemyPersonaRepository,
 )
 from .totp_pyotp import TotpPyotp
+
+
+def _emisor_email(settings: Settings) -> EmailReal | EmailConsola:
+    # §15.2: el proveedor real se elige por configuración; la consola queda solo para dev.
+    if settings.email_proveedor == "real":
+        return EmailReal(
+            host=settings.email_smtp_host,
+            port=settings.email_smtp_port,
+            user=settings.email_smtp_user,
+            password=settings.email_smtp_password.get_secret_value(),
+            remitente=settings.email_from,
+        )
+    return EmailConsola(environment=settings.environment)
 
 
 def construir_puertos(session: AsyncSession, settings: Settings, redis: Redis) -> Puertos:
@@ -61,7 +75,7 @@ def construir_puertos(session: AsyncSession, settings: Settings, redis: Redis) -
         envio_otp=OtpConsola(environment=settings.environment),
         almacen_otp=RedisAlmacenOtp(redis),
         rate_limiter=RedisRateLimiter(redis),
-        emisor_email=EmailConsola(environment=settings.environment),
+        emisor_email=_emisor_email(settings),
         almacen_reset=RedisAlmacenReset(redis),
         password_min_length=settings.password_min_length,
         otp_length=settings.otp_length,

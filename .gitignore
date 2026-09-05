@@ -59,3 +59,6 @@ scripts/.tiles-build/
 apps/web/public/tiles/*
 !apps/web/public/tiles/.gitkeep
 !apps/web/public/tiles/README.md
+
+# Config de producción con secretos (§15.1): el real NUNCA se commitea; el .ejemplo sí.
+config/produccion.env

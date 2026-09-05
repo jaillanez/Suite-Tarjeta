@@ -102,6 +102,13 @@ class Settings(BaseSettings):
     email_proveedor: Literal["consola", "real"] = "consola"
     reset_ttl_seconds: int = 3600  # 1 h de validez del token de recuperación
     reset_max_solicitudes_por_hora: int = 5
+    # SMTP del proveedor real (§15.2). Los cinco datos que da el responsable van en la config de
+    # producción; con `email_proveedor=real` se usan. En dev queda el adaptador de consola.
+    email_smtp_host: str = ""
+    email_smtp_port: int = 587
+    email_smtp_user: str = ""
+    email_smtp_password: SecretStr = SecretStr("")
+    email_from: str = ""
 
     # MFA
     mfa_issuer: str = "Tarjeta de Beneficios"
