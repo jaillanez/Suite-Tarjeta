@@ -20,7 +20,7 @@ jobs:
       codigo: ${{ steps.filter.outputs.codigo }}
       estado: ${{ steps.filter.outputs.estado }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -87,7 +87,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Instalar uv
         uses: astral-sh/setup-uv@v6
         with:
@@ -184,7 +184,7 @@ jobs:
     if: ${{ needs.changes.outputs.web == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Instalar pnpm
         uses: pnpm/action-setup@v4
       - name: Instalar Node
