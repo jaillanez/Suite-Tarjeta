@@ -107,6 +107,12 @@ quién depende.
 | Revisión legal de los tres borradores | No es trabajo de desarrollo | Asesoría Letrada |
 | Cuentas de App Store y Google Play | Trámite externo | Responsable del proyecto |
 
+**Herramientas listas para correr en la máquina del responsable (§15.4/§15.5/§15.6):**
+`scripts/compilar-android.sh` (APK debug, un comando, con verificación de requisitos),
+`scripts/compilar-android-aab.sh` (AAB firmado + keystore), `scripts/verificar-ios.sh` (veredicto
+iOS), y los instructivos `docs/compilar-apk.md` y `docs/verificar-keychain.md`. En la Mac del
+proyecto ya está el Android SDK; falta **JDK 21** (`brew install --cask temurin@21`) para el APK.
+
 **Decisión sobre iOS (registrada):** **iOS entra en el lanzamiento inicial, junto con Android.** El
 responsable cuenta (o contará) con una Mac con Xcode 27; la compilación de iOS queda **pendiente de
 ejecutarse en esa máquina** siguiendo `docs/apps-build.md`. No es "Android primero, iOS después":

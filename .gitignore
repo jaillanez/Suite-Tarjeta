@@ -62,3 +62,7 @@ apps/web/public/tiles/*
 
 # Config de producción con secretos (§15.1): el real NUNCA se commitea; el .ejemplo sí.
 config/produccion.env
+
+# Artefactos de build de apps (§15.4) y keystore de firma (irreemplazable: resguardar aparte)
+build/
+config/*.jks
