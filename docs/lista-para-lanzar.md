@@ -93,6 +93,31 @@ Se lanza sin esto y se agrega después (post-lanzamiento).
 
 ---
 
+## 6. Lo que no puede hacer el agente (§14.3)
+
+No depende del equipo de desarrollo en este entorno; queda listado para que se sepa qué falta y de
+quién depende.
+
+| Qué | Por qué no lo puede hacer el agente | Quién |
+|---|---|---|
+| Compilar el APK y el AAB firmado | No hay Android SDK ni gradle en el entorno | Responsable del proyecto, en su máquina |
+| Probar el recorrido completo en un teléfono real | No hay dispositivo | Responsable del proyecto |
+| Confirmar que los tokens van a Keychain o Keystore | Solo se verifica en dispositivo | Responsable del proyecto |
+| Compilar iOS | Requiere Mac con Xcode 27 | Responsable del proyecto (ver decisión abajo) |
+| Revisión legal de los tres borradores | No es trabajo de desarrollo | Asesoría Letrada |
+| Cuentas de App Store y Google Play | Trámite externo | Responsable del proyecto |
+
+**Decisión sobre iOS (registrada):** **iOS entra en el lanzamiento inicial, junto con Android.** El
+responsable cuenta (o contará) con una Mac con Xcode 27; la compilación de iOS queda **pendiente de
+ejecutarse en esa máquina** siguiendo `docs/apps-build.md`. No es "Android primero, iOS después":
+ambas plataformas van al lanzamiento.
+
+**Almacén seguro (recordatorio):** es el único ítem del PASO 12 que sigue sin cerrar y solo se
+verifica en un teléfono. Mientras no se confirme en dispositivo, en la matriz va como **parcial**,
+nunca como resuelto.
+
+---
+
 ## Observación
 
 Los puntos 1.2, 1.6 y 1.4 nunca se conversaron en todo el proyecto. No son técnicos y no dependen
