@@ -1,20 +1,23 @@
-# Precarga de comercios de Rivadavia (§13.3).
-# DATOS SINTÉTICOS para probar el sistema completo — NO son negocios reales.
-# Reemplazar por un relevamiento real (el comando de carga es idempotente).
-# La geografía (zonas/coords) sí es de Rivadavia (San Juan) para poblar el mapa.
+# Precarga de comercios de Rivadavia, San Juan (§13.3 / §14.2).
+# Comercios REALES relevados de OpenStreetMap (Overpass) el 2026-09-05: nombre, rubro y
+# COORDENADAS son reales (de OSM); el teléfono es real cuando OSM lo tenía. Las PROMOCIONES
+# son ESTIMADAS/representativas del rubro (no se pudieron ver promos reales de sus redes con
+# las herramientas disponibles) y están marcadas como tales en 'origen'. El CUIT es inventado
+# con formato válido. Reemplazable por relevamiento con promos reales (comando idempotente).
 
 comercios:
-- cuit: '30655670561'
-  razon_social: La Espiga de Oro SRL
-  nombre_fantasia: Panadería La Espiga de Oro
-  rubro: panaderia
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '33059454701'
+  razon_social: Librería Croquis
+  nombre_fantasia: Librería Croquis
+  rubro: libreria
+  origen: OpenStreetMap nodo 2608842189, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Av. Libertador San Martín 1152, Rivadavia Centro, Rivadavia
-    telefono: 264 4738313
-    lat: -31.534605
-    lon: -68.596654
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.537661
+    lon: -68.576644
     horarios: &id001
     - dia: 0
       franjas:
@@ -53,40 +56,98 @@ comercios:
       - desde: '17:00'
         hasta: '21:00'
   promociones:
+  - titulo: 10% en útiles
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_black: 12
+    valor_platino: 10
+- cuit: '30732969337'
+  razon_social: Mundo Pizza
+  nombre_fantasia: Mundo Pizza
+  rubro: gastronomia
+  origen: OpenStreetMap nodo 5471849983, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.534848
+    lon: -68.593452
+    horarios: *id001
+  promociones:
+  - titulo: 20% en el total
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_black: 20
+    valor_platino: 15
+- cuit: '30118269000'
+  razon_social: Dulzuras Maná
+  nombre_fantasia: Dulzuras Maná
+  rubro: panaderia
+  origen: OpenStreetMap nodo 4079463610, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.539665
+    lon: -68.617658
+    horarios: *id001
+  promociones:
   - titulo: 10% en panificados
     mecanica: PORCENTAJE
     segmento: AMBOS
     valor_black: 15
     valor_platino: 10
-- cuit: '30005940401'
-  razon_social: La Esquina SRL
-  nombre_fantasia: Kiosco La Esquina
-  rubro: kiosco
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30325901124'
+  razon_social: Carnes Parra
+  nombre_fantasia: Carnes Parra
+  rubro: carniceria
+  origen: OpenStreetMap nodo 5468491470, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); teléfono real de OSM
   sucursal:
     nombre: Casa Central
-    direccion: Ignacio de la Roza Oeste 1405, Marquesado, Rivadavia
-    telefono: 264 4285506
-    lat: -31.540724
-    lon: -68.621331
+    direccion: Rastreador Calivar 369 (S), Rivadavia, San Juan
+    telefono: +54 264 9 585 5503
+    lat: -31.534411
+    lon: -68.59353
     horarios: *id001
   promociones:
-  - titulo: $300 off en compras +$3000
-    mecanica: MONTO_FIJO
+  - titulo: 10% los martes
+    mecanica: PORCENTAJE
     segmento: AMBOS
-    valor_black: 300
-    valor_platino: 200
-- cuit: '30103762111'
-  razon_social: Cruz Azul SRL
-  nombre_fantasia: Farmacia Cruz Azul
-  rubro: farmacia
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+    valor_black: 15
+    valor_platino: 10
+- cuit: '33331911343'
+  razon_social: Mirame
+  nombre_fantasia: Mirame
+  rubro: indumentaria
+  origen: OpenStreetMap nodo 4801866667, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Rastreador Calivar 526, La Bebida, Rivadavia
-    telefono: 264 4739062
-    lat: -31.531638
-    lon: -68.626872
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.536289
+    lon: -68.593049
+    horarios: *id001
+  promociones:
+  - titulo: 20% en temporada
+    mecanica: PORCENTAJE
+    segmento: SOLO_BLACK
+    valor_black: 20
+- cuit: '30017072443'
+  razon_social: Farmacia Universidad
+  nombre_fantasia: Farmacia Universidad
+  rubro: farmacia
+  origen: OpenStreetMap nodo 4088623823, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.538478
+    lon: -68.580455
     horarios: *id001
   promociones:
   - titulo: 15% en perfumería
@@ -94,194 +155,37 @@ comercios:
     segmento: AMBOS
     valor_black: 15
     valor_platino: 10
-- cuit: '30331299451'
-  razon_social: Sabores del Oeste SRL
-  nombre_fantasia: Gastronomia Sabores del Oeste
-  rubro: gastronomia
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30454820076'
+  razon_social: Maxi Kiosco
+  nombre_fantasia: Maxi Kiosco
+  rubro: supermercado
+  origen: OpenStreetMap nodo 4365577789, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Tucumán 1975, Meglioli, Rivadavia
-    telefono: 264 4522382
-    lat: -31.54222
-    lon: -68.601462
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.5253
+    lon: -68.62897
     horarios: *id001
   promociones:
-  - titulo: Combo del día $6500
-    mecanica: COMBO
-    segmento: AMBOS
-    valor_black: 6500
-    valor_platino: 6500
-- cuit: '30936522871'
-  razon_social: Polo Sur SRL
-  nombre_fantasia: Heladeria Polo Sur
-  rubro: heladeria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: San Miguel 1708, Barrio Rivadavia, Rivadavia
-    telefono: 264 4195423
-    lat: -31.526805
-    lon: -68.592608
-    horarios: *id001
-  promociones:
-  - titulo: 2x1 en cuarto kg
-    mecanica: DOS_POR_UNO
-    segmento: AMBOS
-    valor_black: 0
-- cuit: '30363399261'
-  razon_social: La Vestidora SRL
-  nombre_fantasia: Indumentaria La Vestidora
-  rubro: indumentaria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: Sarmiento 1531, Av. Libertador Oeste, Rivadavia
-    telefono: 264 4555377
-    lat: -31.539545
-    lon: -68.608337
-    horarios: *id001
-  promociones:
-  - titulo: 25% en temporada
-    mecanica: PORCENTAJE
-    segmento: SOLO_BLACK
-    valor_black: 25
-- cuit: '30880400211'
-  razon_social: El Lápiz SRL
-  nombre_fantasia: Libreria El Lápiz
-  rubro: libreria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: Meglioli 1801, Rivadavia Centro, Rivadavia
-    telefono: 264 4102808
-    lat: -31.538708
-    lon: -68.601903
-    horarios: *id001
-  promociones:
-  - titulo: 10% en útiles
-    mecanica: PORCENTAJE
-    segmento: AMBOS
-    valor_black: 12
-    valor_platino: 10
-- cuit: '30076852191'
-  razon_social: Construir SRL
-  nombre_fantasia: Ferreteria Construir
-  rubro: ferreteria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: Comandante Cabot 1566, Marquesado, Rivadavia
-    telefono: 264 4617090
-    lat: -31.544232
-    lon: -68.620851
-    horarios: *id001
-  promociones:
-  - titulo: $500 off en +$5000
-    mecanica: MONTO_FIJO
-    segmento: AMBOS
-    valor_black: 500
-    valor_platino: 500
-- cuit: '30019556331'
-  razon_social: Del Campo SRL
-  nombre_fantasia: Verduleria Del Campo
-  rubro: verduleria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: Los Andes 1987, La Bebida, Rivadavia
-    telefono: 264 4711240
-    lat: -31.527774
-    lon: -68.629274
-    horarios: *id001
-  promociones:
-  - titulo: 10% en verdura
+  - titulo: 10% los miércoles
     mecanica: PORCENTAJE
     segmento: AMBOS
     valor_black: 10
-    valor_platino: 10
-- cuit: '30672980161'
-  razon_social: El Novillo SRL
-  nombre_fantasia: Carniceria El Novillo
-  rubro: carniceria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: Aristóbulo del Valle 2040, Meglioli, Rivadavia
-    telefono: 264 4583542
-    lat: -31.549784
-    lon: -68.600377
-    horarios: *id001
-  promociones:
-  - titulo: 15% los martes
-    mecanica: PORCENTAJE
-    segmento: AMBOS
-    valor_black: 15
-    valor_platino: 10
-- cuit: '30437334541'
-  razon_social: Aroma SRL
-  nombre_fantasia: Cafeteria Aroma
-  rubro: cafeteria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: Boa­tella 1706, Barrio Rivadavia, Rivadavia
-    telefono: 264 4947613
-    lat: -31.527707
-    lon: -68.590065
-    horarios: *id001
-  promociones:
-  - titulo: Café + medialuna $2500
-    mecanica: PRECIO_ESPECIAL
-    segmento: AMBOS
-    valor_black: 2500
-    valor_platino: 2500
-- cuit: '30805791431'
-  razon_social: Óptica del Sol SRL
-  nombre_fantasia: Optica Óptica del Sol
-  rubro: optica
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: El Molino 931, Av. Libertador Oeste, Rivadavia
-    telefono: 264 4612511
-    lat: -31.540761
-    lon: -68.615276
-    horarios: *id001
-  promociones:
-  - titulo: 20% en armazones
-    mecanica: PORCENTAJE
-    segmento: SOLO_BLACK
-    valor_black: 20
-- cuit: '30270326291'
-  razon_social: El Arquero SRL
-  nombre_fantasia: Deportes El Arquero
-  rubro: deportes
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: Av. Libertador San Martín 1261, Rivadavia Centro, Rivadavia
-    telefono: 264 4613244
-    lat: -31.539811
-    lon: -68.601361
-    horarios: *id001
-  promociones:
-  - titulo: puntos x2
-    mecanica: MULTIPLICADOR_PUNTOS
-    segmento: AMBOS
-    valor_black: 3
-    valor_platino: 2
-- cuit: '30533816411'
-  razon_social: Look SRL
-  nombre_fantasia: Peluqueria Look
+    valor_platino: 8
+- cuit: '30639073498'
+  razon_social: Biondo
+  nombre_fantasia: Biondo
   rubro: peluqueria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+  origen: OpenStreetMap nodo 4801866673, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Ignacio de la Roza Oeste 106, Marquesado, Rivadavia
-    telefono: 264 4975742
-    lat: -31.540788
-    lon: -68.623275
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.536079
+    lon: -68.593054
     horarios: *id001
   promociones:
   - titulo: 15% en corte
@@ -289,35 +193,37 @@ comercios:
     segmento: AMBOS
     valor_black: 15
     valor_platino: 10
-- cuit: '30768810321'
-  razon_social: Pan y Miel SRL
-  nombre_fantasia: Panadería Pan y Miel
-  rubro: panaderia
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30249312998'
+  razon_social: Ferretería Alcázar
+  nombre_fantasia: Ferretería Alcázar
+  rubro: ferreteria
+  origen: OpenStreetMap nodo 4365623592, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Rastreador Calivar 2143, La Bebida, Rivadavia
-    telefono: 264 4338871
-    lat: -31.528783
-    lon: -68.627603
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.528417
+    lon: -68.577733
     horarios: *id001
   promociones:
-  - titulo: 10% en panificados
-    mecanica: PORCENTAJE
+  - titulo: $500 off en compras +$5000
+    mecanica: MONTO_FIJO
     segmento: AMBOS
-    valor_black: 15
-    valor_platino: 10
-- cuit: '30251523751'
-  razon_social: Golosinas Pipo SRL
-  nombre_fantasia: Kiosco Golosinas Pipo
+    valor_black: 500
+    valor_platino: 500
+- cuit: '30457397670'
+  razon_social: La Norita
+  nombre_fantasia: La Norita
   rubro: kiosco
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+  origen: OpenStreetMap nodo 2608842522, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Tucumán 2196, Meglioli, Rivadavia
-    telefono: 264 4382706
-    lat: -31.542155
-    lon: -68.602269
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.538796
+    lon: -68.577739
     horarios: *id001
   promociones:
   - titulo: $300 off en compras +$3000
@@ -325,87 +231,74 @@ comercios:
     segmento: AMBOS
     valor_black: 300
     valor_platino: 200
-- cuit: '30835504991'
-  razon_social: Del Oeste SRL
-  nombre_fantasia: Farmacia Del Oeste
-  rubro: farmacia
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30151294258'
+  razon_social: Guadalupe
+  nombre_fantasia: Guadalupe
+  rubro: verduleria
+  origen: OpenStreetMap nodo 4079460844, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: San Miguel 934, Barrio Rivadavia, Rivadavia
-    telefono: 264 4645997
-    lat: -31.534899
-    lon: -68.584697
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.537467
+    lon: -68.629057
     horarios: *id001
   promociones:
-  - titulo: 15% en perfumería
+  - titulo: 10% en frutas y verduras
     mecanica: PORCENTAJE
     segmento: AMBOS
-    valor_black: 15
+    valor_black: 10
     valor_platino: 10
-- cuit: '30750127311'
-  razon_social: Doña Rosa SRL
-  nombre_fantasia: Gastronomia Doña Rosa
-  rubro: gastronomia
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30877698714'
+  razon_social: Hora Libre
+  nombre_fantasia: Hora Libre
+  rubro: cafeteria
+  origen: OpenStreetMap nodo 4983214621, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Sarmiento 323, Av. Libertador Oeste, Rivadavia
-    telefono: 264 4349393
-    lat: -31.538005
-    lon: -68.614534
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.538559
+    lon: -68.58646
     horarios: *id001
   promociones:
-  - titulo: Combo del día $6500
-    mecanica: COMBO
+  - titulo: Café + medialuna a precio especial
+    mecanica: PRECIO_ESPECIAL
     segmento: AMBOS
-    valor_black: 6500
-    valor_platino: 6500
-- cuit: '30995670441'
-  razon_social: La Montaña SRL
-  nombre_fantasia: Heladeria La Montaña
+    valor_black: 2500
+    valor_platino: 2500
+- cuit: '30346356347'
+  razon_social: Grido
+  nombre_fantasia: Grido
   rubro: heladeria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+  origen: OpenStreetMap nodo 4079448808, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Meglioli 466, Rivadavia Centro, Rivadavia
-    telefono: 264 4854138
-    lat: -31.534245
-    lon: -68.596165
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.539985
+    lon: -68.619835
     horarios: *id001
   promociones:
   - titulo: 2x1 en cuarto kg
     mecanica: DOS_POR_UNO
     segmento: AMBOS
     valor_black: 0
-- cuit: '30780678911'
-  razon_social: Estilo SJ SRL
-  nombre_fantasia: Indumentaria Estilo SJ
-  rubro: indumentaria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: Comandante Cabot 1042, Marquesado, Rivadavia
-    telefono: 264 4676598
-    lat: -31.538103
-    lon: -68.61384
-    horarios: *id001
-  promociones:
-  - titulo: 25% en temporada
-    mecanica: PORCENTAJE
-    segmento: SOLO_BLACK
-    valor_black: 25
-- cuit: '30126358891'
-  razon_social: Mundo Libro SRL
-  nombre_fantasia: Libreria Mundo Libro
+- cuit: '30640523928'
+  razon_social: Cuspide
+  nombre_fantasia: Cuspide
   rubro: libreria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+  origen: OpenStreetMap nodo 3817450668, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); teléfono real de OSM
   sucursal:
     nombre: Casa Central
-    direccion: Los Andes 1814, La Bebida, Rivadavia
-    telefono: 264 4529745
-    lat: -31.529846
-    lon: -68.632575
+    direccion: Rivadavia, San Juan
+    telefono: '+542644237914'
+    lat: -31.540167
+    lon: -68.572733
     horarios: *id001
   promociones:
   - titulo: 10% en útiles
@@ -413,124 +306,131 @@ comercios:
     segmento: AMBOS
     valor_black: 12
     valor_platino: 10
-- cuit: '30845664451'
-  razon_social: El Tornillo SRL
-  nombre_fantasia: Ferreteria El Tornillo
-  rubro: ferreteria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30209410369'
+  razon_social: Lebron Comunicaciones
+  nombre_fantasia: Lebron Comunicaciones
+  rubro: gastronomia
+  origen: OpenStreetMap nodo 5712701373, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Aristóbulo del Valle 810, Meglioli, Rivadavia
-    telefono: 264 4271327
-    lat: -31.548373
-    lon: -68.60629
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.53999
+    lon: -68.619886
     horarios: *id001
   promociones:
-  - titulo: $500 off en +$5000
-    mecanica: MONTO_FIJO
-    segmento: AMBOS
-    valor_black: 500
-    valor_platino: 500
-- cuit: '30061684521'
-  razon_social: Verde Fresco SRL
-  nombre_fantasia: Verduleria Verde Fresco
-  rubro: verduleria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: Boa­tella 1279, Barrio Rivadavia, Rivadavia
-    telefono: 264 4102255
-    lat: -31.533885
-    lon: -68.590583
-    horarios: *id001
-  promociones:
-  - titulo: 10% en verdura
+  - titulo: 20% en el total
     mecanica: PORCENTAJE
     segmento: AMBOS
-    valor_black: 10
-    valor_platino: 10
-- cuit: '30976751951'
-  razon_social: Carnes del Oeste SRL
-  nombre_fantasia: Carniceria Carnes del Oeste
-  rubro: carniceria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+    valor_black: 20
+    valor_platino: 15
+- cuit: '30180396922'
+  razon_social: Panadería La Rosa
+  nombre_fantasia: Panadería La Rosa
+  rubro: panaderia
+  origen: OpenStreetMap nodo 4367177292, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: El Molino 1764, Av. Libertador Oeste, Rivadavia
-    telefono: 264 4275172
-    lat: -31.54206
-    lon: -68.608526
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.528018
+    lon: -68.57359
     horarios: *id001
   promociones:
-  - titulo: 15% los martes
+  - titulo: 10% en panificados
     mecanica: PORCENTAJE
     segmento: AMBOS
     valor_black: 15
     valor_platino: 10
-- cuit: '30559901621'
-  razon_social: Café del Molino SRL
-  nombre_fantasia: Cafeteria Café del Molino
-  rubro: cafeteria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30993978740'
+  razon_social: Avícola Ginestar
+  nombre_fantasia: Avícola Ginestar
+  rubro: carniceria
+  origen: OpenStreetMap nodo 5969375866, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Av. Libertador San Martín 1070, Rivadavia Centro, Rivadavia
-    telefono: 264 4443284
-    lat: -31.536922
-    lon: -68.604644
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.538337
+    lon: -68.56739
     horarios: *id001
   promociones:
-  - titulo: Café + medialuna $2500
-    mecanica: PRECIO_ESPECIAL
+  - titulo: 10% los martes
+    mecanica: PORCENTAJE
     segmento: AMBOS
-    valor_black: 2500
-    valor_platino: 2500
-- cuit: '30238877831'
-  razon_social: Óptica del Sol SRL
-  nombre_fantasia: Optica Óptica del Sol
-  rubro: optica
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+    valor_black: 15
+    valor_platino: 10
+- cuit: '30894737979'
+  razon_social: Marena
+  nombre_fantasia: Marena
+  rubro: indumentaria
+  origen: OpenStreetMap nodo 4801866669, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Ignacio de la Roza Oeste 2272, Marquesado, Rivadavia
-    telefono: 264 4417373
-    lat: -31.536831
-    lon: -68.616795
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.536235
+    lon: -68.593065
     horarios: *id001
   promociones:
-  - titulo: 20% en armazones
+  - titulo: 20% en temporada
     mecanica: PORCENTAJE
     segmento: SOLO_BLACK
     valor_black: 20
-- cuit: '30383388761'
-  razon_social: El Arquero SRL
-  nombre_fantasia: Deportes El Arquero
-  rubro: deportes
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30552590976'
+  razon_social: Farmacia Uno
+  nombre_fantasia: Farmacia Uno
+  rubro: farmacia
+  origen: OpenStreetMap nodo 6713569705, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); teléfono real de OSM
   sucursal:
     nombre: Casa Central
-    direccion: Rastreador Calivar 1219, La Bebida, Rivadavia
-    telefono: 264 4176748
-    lat: -31.528093
-    lon: -68.629243
+    direccion: Rastreador Calivar 616 (S), Rivadavia, San Juan
+    telefono: +54 264 433 0066
+    lat: -31.538214
+    lon: -68.592773
     horarios: *id001
   promociones:
-  - titulo: puntos x2
-    mecanica: MULTIPLICADOR_PUNTOS
+  - titulo: 15% en perfumería
+    mecanica: PORCENTAJE
     segmento: AMBOS
-    valor_black: 3
-    valor_platino: 2
-- cuit: '30452879151'
-  razon_social: Look SRL
-  nombre_fantasia: Peluqueria Look
-  rubro: peluqueria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+    valor_black: 15
+    valor_platino: 10
+- cuit: '30525004798'
+  razon_social: Super Buho
+  nombre_fantasia: Super Buho
+  rubro: supermercado
+  origen: OpenStreetMap nodo 7987060014, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Tucumán 2073, Meglioli, Rivadavia
-    telefono: 264 4877732
-    lat: -31.545538
-    lon: -68.600126
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.522307
+    lon: -68.579446
+    horarios: *id001
+  promociones:
+  - titulo: 10% los miércoles
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_black: 10
+    valor_platino: 8
+- cuit: '30096477690'
+  razon_social: David Alejandro
+  nombre_fantasia: David Alejandro
+  rubro: peluqueria
+  origen: OpenStreetMap nodo 5429674242, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.533504
+    lon: -68.598115
     horarios: *id001
   promociones:
   - titulo: 15% en corte
@@ -538,35 +438,37 @@ comercios:
     segmento: AMBOS
     valor_black: 15
     valor_platino: 10
-- cuit: '30524773621'
-  razon_social: La Espiga de Oro SRL
-  nombre_fantasia: Panadería La Espiga de Oro
-  rubro: panaderia
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30780468366'
+  razon_social: Ferretería La Hogareña
+  nombre_fantasia: Ferretería La Hogareña
+  rubro: ferreteria
+  origen: OpenStreetMap nodo 4367026690, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: San Miguel 564, Barrio Rivadavia, Rivadavia
-    telefono: 264 4396213
-    lat: -31.527676
-    lon: -68.591895
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.538481
+    lon: -68.579787
     horarios: *id001
   promociones:
-  - titulo: 10% en panificados
-    mecanica: PORCENTAJE
+  - titulo: $500 off en compras +$5000
+    mecanica: MONTO_FIJO
     segmento: AMBOS
-    valor_black: 15
-    valor_platino: 10
-- cuit: '30741132051'
-  razon_social: La Esquina SRL
-  nombre_fantasia: Kiosco La Esquina
+    valor_black: 500
+    valor_platino: 500
+- cuit: '30504525496'
+  razon_social: Gomeria El Chirola
+  nombre_fantasia: Gomeria El Chirola
   rubro: kiosco
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+  origen: OpenStreetMap nodo 3516408754, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Sarmiento 1737, Av. Libertador Oeste, Rivadavia
-    telefono: 264 4953824
-    lat: -31.538323
-    lon: -68.615761
+    direccion: Hipólito Yrigoyen 1072, Rivadavia, San Juan
+    telefono: ''
+    lat: -31.541056
+    lon: -68.566657
     horarios: *id001
   promociones:
   - titulo: $300 off en compras +$3000
@@ -574,87 +476,74 @@ comercios:
     segmento: AMBOS
     valor_black: 300
     valor_platino: 200
-- cuit: '30467946641'
-  razon_social: Cruz Azul SRL
-  nombre_fantasia: Farmacia Cruz Azul
-  rubro: farmacia
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30028606385'
+  razon_social: CIN - DAR
+  nombre_fantasia: CIN - DAR
+  rubro: verduleria
+  origen: OpenStreetMap nodo 5427982562, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Meglioli 1238, Rivadavia Centro, Rivadavia
-    telefono: 264 4824365
-    lat: -31.534539
-    lon: -68.603893
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.53223
+    lon: -68.601135
     horarios: *id001
   promociones:
-  - titulo: 15% en perfumería
+  - titulo: 10% en frutas y verduras
     mecanica: PORCENTAJE
     segmento: AMBOS
-    valor_black: 15
+    valor_black: 10
     valor_platino: 10
-- cuit: '30608216131'
-  razon_social: Sabores del Oeste SRL
-  nombre_fantasia: Gastronomia Sabores del Oeste
-  rubro: gastronomia
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '30855190172'
+  razon_social: Balcarce
+  nombre_fantasia: Balcarce
+  rubro: cafeteria
+  origen: OpenStreetMap nodo 6713569722, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Comandante Cabot 1965, Marquesado, Rivadavia
-    telefono: 264 4879780
-    lat: -31.534838
-    lon: -68.622554
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.538591
+    lon: -68.592735
     horarios: *id001
   promociones:
-  - titulo: Combo del día $6500
-    mecanica: COMBO
+  - titulo: Café + medialuna a precio especial
+    mecanica: PRECIO_ESPECIAL
     segmento: AMBOS
-    valor_black: 6500
-    valor_platino: 6500
-- cuit: '30660785561'
-  razon_social: Polo Sur SRL
-  nombre_fantasia: Heladeria Polo Sur
+    valor_black: 2500
+    valor_platino: 2500
+- cuit: '30447208020'
+  razon_social: Portho Gelatto Calivar
+  nombre_fantasia: Portho Gelatto Calivar
   rubro: heladeria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+  origen: OpenStreetMap nodo 6872302914, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Los Andes 742, La Bebida, Rivadavia
-    telefono: 264 4389187
-    lat: -31.527093
-    lon: -68.633478
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.534281
+    lon: -68.593581
     horarios: *id001
   promociones:
   - titulo: 2x1 en cuarto kg
     mecanica: DOS_POR_UNO
     segmento: AMBOS
     valor_black: 0
-- cuit: '30779154431'
-  razon_social: La Vestidora SRL
-  nombre_fantasia: Indumentaria La Vestidora
-  rubro: indumentaria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
-  sucursal:
-    nombre: Casa Central
-    direccion: Aristóbulo del Valle 1035, Meglioli, Rivadavia
-    telefono: 264 4843432
-    lat: -31.551091
-    lon: -68.606823
-    horarios: *id001
-  promociones:
-  - titulo: 25% en temporada
-    mecanica: PORCENTAJE
-    segmento: SOLO_BLACK
-    valor_black: 25
-- cuit: '30094283541'
-  razon_social: Papelería Central SRL
-  nombre_fantasia: Libreria Papelería Central
+- cuit: '30007784313'
+  razon_social: Librería Graficolor
+  nombre_fantasia: Librería Graficolor
   rubro: libreria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+  origen: OpenStreetMap nodo 4313553594, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: Boa­tella 1264, Barrio Rivadavia, Rivadavia
-    telefono: 264 4228974
-    lat: -31.529831
-    lon: -68.59382
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.536626
+    lon: -68.578876
     horarios: *id001
   promociones:
   - titulo: 10% en útiles
@@ -662,21 +551,173 @@ comercios:
     segmento: AMBOS
     valor_black: 12
     valor_platino: 10
-- cuit: '30897111781'
-  razon_social: Herramientas Cuyo SRL
-  nombre_fantasia: Ferreteria Herramientas Cuyo
-  rubro: ferreteria
-  origen: generado para prueba (2026-09-05) — reemplazar por relevamiento real
+- cuit: '33359124053'
+  razon_social: Checa
+  nombre_fantasia: Checa
+  rubro: gastronomia
+  origen: OpenStreetMap nodo 5990208285, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
   sucursal:
     nombre: Casa Central
-    direccion: El Molino 2226, Av. Libertador Oeste, Rivadavia
-    telefono: 264 4247319
-    lat: -31.537925
-    lon: -68.60534
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.538486
+    lon: -68.580061
     horarios: *id001
   promociones:
-  - titulo: $500 off en +$5000
+  - titulo: 20% en el total
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_black: 20
+    valor_platino: 15
+- cuit: '30237400689'
+  razon_social: María Casa de Tortas
+  nombre_fantasia: María Casa de Tortas
+  rubro: panaderia
+  origen: OpenStreetMap nodo 5427982560, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.532167
+    lon: -68.601147
+    horarios: *id001
+  promociones:
+  - titulo: 10% en panificados
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_black: 15
+    valor_platino: 10
+- cuit: '30680430485'
+  razon_social: Avícola Genaro
+  nombre_fantasia: Avícola Genaro
+  rubro: carniceria
+  origen: OpenStreetMap nodo 5993574965, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.539824
+    lon: -68.567287
+    horarios: *id001
+  promociones:
+  - titulo: 10% los martes
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_black: 15
+    valor_platino: 10
+- cuit: '30918292140'
+  razon_social: A tus Pies
+  nombre_fantasia: A tus Pies
+  rubro: indumentaria
+  origen: OpenStreetMap nodo 4801866672, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.536172
+    lon: -68.593083
+    horarios: *id001
+  promociones:
+  - titulo: 20% en temporada
+    mecanica: PORCENTAJE
+    segmento: SOLO_BLACK
+    valor_black: 20
+- cuit: '30144022323'
+  razon_social: Farmacia Central
+  nombre_fantasia: Farmacia Central
+  rubro: farmacia
+  origen: OpenStreetMap nodo 6901566270, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.530843
+    lon: -68.595631
+    horarios: *id001
+  promociones:
+  - titulo: 15% en perfumería
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_black: 15
+    valor_platino: 10
+- cuit: '30895107480'
+  razon_social: Fusión
+  nombre_fantasia: Fusión
+  rubro: peluqueria
+  origen: OpenStreetMap nodo 6842551378, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.533239
+    lon: -68.594103
+    horarios: *id001
+  promociones:
+  - titulo: 15% en corte
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_black: 15
+    valor_platino: 10
+- cuit: '30102323188'
+  razon_social: Dipot House
+  nombre_fantasia: Dipot House
+  rubro: ferreteria
+  origen: OpenStreetMap nodo 4764268061, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.538967
+    lon: -68.569617
+    horarios: *id001
+  promociones:
+  - titulo: $500 off en compras +$5000
     mecanica: MONTO_FIJO
     segmento: AMBOS
     valor_black: 500
     valor_platino: 500
+- cuit: '30547088847'
+  razon_social: Neumáticos El Sauce
+  nombre_fantasia: Neumáticos El Sauce
+  rubro: kiosco
+  origen: OpenStreetMap nodo 3945192105, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.521068
+    lon: -68.564835
+    horarios: *id001
+  promociones:
+  - titulo: $300 off en compras +$3000
+    mecanica: MONTO_FIJO
+    segmento: AMBOS
+    valor_black: 300
+    valor_platino: 200
+- cuit: '30385544584'
+  razon_social: Santa Rita
+  nombre_fantasia: Santa Rita
+  rubro: verduleria
+  origen: OpenStreetMap nodo 5712701388, relevado 2026-09-05; coordenadas reales;
+    promoción ESTIMADA (representativa del rubro); sin teléfono en la fuente
+  sucursal:
+    nombre: Casa Central
+    direccion: Rivadavia, San Juan
+    telefono: ''
+    lat: -31.540107
+    lon: -68.620682
+    horarios: *id001
+  promociones:
+  - titulo: 10% en frutas y verduras
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_black: 10
+    valor_platino: 10

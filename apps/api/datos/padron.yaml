@@ -1,5 +1,5 @@
 # Padrón simulado (§13.1). Lo no listado devuelve false. Recarga en caliente.
-# Los CUIT de la precarga de comercios (§13.3) figuran acá como es_comerciante=true.
+# Incluye los CUIT de la precarga de comercios (§14.2) como es_comerciante=true.
 
 contribuyentes:
 - dni: '20123456'
@@ -9,76 +9,76 @@ contribuyentes:
 comercios:
 - cuit: '30712345678'
   es_comerciante: true
-- cuit: '30655670561'
+- cuit: '33059454701'
   es_comerciante: true
-- cuit: '30005940401'
+- cuit: '30732969337'
   es_comerciante: true
-- cuit: '30103762111'
+- cuit: '30118269000'
   es_comerciante: true
-- cuit: '30331299451'
+- cuit: '30325901124'
   es_comerciante: true
-- cuit: '30936522871'
+- cuit: '33331911343'
   es_comerciante: true
-- cuit: '30363399261'
+- cuit: '30017072443'
   es_comerciante: true
-- cuit: '30880400211'
+- cuit: '30454820076'
   es_comerciante: true
-- cuit: '30076852191'
+- cuit: '30639073498'
   es_comerciante: true
-- cuit: '30019556331'
+- cuit: '30249312998'
   es_comerciante: true
-- cuit: '30672980161'
+- cuit: '30457397670'
   es_comerciante: true
-- cuit: '30437334541'
+- cuit: '30151294258'
   es_comerciante: true
-- cuit: '30805791431'
+- cuit: '30877698714'
   es_comerciante: true
-- cuit: '30270326291'
+- cuit: '30346356347'
   es_comerciante: true
-- cuit: '30533816411'
+- cuit: '30640523928'
   es_comerciante: true
-- cuit: '30768810321'
+- cuit: '30209410369'
   es_comerciante: true
-- cuit: '30251523751'
+- cuit: '30180396922'
   es_comerciante: true
-- cuit: '30835504991'
+- cuit: '30993978740'
   es_comerciante: true
-- cuit: '30750127311'
+- cuit: '30894737979'
   es_comerciante: true
-- cuit: '30995670441'
+- cuit: '30552590976'
   es_comerciante: true
-- cuit: '30780678911'
+- cuit: '30525004798'
   es_comerciante: true
-- cuit: '30126358891'
+- cuit: '30096477690'
   es_comerciante: true
-- cuit: '30845664451'
+- cuit: '30780468366'
   es_comerciante: true
-- cuit: '30061684521'
+- cuit: '30504525496'
   es_comerciante: true
-- cuit: '30976751951'
+- cuit: '30028606385'
   es_comerciante: true
-- cuit: '30559901621'
+- cuit: '30855190172'
   es_comerciante: true
-- cuit: '30238877831'
+- cuit: '30447208020'
   es_comerciante: true
-- cuit: '30383388761'
+- cuit: '30007784313'
   es_comerciante: true
-- cuit: '30452879151'
+- cuit: '33359124053'
   es_comerciante: true
-- cuit: '30524773621'
+- cuit: '30237400689'
   es_comerciante: true
-- cuit: '30741132051'
+- cuit: '30680430485'
   es_comerciante: true
-- cuit: '30467946641'
+- cuit: '30918292140'
   es_comerciante: true
-- cuit: '30608216131'
+- cuit: '30144022323'
   es_comerciante: true
-- cuit: '30660785561'
+- cuit: '30895107480'
   es_comerciante: true
-- cuit: '30779154431'
+- cuit: '30102323188'
   es_comerciante: true
-- cuit: '30094283541'
+- cuit: '30547088847'
   es_comerciante: true
-- cuit: '30897111781'
+- cuit: '30385544584'
   es_comerciante: true
 caidos: []
