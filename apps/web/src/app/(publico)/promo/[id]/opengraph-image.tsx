@@ -10,7 +10,7 @@ interface Props {
 
 export default async function OgImage({ params }: Props) {
   const { id } = await params;
-  const municipio = process.env.NEXT_PUBLIC_MUNICIPIO_NOMBRE ?? 'Municipio';
+  const municipio = process.env.NEXT_PUBLIC_MUNICIPIO_NOMBRE ?? 'Rivadavia';
   return new ImageResponse(
     (
       <div

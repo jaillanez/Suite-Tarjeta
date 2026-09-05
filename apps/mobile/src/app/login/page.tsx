@@ -3,7 +3,7 @@
 import { type FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ApiError } from '@tarjeta/api-client';
-import { Button, Input, Label } from '@tarjeta/ui';
+import { Button, Input, Label, Marca } from '@tarjeta/ui';
 import { api } from '@/lib/api';
 import { guardarSesion } from '@/lib/session';
 
@@ -47,14 +47,23 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="mx-auto max-w-sm space-y-4 p-4">
-      <h1 className="text-lg font-semibold">Iniciar sesión</h1>
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+    <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 p-6">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <Marca variante="wordmark" alto={44} />
+        <h1 className="text-lg font-semibold">
+          {mfaToken === null ? 'Iniciar sesión' : 'Verificación en dos pasos'}
+        </h1>
+      </div>
+      {error ? (
+        <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
       {mfaToken === null ? (
-        <form onSubmit={onLogin} className="space-y-4">
+        <form onSubmit={onLogin} className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
           <div className="space-y-1.5">
             <Label htmlFor="dni">DNI</Label>
-            <Input id="dni" value={dni} onChange={(e) => setDni(e.target.value)} required />
+            <Input id="dni" inputMode="numeric" value={dni} onChange={(e) => setDni(e.target.value)} required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="password">Contraseña</Label>
@@ -66,14 +75,14 @@ export default function LoginPage() {
               required
             />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" size="lg" className="w-full">
             Entrar
           </Button>
         </form>
       ) : (
-        <form onSubmit={onMfa} className="space-y-4">
+        <form onSubmit={onMfa} className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
           <div className="space-y-1.5">
-            <Label htmlFor="codigo">Código MFA</Label>
+            <Label htmlFor="codigo">Código de verificación</Label>
             <Input
               id="codigo"
               inputMode="numeric"
@@ -82,7 +91,7 @@ export default function LoginPage() {
               required
             />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" size="lg" className="w-full">
             Verificar
           </Button>
         </form>

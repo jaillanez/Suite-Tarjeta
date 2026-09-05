@@ -8,7 +8,7 @@ import { QrToken } from '@/components/QrToken';
 import { api } from '@/lib/api';
 import { esSesionVencida, mensajeDeError } from '@/lib/errores';
 
-const municipio = process.env.NEXT_PUBLIC_MUNICIPIO_NOMBRE ?? 'Municipio';
+const municipio = process.env.NEXT_PUBLIC_MUNICIPIO_NOMBRE ?? 'Rivadavia';
 
 function tokenVigente(lote: TokenOut[]): string | null {
   const ahora = Math.floor(Date.now() / 1000);

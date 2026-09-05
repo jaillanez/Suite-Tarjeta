@@ -1,13 +1,25 @@
-import { Card, CardContent, CardHeader, CardTitle, NivelBadge, TarjetaCredencial } from '@tarjeta/ui';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Marca,
+  NivelBadge,
+  TarjetaCredencial,
+} from '@tarjeta/ui';
 
-const municipio = process.env.NEXT_PUBLIC_MUNICIPIO_NOMBRE ?? 'Municipio';
+const municipio = process.env.NEXT_PUBLIC_MUNICIPIO_NOMBRE ?? 'Rivadavia';
 
 export default function Home() {
   return (
     <div className="space-y-8">
-      <section className="space-y-2">
-        <h1 className="text-3xl font-bold">Tarjeta de Beneficios</h1>
-        <p className="text-muted-foreground">
+      <section className="flex flex-col items-start gap-3">
+        <span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700">
+          <Marca variante="emblema" alto={18} />
+          Municipio de {municipio}
+        </span>
+        <h1 className="text-3xl font-bold tracking-tight">Tarjeta de Beneficios</h1>
+        <p className="max-w-prose text-muted-foreground">
           Descuentos en comercios adheridos de {municipio}. Iniciá sesión para ver tu tarjeta.
         </p>
       </section>

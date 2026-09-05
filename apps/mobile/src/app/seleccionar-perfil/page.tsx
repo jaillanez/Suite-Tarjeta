@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Building2, ChevronRight, Store, UserRound } from 'lucide-react';
 import type { Perfil } from '@tarjeta/api-client';
+import { Marca } from '@tarjeta/ui';
 import { api } from '@/lib/api';
 import { esSesionVencida, mensajeDeError } from '@/lib/errores';
 import { guardarPerfilActivo, guardarSesion } from '@/lib/session';
@@ -12,6 +14,18 @@ const DESTINO: Record<string, string> = {
   CIUDADANO: '/inicio',
   COMERCIO: '/caja',
   MUNICIPAL: '/operacion',
+};
+
+const ICONO: Record<string, typeof UserRound> = {
+  CIUDADANO: UserRound,
+  COMERCIO: Store,
+  MUNICIPAL: Building2,
+};
+
+const ETIQUETA: Record<string, string> = {
+  CIUDADANO: 'Ciudadano',
+  COMERCIO: 'Comercio',
+  MUNICIPAL: 'Municipal',
 };
 
 export default function SeleccionarPerfilPage() {
@@ -43,22 +57,40 @@ export default function SeleccionarPerfilPage() {
   }
 
   return (
-    <main className="mx-auto max-w-md space-y-4 p-4">
-      <h1 className="text-lg font-semibold">Elegí con qué perfil entrás</h1>
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+    <main className="mx-auto max-w-md space-y-6 p-6">
+      <header className="flex flex-col items-center gap-3 pt-6 text-center">
+        <Marca variante="wordmark" alto={38} />
+        <h1 className="text-lg font-semibold">Elegí con qué perfil entrás</h1>
+      </header>
+      {error ? (
+        <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
       <ul className="grid gap-3">
-        {perfiles.map((p) => (
-          <li key={p.clave}>
-            <button
-              type="button"
-              className="w-full rounded-lg border border-border p-4 text-left"
-              onClick={() => activar(p.clave, p.tipo)}
-            >
-              <span className="font-medium">{p.tipo}</span>
-              {p.rol ? <span className="block text-sm text-muted-foreground">{p.rol}</span> : null}
-            </button>
-          </li>
-        ))}
+        {perfiles.map((p) => {
+          const Icono = ICONO[p.tipo] ?? UserRound;
+          return (
+            <li key={p.clave}>
+              <button
+                type="button"
+                className="flex w-full items-center gap-4 rounded-xl border border-border bg-card p-4 text-left transition-colors active:bg-accent"
+                onClick={() => activar(p.clave, p.tipo)}
+              >
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700">
+                  <Icono className="size-5" aria-hidden="true" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold">{ETIQUETA[p.tipo] ?? p.tipo}</span>
+                  {p.rol ? (
+                    <span className="block text-sm text-muted-foreground">{p.rol}</span>
+                  ) : null}
+                </span>
+                <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </main>
   );

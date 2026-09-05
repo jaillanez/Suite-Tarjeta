@@ -77,6 +77,7 @@ Se lanza sin esto y se agrega después (post-lanzamiento).
 | Quién custodia la clave de cifrado | Municipio | ⛔ definir |
 | Quién genera y mantiene el archivo de tiles | Equipo del programa | ⛔ definir |
 | Proveedor de imágenes con IA y su presupuesto mensual | Municipio (cuando llegue el momento) | ⛔ definir |
+| Confirmar la marca de la app (hoy "Rivadavia Cumple", logo/colores tomados del sitio oficial del municipio) y proveer el **logo en vector** de alta resolución | Prensa / Comunicación del municipio | ⛔ definir |
 | Fecha real de apertura al público | Municipio | ⛔ definir |
 
 ---

@@ -14,5 +14,6 @@ export * from './components/ui/table';
 export * from './components/ui/select';
 
 // Componentes del dominio
+export * from './components/Marca';
 export * from './components/NivelBadge';
 export * from './components/TarjetaCredencial';

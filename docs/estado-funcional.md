@@ -1,7 +1,7 @@
 # Estado funcional de la plataforma
 
 Qué es **real** y qué está **fingido**, sin ambigüedad. Se actualiza en cada paso.
-*Última actualización: cierre del PASO 12 (PRs #17–#31).*
+*Última actualización: identidad visual de marca (Rivadavia Cumple) en web y móvil.*
 
 Clasificación: **Implementada** (funciona de punta a punta con integración real) · **Parcial**
 (funciona pero le falta una pieza) · **Simulada** (adaptador de simulación detrás de un puerto;
@@ -30,6 +30,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 | modo demostración | **Implementada** | §13.5: `scripts/demo.py` deja con un comando 2 vecinos (Black/Platino), grupo familiar, comercio con cajero y turno abierto, promos de distintas mecánicas y puntos con movimientos. Idempotente (`docs/modo-demo.md`). |
 | difusion (redes) | **Pendiente** | Publicación en redes sociales; fuera de alcance hasta su paso. |
 | captacion | **Pendiente** | Módulo de captación; no construido. |
+| identidad visual (marca) | **Implementada** | Marca oficial **"Rivadavia Cumple"** aplicada a web y móvil: logotipo y emblema (tilde ✓) reales del municipio (`public/marca/`), paleta verde oficial en el sistema de diseño (`packages/ui/src/styles/theme.css`: verde acción `#4A863C`, bosque `#304830`, tilde `#589048`), componente compartido `Marca`. Ícono y splash nativos de Android regenerados con el tilde; app renombrada "Tarjeta Rivadavia". Nombre del municipio ya no cae al placeholder. **Pendiente menor:** reemplazar por assets vectoriales/oficiales de mayor resolución si Prensa los provee; ícono/splash de iOS al generar el proyecto nativo. |
 
 ---
 

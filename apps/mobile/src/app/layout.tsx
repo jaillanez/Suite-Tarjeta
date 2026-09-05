@@ -4,12 +4,12 @@ import { AlmacenSeguroInit } from '@/components/AlmacenSeguroInit';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Tarjeta de Beneficios',
-  description: 'Tu tarjeta de beneficios municipal.',
+  title: 'Tarjeta de Beneficios · Rivadavia',
+  description: 'Tu tarjeta de beneficios del municipio de Rivadavia.',
 };
 
 export const viewport: Viewport = {
-  themeColor: '#1e40af',
+  themeColor: '#4a863c',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
