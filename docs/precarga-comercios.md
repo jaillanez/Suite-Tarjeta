@@ -3,11 +3,14 @@
 Para probar el sistema completo con el mapa poblado, se cargan comercios de precarga con su
 sucursal y promociones, todos en estado **ACTIVA**.
 
-> **Los datos son sintéticos** (`datos/comercios_rivadavia.yaml`): nombres y teléfonos inventados,
-> **no** son negocios reales. La geografía (zonas y coordenadas) sí es de Rivadavia (San Juan) para
-> que el mapa se vea realista. Reemplazá el archivo por un relevamiento real cuando lo tengas; el
-> comando es idempotente. Cada comercio guarda su **origen** (de dónde salió el dato y cuándo),
-> como agenda para el promotor que después los visite.
+> **Los datos son de comercios reales de Rivadavia** (`datos/comercios_rivadavia.yaml`), relevados
+> de **OpenStreetMap** (Overpass) el 2026-09-05: **nombre, rubro y coordenadas son reales**; el
+> teléfono es real cuando OSM lo tenía. Las **promociones son estimadas/representativas del rubro**
+> (no se pudieron ver las promos reales de las redes de cada comercio con las herramientas
+> disponibles) y están **marcadas como estimadas** en el campo `origen`. El **CUIT es inventado**
+> con formato válido. Cada comercio guarda su `origen` (fuente + fecha), como agenda para el
+> promotor que después los visite y confirme/actualice sus promociones. Reemplazable con el mismo
+> comando idempotente.
 
 ## Comandos
 
