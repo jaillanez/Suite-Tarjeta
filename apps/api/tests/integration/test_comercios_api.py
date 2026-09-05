@@ -280,32 +280,64 @@ async def _invitar_y_aceptar_cajero(
     return ids[0]
 
 
+async def _nuevo_cajero(
+    client: AsyncClient, *, admin: str, id_comercio: str, previos: set[str]
+) -> tuple[str, str]:
+    """Da de alta un cajero nuevo (invitación + registro + aceptación). Devuelve
+    (id_usuario, id_persona). `previos` son los id_usuario ya existentes, para identificar el nuevo."""
+    h_admin = _headers(_token(admin, f"COMERCIO:{id_comercio}"))
+    r = await client.post(
+        "/api/v1/comercios/usuarios/invitar",
+        headers=h_admin,
+        json={"rol": "CAJERO", "destino": "cajero@example.com"},
+    )
+    token_inv = r.json()["token"]
+    persona = await _registrar(client)
+    await client.post(
+        f"/api/v1/portal-comercio/invitaciones/{token_inv}/aceptar",
+        headers=_headers(_token(persona, "CIUDADANO")),
+    )
+    r = await client.get("/api/v1/comercios/usuarios", headers=h_admin)
+    ids = {u["id"] for u in r.json() if u["rol"] == "CAJERO"}
+    return (ids - previos).pop(), persona
+
+
+async def _registrar_pin(
+    client: AsyncClient, *, admin: str, id_comercio: str, id_usuario: str, huella: str, pin: str
+) -> None:
+    h_admin = _headers(_token(admin, f"COMERCIO:{id_comercio}"))
+    r = await client.post(
+        f"/api/v1/comercios/cajeros/{id_usuario}/pin",
+        headers={**h_admin, "X-Device-Huella": huella},
+        json={"pin": pin},
+    )
+    assert r.status_code == 200, r.text
+
+
 async def test_pin_no_funciona_desde_otro_dispositivo(client: AsyncClient, padron) -> None:
     admin, r = await _adherir(client, padron, comerciante=True)
     id_comercio = r.json()["id_comercio"]
     id_usuario = await _invitar_y_aceptar_cajero(
         client, admin_persona=admin, id_comercio=id_comercio
     )
-    h_admin = _headers(_token(admin, f"COMERCIO:{id_comercio}"))
-    # El encargado registra el PIN en el dispositivo d1.
-    r = await client.post(
-        f"/api/v1/comercios/cajeros/{id_usuario}/pin",
-        headers={**h_admin, "X-Device-Huella": "d1"},
-        json={"pin": "1234"},
+    # Huellas únicas por test (el test DB no aísla filas entre tests): el registrado y "otro".
+    huella_ok, huella_otro = str(uuid.uuid4()), str(uuid.uuid4())
+    # El encargado registra el PIN en el dispositivo registrado.
+    await _registrar_pin(
+        client, admin=admin, id_comercio=id_comercio, id_usuario=id_usuario, huella=huella_ok, pin="1234"
     )
-    assert r.status_code == 200, r.text
-    # Login desde otro dispositivo: 403.
+    # Login de ese cajero desde otro dispositivo: no pertenece a esa huella -> 403.
     r = await client.post(
         "/api/v1/portal-comercio/cajero/login",
         json={"id_usuario": id_usuario, "pin": "1234"},
-        headers={"X-Device-Huella": "d2"},
+        headers={"X-Device-Huella": huella_otro},
     )
     assert r.status_code == 403, r.text
     # Login desde el dispositivo registrado: ok.
     r = await client.post(
         "/api/v1/portal-comercio/cajero/login",
         json={"id_usuario": id_usuario, "pin": "1234"},
-        headers={"X-Device-Huella": "d1"},
+        headers={"X-Device-Huella": huella_ok},
     )
     assert r.status_code == 200, r.text
     assert "access_token" in r.json()
@@ -318,15 +350,14 @@ async def test_baja_cajero_revoca_sesiones(client: AsyncClient, padron) -> None:
         client, admin_persona=admin, id_comercio=id_comercio
     )
     h_admin = _headers(_token(admin, f"COMERCIO:{id_comercio}"))
-    await client.post(
-        f"/api/v1/comercios/cajeros/{id_usuario}/pin",
-        headers={**h_admin, "X-Device-Huella": "d1"},
-        json={"pin": "1234"},
+    huella = str(uuid.uuid4())  # única por test: la caja resuelve por huella
+    await _registrar_pin(
+        client, admin=admin, id_comercio=id_comercio, id_usuario=id_usuario, huella=huella, pin="1234"
     )
     r = await client.post(
         "/api/v1/portal-comercio/cajero/login",
         json={"id_usuario": id_usuario, "pin": "1234"},
-        headers={"X-Device-Huella": "d1"},
+        headers={"X-Device-Huella": huella},
     )
     refresh = r.json()["refresh_token"]
     # Dar de baja al cajero revoca sus sesiones.
@@ -334,6 +365,101 @@ async def test_baja_cajero_revoca_sesiones(client: AsyncClient, padron) -> None:
     assert r.status_code == 200, r.text
     r = await client.post("/api/v1/auth/refresh", json={"refresh_token": refresh})
     assert r.status_code == 401  # sesión revocada
+
+
+async def test_caja_lista_dispositivo_sin_cajeros(client: AsyncClient) -> None:
+    # Una huella desconocida devuelve lista vacía (no revela si el dispositivo existe).
+    r = await client.get(
+        "/api/v1/portal-comercio/cajero/lista",
+        headers={"X-Device-Huella": str(uuid.uuid4())},
+    )
+    assert r.status_code == 200
+    assert r.json() == []
+
+
+async def test_caja_dos_cajeros_mismo_dispositivo_mismo_pin(client: AsyncClient, padron) -> None:
+    admin, r = await _adherir(client, padron, comerciante=True)
+    id_comercio = r.json()["id_comercio"]
+    huella = str(uuid.uuid4())
+    id1, p1 = await _nuevo_cajero(client, admin=admin, id_comercio=id_comercio, previos=set())
+    await _registrar_pin(
+        client, admin=admin, id_comercio=id_comercio, id_usuario=id1, huella=huella, pin="1234"
+    )
+    id2, p2 = await _nuevo_cajero(client, admin=admin, id_comercio=id_comercio, previos={id1})
+    await _registrar_pin(
+        client, admin=admin, id_comercio=id_comercio, id_usuario=id2, huella=huella, pin="1234"
+    )
+    # El selector muestra los dos y SOLO expone id y nombre corto (ningún dato personal).
+    r = await client.get(
+        "/api/v1/portal-comercio/cajero/lista", headers={"X-Device-Huella": huella}
+    )
+    assert r.status_code == 200
+    lista = r.json()
+    assert {c["id_usuario"] for c in lista} == {id1, id2}
+    assert all(set(c) == {"id_usuario", "nombre"} for c in lista)
+    # Mismo PIN, pero cada login entra como el cajero elegido, no como el otro.
+    r1 = await client.post(
+        "/api/v1/portal-comercio/cajero/login",
+        json={"id_usuario": id1, "pin": "1234"},
+        headers={"X-Device-Huella": huella},
+    )
+    assert r1.status_code == 200, r1.text
+    assert _sub(r1.json()["access_token"]) == p1
+    r2 = await client.post(
+        "/api/v1/portal-comercio/cajero/login",
+        json={"id_usuario": id2, "pin": "1234"},
+        headers={"X-Device-Huella": huella},
+    )
+    assert r2.status_code == 200, r2.text
+    assert _sub(r2.json()["access_token"]) == p2
+
+
+async def test_caja_rechaza_cajero_de_otra_huella(client: AsyncClient, padron) -> None:
+    admin, r = await _adherir(client, padron, comerciante=True)
+    id_comercio = r.json()["id_comercio"]
+    id1, _ = await _nuevo_cajero(client, admin=admin, id_comercio=id_comercio, previos=set())
+    await _registrar_pin(
+        client, admin=admin, id_comercio=id_comercio, id_usuario=id1, huella=str(uuid.uuid4()), pin="1234"
+    )
+    # El PIN es correcto, pero el cajero no pertenece a ESTA huella -> rechazo (no alcanza el PIN).
+    r = await client.post(
+        "/api/v1/portal-comercio/cajero/login",
+        json={"id_usuario": id1, "pin": "1234"},
+        headers={"X-Device-Huella": str(uuid.uuid4())},
+    )
+    assert r.status_code == 403, r.text
+
+
+async def test_caja_bloquea_por_dispositivo_y_reinicia_con_exito(
+    client: AsyncClient, padron
+) -> None:
+    admin, r = await _adherir(client, padron, comerciante=True)
+    id_comercio = r.json()["id_comercio"]
+    huella = str(uuid.uuid4())
+    id1, _ = await _nuevo_cajero(client, admin=admin, id_comercio=id_comercio, previos=set())
+    await _registrar_pin(
+        client, admin=admin, id_comercio=id_comercio, id_usuario=id1, huella=huella, pin="1234"
+    )
+    h = {"X-Device-Huella": huella}
+    login = "/api/v1/portal-comercio/cajero/login"
+
+    # Dos fallos y luego un login correcto: el contador se reinicia.
+    for _ in range(2):
+        r = await client.post(login, json={"id_usuario": id1, "pin": "0000"}, headers=h)
+        assert r.status_code == 422, r.text
+    r = await client.post(login, json={"id_usuario": id1, "pin": "1234"}, headers=h)
+    assert r.status_code == 200, r.text
+
+    # Tras el éxito hacen falta de nuevo tres fallos: al tercero, espera de 30 s (429).
+    for _ in range(2):
+        r = await client.post(login, json={"id_usuario": id1, "pin": "0000"}, headers=h)
+        assert r.status_code == 422, r.text
+    r = await client.post(login, json={"id_usuario": id1, "pin": "0000"}, headers=h)
+    assert r.status_code == 429, r.text
+    assert r.headers.get("retry-after") == "30"
+    # Bloqueado por dispositivo: aunque el PIN sea correcto, sigue en espera.
+    r = await client.post(login, json={"id_usuario": id1, "pin": "1234"}, headers=h)
+    assert r.status_code == 429, r.text
 
 
 # --------------------------------------------------------------- bandeja municipal

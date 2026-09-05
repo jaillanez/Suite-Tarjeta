@@ -75,6 +75,13 @@ class GestionCajero:
             id_comercio=str(usuario.id_comercio),
         )
 
+    async def cajeros_de_dispositivo(self, huella: str | None) -> list[UsuarioComercio]:
+        """Cajeros activos registrados en este dispositivo (§06.5), para el selector de caja.
+        Una huella ausente o desconocida devuelve lista vacía (no revela nada del dispositivo)."""
+        if not huella:
+            return []
+        return [u for u in await self.p.usuarios.listar_por_huella(huella) if u.activo]
+
     async def abrir_turno(self, *, id_usuario: str, id_sucursal: str) -> str:
         usuario = await self._cargar(id_usuario)
         if await self.p.turnos.turno_abierto_de(usuario.id) is not None:

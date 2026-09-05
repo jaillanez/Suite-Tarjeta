@@ -12,6 +12,7 @@ Uso:  uv run python -m tarjeta.scripts.demo
 from __future__ import annotations
 
 import asyncio
+import os
 import uuid
 from datetime import UTC, date, datetime
 
@@ -229,7 +230,9 @@ async def _sembrar() -> None:
         uc.sucursales = [str(id_sucursal)]
         uc.estado = "ACTIVO"
         uc.pin_hash = Argon2PinHasher().hash(_PIN)
-        uc.huella_dispositivo = "demo-dispositivo"
+        # Para probar la caja en un teléfono real: exportá TARJETA_DEMO_HUELLA con la huella del
+        # dispositivo (Preferences: tarjeta_huella_dispositivo) antes de correr el demo.
+        uc.huella_dispositivo = os.environ.get("TARJETA_DEMO_HUELLA", "demo-dispositivo")
         uc.pin_intentos = 0
         # Turno abierto = cerrado_en NULL. id_cajero = id del UsuarioComercio (no de la persona).
         id_turno = _did("turno", str(id_usuario))

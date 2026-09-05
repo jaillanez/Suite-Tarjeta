@@ -190,6 +190,24 @@
         "title": "BilleterasOut",
         "type": "object"
       },
+      "CajeroCortoOut": {
+        "properties": {
+          "id_usuario": {
+            "title": "Id Usuario",
+            "type": "string"
+          },
+          "nombre": {
+            "title": "Nombre",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_usuario",
+          "nombre"
+        ],
+        "title": "CajeroCortoOut",
+        "type": "object"
+      },
       "CajeroLoginIn": {
         "properties": {
           "id_usuario": {
@@ -9699,6 +9717,60 @@
           }
         },
         "summary": "Bandeja",
+        "tags": [
+          "portal-comercio"
+        ]
+      }
+    },
+    "/api/v1/portal-comercio/cajero/lista": {
+      "get": {
+        "description": "Cajeros registrados en este dispositivo, para el selector de caja. Resuelto por la huella;\nuna huella desconocida devuelve lista vacía (no revela si el dispositivo existe). Devuelve solo\nid y nombre corto: ningún otro dato personal.",
+        "operationId": "cajero_lista_api_v1_portal_comercio_cajero_lista_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-huella",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Huella"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CajeroCortoOut"
+                  },
+                  "title": "Response Cajero Lista Api V1 Portal Comercio Cajero Lista Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cajero Lista",
         "tags": [
           "portal-comercio"
         ]

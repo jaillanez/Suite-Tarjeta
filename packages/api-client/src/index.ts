@@ -26,17 +26,21 @@ export interface ApiClientOptions {
 export class ApiError extends Error {
   readonly code: string;
   readonly status: number;
+  /** Segundos a esperar antes de reintentar (cabecera Retry-After), p. ej. en el bloqueo de caja. */
+  readonly retryAfter?: number;
 
-  constructor(message: string, code: string, status: number) {
+  constructor(message: string, code: string, status: number, retryAfter?: number) {
     super(message);
     this.name = 'ApiError';
     this.code = code;
     this.status = status;
+    if (retryAfter !== undefined) this.retryAfter = retryAfter;
   }
 }
 
 interface BackendError {
   error?: { code?: string; message?: string };
+  detail?: string;
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -90,10 +94,13 @@ export function createApiClient(options: ApiClientOptions) {
         } catch {
           // respuesta sin cuerpo JSON
         }
+        const retryHeader = res.headers.get('retry-after');
+        const retryAfter = retryHeader ? Number(retryHeader) : undefined;
         throw new ApiError(
-          body.error?.message ?? res.statusText ?? 'Error de la API',
+          body.error?.message ?? body.detail ?? res.statusText ?? 'Error de la API',
           body.error?.code ?? `http_${res.status}`,
           res.status,
+          Number.isFinite(retryAfter) ? retryAfter : undefined,
         );
       } catch (err) {
         if (err instanceof ApiError) throw err;
@@ -233,6 +240,12 @@ export function createApiClient(options: ApiClientOptions) {
         headers: { 'content-type': 'application/json', 'X-Device-Huella': huella },
         body: JSON.stringify({ pin }),
       }),
+    // Selector de caja: cajeros registrados en este dispositivo (resuelto por la huella).
+    cajeroLista: (huella: string) =>
+      request<CajeroCortoOut[]>('/api/v1/portal-comercio/cajero/lista', {
+        headers: { 'X-Device-Huella': huella },
+      }),
+    // El id_usuario sale del selector; el login valida que pertenezca a la huella (§06.5).
     cajeroLogin: (id_usuario: string, pin: string, huella: string) =>
       request<Tokens>('/api/v1/portal-comercio/cajero/login', {
         method: 'POST',
@@ -548,6 +561,7 @@ export type PromocionOut = S['PromocionOut'];
 export type PromocionFeedOut = S['PromocionFeedOut'];
 export type FichaPublicaOut = S['FichaPublicaOut'];
 export type FeedOut = S['FeedOut'];
+export type CajeroCortoOut = S['CajeroCortoOut'];
 export type PromocionIn = S['PromocionIn'];
 
 // canje (PASO 08)

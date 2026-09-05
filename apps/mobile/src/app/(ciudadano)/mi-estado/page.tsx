@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { EstadoCiudadano, EstadoPadron } from '@tarjeta/api-client';
 import { Button, type Nivel, NivelBadge } from '@tarjeta/ui';
+import { CerrarSesion } from '@/components/CerrarSesion';
 import { api } from '@/lib/api';
 import { esSesionVencida, mensajeDeError } from '@/lib/errores';
 
@@ -77,6 +78,9 @@ export default function MiEstadoPage() {
       <Button size="sm" onClick={actualizar}>
         Actualizar mi estado
       </Button>
+      <div className="border-t border-border pt-4">
+        <CerrarSesion />
+      </div>
     </main>
   );
 }

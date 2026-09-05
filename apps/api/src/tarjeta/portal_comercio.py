@@ -12,7 +12,7 @@ import csv
 import io
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from tarjeta.modules.comercios.api.deps import (
@@ -24,6 +24,7 @@ from tarjeta.modules.comercios.application.cajero import GestionCajero
 from tarjeta.modules.comercios.application.sucursales import GestionSucursales
 from tarjeta.modules.comercios.application.usuarios import GestionUsuarios
 from tarjeta.modules.comercios.domain.comercio import EstadoComercio
+from tarjeta.modules.comercios.domain.errors import DispositivoNoRegistrado, PinInvalido
 from tarjeta.modules.comercios.domain.ports import VerificadorComerciante
 from tarjeta.modules.comercios.domain.roles import Permiso as PermisoComercio
 from tarjeta.modules.comercios.infrastructure.composition import construir_puertos_comercios
@@ -91,8 +92,16 @@ class CargaMasivaIn(BaseModel):
 
 
 class CajeroLoginIn(BaseModel):
+    # El id_usuario NO se tipea: sale del selector de caja (GET /cajero/lista, resuelto por la
+    # huella del dispositivo). El login valida que ese cajero pertenezca a la huella recibida.
     id_usuario: str
     pin: str
+
+
+class CajeroCortoOut(BaseModel):
+    # Solo lo mínimo para el selector: nunca DNI, teléfono ni rol.
+    id_usuario: str
+    nombre: str  # nombre de pila + inicial del apellido, p. ej. "Ana P."
 
 
 class TokensOut(BaseModel):
@@ -187,10 +196,8 @@ async def _crear_admin(
     await session.commit()
 
 
-async def _otorgar_perfil_comercio(
-    session: SessionDep, settings: SettingsDep, *, id_persona: str, id_comercio: str, rol: str
-) -> None:
-    personas = SqlAlchemyPersonaRepository(
+def _repo_personas(session: SessionDep, settings: SettingsDep) -> SqlAlchemyPersonaRepository:
+    return SqlAlchemyPersonaRepository(
         session,
         cipher=FieldCipher(
             settings.field_encryption_key.get_secret_value(),
@@ -198,6 +205,12 @@ async def _otorgar_perfil_comercio(
         ),
         pepper=settings.field_pepper.get_secret_value(),
     )
+
+
+async def _otorgar_perfil_comercio(
+    session: SessionDep, settings: SettingsDep, *, id_persona: str, id_comercio: str, rol: str
+) -> None:
+    personas = _repo_personas(session, settings)
     persona = await personas.obtener_por_id(EntityId.from_str(id_persona))
     if persona is None:
         raise NotFoundError("Persona inexistente.")
@@ -234,6 +247,80 @@ async def aceptar_invitacion(
 
 # ---------------------------------------------------------------- cajero (§06.5)
 
+# Límite de intentos por DISPOSITIVO (no por cajero): 3 fallidos seguidos -> espera de 30 s, en
+# Redis con expiración automática. Sin bloqueos progresivos. (correccion-login-caja §3)
+_CAJA_MAX_INTENTOS = 3
+_CAJA_ESPERA_SEG = 30
+
+
+def _k_bloqueo(huella: str) -> str:
+    return f"caja:bloqueo:{huella}"
+
+
+def _k_intentos(huella: str) -> str:
+    return f"caja:intentos:{huella}"
+
+
+def _error_bloqueo(segundos: int) -> HTTPException:
+    return HTTPException(
+        status_code=429,
+        detail=f"Demasiados intentos. Probá de nuevo en {segundos} segundos.",
+        headers={"Retry-After": str(segundos)},
+    )
+
+
+async def _exigir_caja_no_bloqueada(redis: Any, huella: str | None) -> None:
+    if not huella:
+        return
+    ttl = await redis.ttl(_k_bloqueo(huella))
+    if ttl and ttl > 0:
+        raise _error_bloqueo(int(ttl))
+
+
+async def _registrar_fallo_caja(redis: Any, huella: str | None) -> None:
+    """Suma un intento fallido del dispositivo; al tercero bloquea 30 s y lanza 429."""
+    if not huella:
+        return
+    n = await redis.incr(_k_intentos(huella))
+    if n == 1:
+        await redis.expire(_k_intentos(huella), _CAJA_ESPERA_SEG)
+    if n >= _CAJA_MAX_INTENTOS:
+        await redis.set(_k_bloqueo(huella), "1", ex=_CAJA_ESPERA_SEG)
+        await redis.delete(_k_intentos(huella))
+        raise _error_bloqueo(_CAJA_ESPERA_SEG)
+
+
+async def _limpiar_intentos_caja(redis: Any, huella: str | None) -> None:
+    if not huella:
+        return
+    await redis.delete(_k_intentos(huella), _k_bloqueo(huella))
+
+
+@router.get("/cajero/lista", response_model=list[CajeroCortoOut])
+async def cajero_lista(
+    session: SessionDep,
+    settings: SettingsDep,
+    huella: HuellaDep,
+) -> list[CajeroCortoOut]:
+    """Cajeros registrados en este dispositivo, para el selector de caja. Resuelto por la huella;
+    una huella desconocida devuelve lista vacía (no revela si el dispositivo existe). Devuelve solo
+    id y nombre corto: ningún otro dato personal."""
+    comercios = construir_puertos_comercios(session, settings)
+    usuarios = await GestionCajero(comercios).cajeros_de_dispositivo(huella)
+    if not usuarios:
+        return []
+    personas = _repo_personas(session, settings)
+    salida: list[CajeroCortoOut] = []
+    for u in usuarios:
+        persona = await personas.obtener_por_id(EntityId.from_str(str(u.id_persona)))
+        if persona is None:
+            continue
+        ape = str(persona.apellido)
+        inicial = f" {ape[0]}." if ape else ""
+        salida.append(CajeroCortoOut(id_usuario=str(u.id), nombre=f"{persona.nombre}{inicial}"))
+    salida.sort(key=lambda c: c.nombre.lower())
+    return salida
+
 
 @router.post("/cajero/login", response_model=TokensOut)
 async def cajero_login(
@@ -243,13 +330,20 @@ async def cajero_login(
     redis: RedisDep,
     huella: HuellaDep,
 ) -> TokensOut:
+    await _exigir_caja_no_bloqueada(redis, huella)
     comercios = construir_puertos_comercios(session, settings)
     gestion = GestionCajero(
         comercios,
         max_intentos=settings.cajero_pin_max_intentos,
         bloqueo_seg=settings.cajero_pin_bloqueo_seg,
     )
-    cajero = await gestion.login_pin(id_usuario=body.id_usuario, pin=body.pin, huella=huella)
+    try:
+        # login_pin valida que el id_usuario pertenezca a esta huella (exigir_dispositivo).
+        cajero = await gestion.login_pin(id_usuario=body.id_usuario, pin=body.pin, huella=huella)
+    except (PinInvalido, DispositivoNoRegistrado, NotFoundError):
+        await _registrar_fallo_caja(redis, huella)  # al 3er fallo lanza 429
+        raise
+    await _limpiar_intentos_caja(redis, huella)
     # Minta la sesión de comercio con los servicios de identidad (tokens + refresh).
     id_puertos = construir_puertos(session, settings, redis)
     perfil = f"COMERCIO:{cajero.id_comercio}"

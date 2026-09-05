@@ -1454,6 +1454,28 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/portal-comercio/cajero/lista": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Cajero Lista
+     * @description Cajeros registrados en este dispositivo, para el selector de caja. Resuelto por la huella;
+     *     una huella desconocida devuelve lista vacía (no revela si el dispositivo existe). Devuelve solo
+     *     id y nombre corto: ningún otro dato personal.
+     */
+    get: operations["cajero_lista_api_v1_portal_comercio_cajero_lista_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/portal-comercio/cajero/login": {
     parameters: {
       query?: never;
@@ -2289,6 +2311,13 @@ export interface components {
       pc: components["schemas"]["BilleteraPCOut"][];
       /** Pm */
       pm: number;
+    };
+    /** CajeroCortoOut */
+    CajeroCortoOut: {
+      /** Id Usuario */
+      id_usuario: string;
+      /** Nombre */
+      nombre: string;
     };
     /** CajeroLoginIn */
     CajeroLoginIn: {
@@ -6586,6 +6615,37 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["ComercioBandejaOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cajero_lista_api_v1_portal_comercio_cajero_lista_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        "x-device-huella"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CajeroCortoOut"][];
         };
       };
       /** @description Validation Error */

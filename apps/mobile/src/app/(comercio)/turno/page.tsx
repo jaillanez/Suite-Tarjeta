@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ApiError } from '@tarjeta/api-client';
+import { CerrarSesion } from '@/components/CerrarSesion';
 import { api } from '@/lib/api';
 
 export default function TurnoPage() {
@@ -80,6 +81,9 @@ export default function TurnoPage() {
         </div>
       ) : null}
       {msg ? <p className="text-sm text-destructive">{msg}</p> : null}
+      <div className="border-t border-border pt-4">
+        <CerrarSesion />
+      </div>
     </section>
   );
 }
