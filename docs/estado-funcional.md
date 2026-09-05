@@ -27,6 +27,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 | grupo | **Implementada** | Grupo familiar, herencia de nivel por evento, billetera común (pozo), sucesión, antifraude que solo observa. |
 | contenido | **Parcial** | Cuota atómica, editor, superposición de texto, moderación, almacén de objetos: reales. **Generación de imágenes: simulada** (`GeneradorSimulacion`); el adaptador real exige API key y aún no hay proveedor elegido. Almacén: **local** (dev); falta bucket de prod. |
 | gobierno | **Implementada** | Auditoría inmutable a nivel DB, parametría, doble conformidad, agentes municipales, recaudación por vistas. |
+| modo demostración | **Implementada** | §13.5: `scripts/demo.py` deja con un comando 2 vecinos (Black/Platino), grupo familiar, comercio con cajero y turno abierto, promos de distintas mecánicas y puntos con movimientos. Idempotente (`docs/modo-demo.md`). |
 | difusion (redes) | **Pendiente** | Publicación en redes sociales; fuera de alcance hasta su paso. |
 | captacion | **Pendiente** | Módulo de captación; no construido. |
 
