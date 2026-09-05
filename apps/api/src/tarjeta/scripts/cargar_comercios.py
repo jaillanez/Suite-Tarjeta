@@ -24,6 +24,7 @@ from typing import Any
 
 import yaml
 
+from tarjeta.config import API_ROOT
 from tarjeta.modules.comercios.infrastructure.models import ComercioModel, SucursalModel
 from tarjeta.modules.comercios.infrastructure.repositories import _punto
 from tarjeta.modules.promociones.infrastructure.models import (
@@ -35,7 +36,7 @@ from tarjeta.shared.infrastructure.database import get_sessionmaker
 _NS = uuid.UUID("6f1e2d3c-4b5a-6978-8a9b-0c1d2e3f4a5b")  # namespace estable de la precarga
 _VIGENCIA_DESDE = date(2026, 1, 1)
 _VIGENCIA_HASTA = date(2027, 12, 31)
-_RUTA_DEFECTO = "datos/comercios_rivadavia.yaml"
+_RUTA_DEFECTO = API_ROOT / "datos" / "comercios_rivadavia.yaml"
 
 
 def _id(*partes: str) -> uuid.UUID:
@@ -112,7 +113,7 @@ async def _cargar(datos: list[dict[str, Any]]) -> int:
 
 
 def main() -> None:
-    ruta = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(_RUTA_DEFECTO)
+    ruta = Path(sys.argv[1]) if len(sys.argv) > 1 else _RUTA_DEFECTO
     datos = yaml.safe_load(ruta.read_text())["comercios"]
     n = asyncio.run(_cargar(datos))
     print(f"Comercios de precarga cargados/actualizados: {n} (desde {ruta})")
