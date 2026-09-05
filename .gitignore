@@ -17,8 +17,13 @@ build/
 next-env.d.ts
 
 # === Móvil (Capacitor) ===
-android/
-ios/
+# Los proyectos nativos (apps/mobile/android, apps/mobile/ios) SÍ se versionan: ahí viven íconos,
+# permisos del manifiesto y versionCode/versionName. Sus salidas de build (build/, .gradle/,
+# local.properties, *.apk/*.aab, Pods, DerivedData) las ignora el .gitignore interno de cada
+# proyecto + las reglas de arriba (build/). Ver docs/compilar-apk.md.
+apps/mobile/android/local.properties
+apps/mobile/ios/App/Pods/
+apps/mobile/ios/App/App/public/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
