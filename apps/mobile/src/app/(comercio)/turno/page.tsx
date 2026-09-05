@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Store } from 'lucide-react';
 import { ApiError, type SucursalOut } from '@tarjeta/api-client';
 import { Button } from '@tarjeta/ui';
+import { CajaOperacion } from '@/components/CajaOperacion';
 import { CerrarSesion } from '@/components/CerrarSesion';
 import { api } from '@/lib/api';
 
@@ -74,19 +75,17 @@ export default function TurnoPage() {
       <h1 className="text-xl font-semibold">Turno</h1>
 
       {turnoAbierto ? (
-        <div className="space-y-3">
-          <div className="rounded-xl border border-primary bg-brand-50 p-4">
-            <p className="font-semibold text-brand-900">Turno abierto</p>
-            {activa ? (
-              <p className="text-sm text-brand-700">{activa.nombre}</p>
-            ) : null}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between rounded-xl border border-primary/40 bg-brand-50 p-3">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-brand-900">Turno abierto</p>
+              {activa ? <p className="truncate text-xs text-brand-700">{activa.nombre}</p> : null}
+            </div>
+            <Button variant="ghost" size="sm" onClick={cerrar}>
+              Cerrar turno
+            </Button>
           </div>
-          <p className="text-sm text-muted-foreground">
-            La caja (escaneo del QR del ciudadano) llega en el paso siguiente.
-          </p>
-          <Button variant="outline" className="w-full" onClick={cerrar}>
-            Cerrar turno
-          </Button>
+          {activa ? <CajaOperacion idSucursal={activa.id} /> : null}
         </div>
       ) : (
         <div className="space-y-3">
