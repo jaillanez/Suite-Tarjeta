@@ -1,7 +1,7 @@
 # Estado funcional de la plataforma
 
 Qué es **real** y qué está **fingido**, sin ambigüedad. Se actualiza en cada paso.
-*Última actualización: identidad visual de marca (Rivadavia Cumple) en web y móvil.*
+*Última actualización: home + navegación del ciudadano en móvil; almacén seguro verificado en dispositivo.*
 
 Clasificación: **Implementada** (funciona de punta a punta con integración real) · **Parcial**
 (funciona pero le falta una pieza) · **Simulada** (adaptador de simulación detrás de un puerto;
@@ -18,7 +18,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 |---|---|---|
 | identidad | **Parcial** | Registro abierto, login, MFA (TOTP), dispositivos, perfiles: reales. Sesión web: refresh en **cookie HttpOnly** + access en memoria (§12 P1-A). **Verificación de identidad: autodeclarada** (no hay RENAPER; fuera de alcance, §12.2-C). Recuperación de cuenta por email: **flujo completo** (token de un solo uso, cierra sesiones); el **envío real espera proveedor** (`EMAIL_PROVEEDOR`, en dev por consola). |
 | padron | **Simulada** | Puerto `ClientePadron` con cliente real y simulación. En dev/tests el simulador lee un **YAML** (`datos/padron.yaml`) con **recarga en caliente**; lo no listado devuelve `false` (sin paridad, §13.1). **En prod ese atajo está prohibido** y el arranque se bloquea con `padron_modo=simulacion`. Depende de: endpoint municipal real + credenciales. |
-| ciudadania | **Implementada** | Perfil, nivel (Platino/Black), tarjeta digital, historial de nivel. Tarjeta **física**: parcial (número emitido; no hay impresión/logística). |
+| ciudadania | **Implementada** | Perfil, nivel (Platino/Black), tarjeta digital, historial de nivel. Tarjeta **física**: parcial (número emitido; no hay impresión/logística). **App móvil:** home del ciudadano (`/inicio`: saludo, credencial y accesos) + **navegación inferior** (Inicio · Tarjeta · Beneficios · Puntos · Mi estado); pantalla de **Beneficios** con el feed real de promociones. |
 | textos legales | **Parcial** | Términos del ciudadano, política de privacidad y convenio del comercio **cargados** como versión `v1` (§13.2, `docs/legal/*.md`), con la nota "no utilizar sin revisión legal" visible. **Borradores**: falta revisión de Asesoría Letrada. |
 | comercios | **Implementada** | Adhesión (máquina de estados), sucursales con PostGIS, usuarios y roles, PIN de cajero atado a dispositivo, turnos, QR de comprobante en PDF. **Precarga (§13.3/§14.2/§15.3):** comando idempotente `cargar_comercios` siembra 38 comercios **reales de Rivadavia** (relevados de OpenStreetMap: nombre/rubro/coordenadas reales) en estado ACTIVA; **2 con promoción real confirmada** (Farmacia Cuyo y Cabral Mayorista: 20% tope $15.000), el resto con promo estimada marcada; bandera `precarga` + `baja_precarga` para baja en bloque (`docs/precarga-comercios.md`). |
 | promociones | **Implementada** | Mecánicas, vigencia, topes atómicos, moderación por confianza, descubrimiento (pg_trgm + unaccent). |
@@ -44,7 +44,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 | Correo / recuperación de cuenta | **Parcial** | Flujo completo + **adaptador SMTP real cableado** (§15.2, `EmailReal`); en dev por consola. Comando `probar_email` para probar el envío | Cargar los datos SMTP en `config/produccion.env` y `EMAIL_PROVEEDOR=real`; la guarda de arranque bloquea prod en simulación |
 | Generación de imágenes IA | **Simulada** | Fondos de color deterministas, sin red | Proveedor elegido + API key (ver `docs/costo-ia.md`) |
 | Almacén de objetos | **Parcial** | Disco local detrás de puerto | Bucket de producción |
-| Almacén seguro móvil (Keychain/Keystore) | **Parcial** | Seam + migración + **plugin nativo cableado** (`capacitor-secure-storage-plugin` vía `AlmacenSeguroInit`, solo en dispositivo); en web dev, fallback a Preferences | Verificación en dispositivo (`cap:sync` + build nativo): CI no compila el proyecto nativo. |
+| Almacén seguro móvil (Keychain/Keystore) | **Implementada** | **Verificado en un Android real (§15.6):** access/refresh viven en el Keystore (vía `capacitor-secure-storage-plugin`, `cap_sec.xml`) **cifrados**; en el almacenamiento común solo queda el perfil activo (no sensible); **cero JWT en claro** (`grep eyJ` sin coincidencias). El seam resuelve el backend de forma perezosa y esperada, y `guardarSesion` ya no toca Preferences: se corrigió una carrera del primer login que dejaba el token en Preferences y luego lo borraba (→ 401). | iOS se re-verifica al generar el proyecto nativo. |
 | Tiles del mapa | **Parcial** | §13.0/§14.1: en dev/local usa el **OSM público** (por defecto). En **producción falla cerrado**: sin `NEXT_PUBLIC_TILES_URL` propia, el mapa muestra "no disponible" y **no** cae al server público. Falta generar/hostear los tiles propios: `scripts/generar-tiles.sh` (Java 21+) (`docs/tiles-mapa.md`) |
 
 ---

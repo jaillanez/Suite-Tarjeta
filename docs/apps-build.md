@@ -76,7 +76,7 @@ pnpm exec cap open ios          # abre Xcode 27
 
 | Ítem | Cómo | Resultado |
 |---|---|---|
-| Tokens en el **almacén seguro** del SO (Keychain/Keystore) | tras login, inspeccionar que access/refresh NO estén en almacenamiento común (ver `almacen-seguro.ts` + `AlmacenSeguroInit`) | _(pendiente en dispositivo)_ |
+| Tokens en el **almacén seguro** del SO (Keychain/Keystore) | tras login, inspeccionar que access/refresh NO estén en almacenamiento común (ver `almacen-seguro.ts` + `AlmacenSeguroInit`) | ✅ **OK** en Android real (Redmi, HyperOS): access/refresh cifrados en `cap_sec.xml` (Keystore); en `CapacitorStorage.xml` solo el perfil activo; `grep eyJ` sin coincidencias (§15.6) |
 | La cámara escanea el QR | caja → escanear QR del ciudadano | _(pendiente)_ |
 | Modo sin conexión encola y sincroniza | poner en avión, operar, volver la señal | _(pendiente)_ |
 | El mapa carga | pantalla con mapa | _(pendiente)_ |
