@@ -32,6 +32,12 @@ Hace: verifica requisitos → `pnpm build` (móvil) → `cap add android` (la pr
 `cap sync android` → `gradlew assembleDebug`. Deja el APK en **`build/tarjeta-debug.apk`** y muestra
 la ruta.
 
+> Los plugins nativos ya están como dependencias (`@capacitor/android`, `@capacitor/ios`), así que
+> `cap add` encuentra la plataforma. **La primera vez que se genera `apps/mobile/android/`,
+> conviene commitearlo** (junto con `apps/mobile/ios/` cuando se genere): ahí viven los íconos, los
+> permisos del `AndroidManifest.xml` y `versionCode/versionName`, y si no se versiona se pierden al
+> regenerar. Con el proyecto ya presente, el script usa `cap sync` (no vuelve a hacer `cap add`).
+
 ## Pasar el APK al teléfono
 
 ```bash
