@@ -29,10 +29,9 @@ from tarjeta.shared.infrastructure.outbox import EventDispatcher, OutboxModel  #
 PASSWORD = "contrasena-larga-123"
 
 
-def _cuit(comerciante: bool) -> str:
-    base = random.randint(10_000_000, 39_999_999)
-    ultimo = 0 if comerciante else 1
-    return f"20{base}{ultimo}"  # 11 dígitos; paridad del último => es_comerciante
+def _cuit() -> str:
+    # §13.1: sin paridad. Si es comerciante se siembra en el padrón (fixture `padron`).
+    return f"20{random.randint(10_000_000, 39_999_999)}1"  # 11 dígitos
 
 
 def _token(id_persona: str, perfil: str) -> str:
@@ -92,11 +91,15 @@ async def _registrar(client: AsyncClient) -> str:
     return _sub(r.json()["tokens"]["access_token"])
 
 
-async def _adherir(client: AsyncClient, *, comerciante: bool = True, sucursal: dict | None = None):
+async def _adherir(
+    client: AsyncClient, padron, *, comerciante: bool = True, sucursal: dict | None = None
+):
     id_persona = await _registrar(client)
     ciudadano = _token(id_persona, "CIUDADANO")
+    cuit = _cuit()
+    padron.comerciante(cuit, comerciante)
     body = {
-        "cuit": _cuit(comerciante),
+        "cuit": cuit,
         "razon_social": "Kiosco Rivadavia",
         "nombre_fantasia": "El Kiosco",
         "rubro": "kiosco",
@@ -113,13 +116,13 @@ async def _adherir(client: AsyncClient, *, comerciante: bool = True, sucursal: d
 # --------------------------------------------------------------- adhesión
 
 
-async def test_cuit_no_comerciante_no_adhiere(client: AsyncClient) -> None:
-    _, r = await _adherir(client, comerciante=False)
+async def test_cuit_no_comerciante_no_adhiere(client: AsyncClient, padron) -> None:
+    _, r = await _adherir(client, padron, comerciante=False)
     assert r.status_code == 409, r.text
 
 
-async def test_adhesion_ok_y_mi_comercio(client: AsyncClient) -> None:
-    id_persona, r = await _adherir(client, comerciante=True)
+async def test_adhesion_ok_y_mi_comercio(client: AsyncClient, padron) -> None:
+    id_persona, r = await _adherir(client, padron, comerciante=True)
     assert r.status_code == 200, r.text
     id_comercio = r.json()["id_comercio"]
     comercio_token = _token(id_persona, f"COMERCIO:{id_comercio}")
@@ -141,8 +144,8 @@ async def _activar_comercio(client: AsyncClient, id_comercio: str) -> None:
     assert r.status_code == 200, r.text
 
 
-async def test_cercania_ordena_por_distancia(client: AsyncClient) -> None:
-    id_persona, r = await _adherir(client, comerciante=True)
+async def test_cercania_ordena_por_distancia(client: AsyncClient, padron) -> None:
+    id_persona, r = await _adherir(client, padron, comerciante=True)
     id_comercio = r.json()["id_comercio"]
     h = _headers(_token(id_persona, f"COMERCIO:{id_comercio}"))
     # Punto distintivo para no mezclarse con sucursales de otros tests (que están en ~-31.53).
@@ -166,10 +169,10 @@ async def test_cercania_ordena_por_distancia(client: AsyncClient) -> None:
     assert ids.index(id_cerca) < ids.index(id_lejos)  # orden por distancia
 
 
-async def test_abierto_ahora_respeta_zona(client: AsyncClient) -> None:
+async def test_abierto_ahora_respeta_zona(client: AsyncClient, padron) -> None:
     settings = get_settings()
     ahora = datetime.now(ZoneInfo(settings.municipio_timezone))
-    id_persona, r = await _adherir(client, comerciante=True)
+    id_persona, r = await _adherir(client, padron, comerciante=True)
     id_comercio = r.json()["id_comercio"]
     h = _headers(_token(id_persona, f"COMERCIO:{id_comercio}"))
     # Sucursal abierta todo el día de hoy (según la zona del municipio).
@@ -196,8 +199,8 @@ async def test_abierto_ahora_respeta_zona(client: AsyncClient) -> None:
     assert r.json()["abierto"] is False
 
 
-async def test_qr_pdf(client: AsyncClient) -> None:
-    id_persona, r = await _adherir(client, comerciante=True)
+async def test_qr_pdf(client: AsyncClient, padron) -> None:
+    id_persona, r = await _adherir(client, padron, comerciante=True)
     id_comercio = r.json()["id_comercio"]
     h = _headers(_token(id_persona, f"COMERCIO:{id_comercio}"))
     r = await client.get("/api/v1/comercios/sucursales", headers=h)
@@ -214,8 +217,8 @@ async def test_qr_pdf(client: AsyncClient) -> None:
 _PROHIBIDOS = ("dni", "cuil", "domicilio", "celular", "email")
 
 
-async def test_ningun_endpoint_expone_datos_del_ciudadano(client: AsyncClient) -> None:
-    id_persona, r = await _adherir(client, comerciante=True)
+async def test_ningun_endpoint_expone_datos_del_ciudadano(client: AsyncClient, padron) -> None:
+    id_persona, r = await _adherir(client, padron, comerciante=True)
     id_comercio = r.json()["id_comercio"]
     h = _headers(_token(id_persona, f"COMERCIO:{id_comercio}"))
     # Agente municipal para la ficha.
@@ -277,8 +280,8 @@ async def _invitar_y_aceptar_cajero(
     return ids[0]
 
 
-async def test_pin_no_funciona_desde_otro_dispositivo(client: AsyncClient) -> None:
-    admin, r = await _adherir(client, comerciante=True)
+async def test_pin_no_funciona_desde_otro_dispositivo(client: AsyncClient, padron) -> None:
+    admin, r = await _adherir(client, padron, comerciante=True)
     id_comercio = r.json()["id_comercio"]
     id_usuario = await _invitar_y_aceptar_cajero(
         client, admin_persona=admin, id_comercio=id_comercio
@@ -308,8 +311,8 @@ async def test_pin_no_funciona_desde_otro_dispositivo(client: AsyncClient) -> No
     assert "access_token" in r.json()
 
 
-async def test_baja_cajero_revoca_sesiones(client: AsyncClient) -> None:
-    admin, r = await _adherir(client, comerciante=True)
+async def test_baja_cajero_revoca_sesiones(client: AsyncClient, padron) -> None:
+    admin, r = await _adherir(client, padron, comerciante=True)
     id_comercio = r.json()["id_comercio"]
     id_usuario = await _invitar_y_aceptar_cajero(
         client, admin_persona=admin, id_comercio=id_comercio
@@ -336,8 +339,8 @@ async def test_baja_cajero_revoca_sesiones(client: AsyncClient) -> None:
 # --------------------------------------------------------------- bandeja municipal
 
 
-async def test_bandeja_y_doble_conformidad_baja(client: AsyncClient) -> None:
-    _, r = await _adherir(client, comerciante=True)
+async def test_bandeja_y_doble_conformidad_baja(client: AsyncClient, padron) -> None:
+    _, r = await _adherir(client, padron, comerciante=True)
     id_comercio = r.json()["id_comercio"]
     # Dos agentes municipales (para la doble conformidad de la baja).
     a1, a2 = str(uuid.uuid4()), str(uuid.uuid4())
@@ -376,12 +379,14 @@ async def test_bandeja_y_doble_conformidad_baja(client: AsyncClient) -> None:
     assert r.json()["estado"] == "BAJA"
 
 
-async def test_carga_masiva_valida_y_reporta(client: AsyncClient) -> None:
+async def test_carga_masiva_valida_y_reporta(client: AsyncClient, padron) -> None:
     pid = str(uuid.uuid4())
     await _seed_agente(pid, "ADMINISTRADOR")
     h = _headers(_token(pid, "MUNICIPAL"))
-    ok1 = _cuit(comerciante=True)
-    malo = _cuit(comerciante=False)
+    ok1 = _cuit()
+    padron.comerciante(ok1, True)
+    malo = _cuit()
+    padron.comerciante(malo, False)
     csv = f"cuit,razon_social,rubro\n{ok1},Comercio Uno,kiosco\n{malo},Comercio Malo,almacen\n,,\n"
     r = await client.post(
         "/api/v1/portal-comercio/carga-masiva",

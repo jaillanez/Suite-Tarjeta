@@ -444,10 +444,10 @@ def _h(t: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {t}"}
 
 
-async def _registrar(client: AsyncClient, *, par: bool = True) -> str:
-    # DNI par => al día => BLACK; impar => no al día => PLATINO (padrón simulado determinístico).
-    inicio = 10_000_000 if par else 10_000_001
-    dni = str(random.randrange(inicio, 39_999_999, 2))
+async def _registrar(client: AsyncClient, padron, *, al_dia: bool = True) -> str:
+    # §13.1: el nivel se controla sembrando el padrón (al_dia=True => BLACK; False => PLATINO).
+    dni = str(random.randint(10_000_000, 39_999_999))
+    padron.al_dia(dni, al_dia)
     r = await client.post(
         "/api/v1/auth/registro",
         json={
@@ -500,8 +500,10 @@ async def _seed_cajero_y_promo(sm: async_sessionmaker) -> tuple[str, str, str, s
 _PROHIBIDOS = ("dni", "cuil", "domicilio", "celular", "email")
 
 
-async def test_flujo_http_completo_y_sin_pii(client: AsyncClient, sm: async_sessionmaker) -> None:
-    ciudadano = await _registrar(client)
+async def test_flujo_http_completo_y_sin_pii(
+    client: AsyncClient, sm: async_sessionmaker, padron
+) -> None:
+    ciudadano = await _registrar(client, padron)
     id_comercio, id_sucursal, cajero_persona, pid = await _seed_cajero_y_promo(sm)
     h_ciudadano = _h(_token(ciudadano, "CIUDADANO"))
     h_cajero = _h(_token(cajero_persona, f"COMERCIO:{id_comercio}"))
@@ -565,9 +567,11 @@ async def test_flujo_http_completo_y_sin_pii(client: AsyncClient, sm: async_sess
             assert prohibido not in bajo, f"'{prohibido}' aparece en {cuerpo_txt[:200]}"
 
 
-async def test_ciudadano_platino_canjea(client: AsyncClient, sm: async_sessionmaker) -> None:
+async def test_ciudadano_platino_canjea(
+    client: AsyncClient, sm: async_sessionmaker, padron
+) -> None:
     # §12.1: un ciudadano con al_dia=false (PLATINO) canjea con normalidad.
-    ciudadano = await _registrar(client, par=False)
+    ciudadano = await _registrar(client, padron, al_dia=False)
     id_comercio, id_sucursal, cajero_persona, pid = await _seed_cajero_y_promo(sm)
     h_caj = _h(_token(cajero_persona, f"COMERCIO:{id_comercio}"))
     h_ciu = _h(_token(ciudadano, "CIUDADANO"))

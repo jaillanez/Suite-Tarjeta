@@ -1,0 +1,21 @@
+# Padrón simulado (§13.1). Reemplaza al endpoint municipal mientras no esté disponible.
+# Cualquier DNI/CUIT que no figure acá devuelve false (sin error). Recarga en caliente: editá
+# este archivo y la próxima consulta usa los datos nuevos, sin reiniciar la API.
+#
+# Cuando el municipio entregue el endpoint real, pasar a modo real por configuración
+# (TARJETA_PADRON_MODO=real) sin tocar código. Ver docs/padron-simulado.md.
+
+# Ciudadanos: al_dia=true => nivel Black; false u omitido => Platino.
+contribuyentes:
+  - dni: "20123456"
+    al_dia: true
+  - dni: "27987654"
+    al_dia: false
+
+# Comercios: es_comerciante=true habilita la validación fiscal en la adhesión.
+comercios:
+  - cuit: "30712345678"
+    es_comerciante: true
+
+# Opcional: DNIs/CUITs que simulan el endpoint caído (para probar que el padrón no degrada).
+caidos: []
