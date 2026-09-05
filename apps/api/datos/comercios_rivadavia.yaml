@@ -6,6 +6,112 @@
 # con formato válido. Reemplazable por relevamiento con promos reales (comando idempotente).
 
 comercios:
+- cuit: '30722917592'
+  razon_social: Farmacia Cuyo
+  nombre_fantasia: Farmacia Cuyo
+  rubro: farmacia
+  origen: 'Relevado 2026-09-05 (farmaciacuyo.com / paginasamarillas.com.ar): Av. Libertador
+    San Martín O 2918, Rivadavia. Dirección real; coordenada APROXIMADA según la dirección;
+    promoción REAL confirmada (§15.3).'
+  sucursal:
+    nombre: Casa Central
+    direccion: Av. Libertador San Martín 2918 Oeste, Rivadavia, San Juan
+    telefono: 0264 423-1033
+    lat: -31.5376
+    lon: -68.568
+    horarios:
+    - dia: 0
+      franjas:
+      - desde: 00:00
+        hasta: '23:59'
+    - dia: 1
+      franjas:
+      - desde: 00:00
+        hasta: '23:59'
+    - dia: 2
+      franjas:
+      - desde: 00:00
+        hasta: '23:59'
+    - dia: 3
+      franjas:
+      - desde: 00:00
+        hasta: '23:59'
+    - dia: 4
+      franjas:
+      - desde: 00:00
+        hasta: '23:59'
+    - dia: 5
+      franjas:
+      - desde: 00:00
+        hasta: '23:59'
+    - dia: 6
+      franjas:
+      - desde: 00:00
+        hasta: '23:59'
+  promociones:
+  - titulo: 20% de descuento (tope $15.000 por compra)
+    descripcion: 20% de descuento con un tope de $15.000 por compra.
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_platino: 20
+    valor_black: 20
+- cuit: '30938127219'
+  razon_social: Cabral Mayorista
+  nombre_fantasia: Cabral Mayorista
+  rubro: supermercado
+  origen: 'Relevado 2026-09-05 (cylex.com.ar, Suc. Rivadavia): Av. Libertador 4672
+    O Local 4, tel 0264 672-3693. Dirección y teléfono reales; coordenada APROXIMADA
+    según la dirección; promoción REAL confirmada (§15.3).'
+  sucursal:
+    nombre: Sucursal Rivadavia
+    direccion: Av. Libertador San Martín 4672 Oeste, Local 4, Rivadavia, San Juan
+    telefono: 0264 672-3693
+    lat: -31.5378
+    lon: -68.5905
+    horarios:
+    - dia: 0
+      franjas:
+      - desde: 09:00
+        hasta: '13:00'
+      - desde: '17:00'
+        hasta: '21:00'
+    - dia: 1
+      franjas:
+      - desde: 09:00
+        hasta: '13:00'
+      - desde: '17:00'
+        hasta: '21:00'
+    - dia: 2
+      franjas:
+      - desde: 09:00
+        hasta: '13:00'
+      - desde: '17:00'
+        hasta: '21:00'
+    - dia: 3
+      franjas:
+      - desde: 09:00
+        hasta: '13:00'
+      - desde: '17:00'
+        hasta: '21:00'
+    - dia: 4
+      franjas:
+      - desde: 09:00
+        hasta: '13:00'
+      - desde: '17:00'
+        hasta: '21:00'
+    - dia: 5
+      franjas:
+      - desde: 09:00
+        hasta: '13:00'
+      - desde: '17:00'
+        hasta: '21:00'
+  promociones:
+  - titulo: 20% de descuento (tope $15.000 por compra)
+    descripcion: 20% de descuento con un tope de $15.000 por compra.
+    mecanica: PORCENTAJE
+    segmento: AMBOS
+    valor_platino: 20
+    valor_black: 20
 - cuit: '33059454701'
   razon_social: Librería Croquis
   nombre_fantasia: Librería Croquis

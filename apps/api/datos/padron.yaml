@@ -81,4 +81,8 @@ comercios:
   es_comerciante: true
 - cuit: '30385544584'
   es_comerciante: true
+- cuit: '30722917592'
+  es_comerciante: true
+- cuit: '30938127219'
+  es_comerciante: true
 caidos: []
