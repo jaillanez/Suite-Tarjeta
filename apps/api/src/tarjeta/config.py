@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     padron_timeout_seconds: float = 5.0
     padron_cache_ttl_seconds: int = 21600  # 6 h
     padron_modo: Literal["real", "simulacion"] = "simulacion"
-    padron_sim_archivo: str = ""  # JSON con respuestas por DNI/CUIT (opcional)
+    padron_sim_archivo: str = "datos/padron.yaml"  # YAML por DNI/CUIT (§13.1), recarga en caliente
 
     # Seguridad
     jwt_secret: SecretStr

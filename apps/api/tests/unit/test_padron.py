@@ -34,10 +34,16 @@ def test_modelo_padron_no_tiene_columnas_de_dinero() -> None:
         assert not any(any(p in c for p in _PROHIBIDAS) for c in cols), cols
 
 
-async def test_simulador_regla_par_impar() -> None:
-    sim = ClientePadronSimulado()
-    assert await sim.al_dia("20000000") is True  # par
-    assert await sim.al_dia("20000001") is False  # impar
+async def test_simulador_sin_paridad_lo_no_listado_es_false() -> None:
+    # §13.1: no hay regla por paridad. Lo que no está en los datos devuelve False.
+    sim = ClientePadronSimulado(
+        al_dia_por_dni={"20000000": True}, comerciante_por_cuit={"30712345678": True}
+    )
+    assert await sim.al_dia("20000000") is True  # listado
+    assert await sim.al_dia("20000001") is False  # no listado (antes "impar")
+    assert await sim.al_dia("20000002") is False  # no listado (antes "par" => True)
+    assert await sim.es_comerciante("30712345678") is True
+    assert await sim.es_comerciante("20111111111") is False  # no listado
 
 
 async def test_simulador_overrides_y_caida() -> None:

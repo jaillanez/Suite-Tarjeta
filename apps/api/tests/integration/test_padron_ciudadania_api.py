@@ -20,11 +20,9 @@ from tarjeta.main import create_app  # noqa: E402
 PASSWORD = "contrasena-larga-123"
 
 
-def _dni(par: bool) -> str:
-    n = random.randint(10_000_000, 39_999_999)
-    if n % 2 != (0 if par else 1):
-        n += 1
-    return str(n)
+def _dni() -> str:
+    # §13.1: sin paridad. El nivel se controla sembrando el padrón (fixture `padron`).
+    return str(random.randint(10_000_000, 39_999_999))
 
 
 @pytest.fixture
@@ -67,24 +65,30 @@ async def _registrar_login(client: AsyncClient, dni: str) -> dict[str, str]:
     return r.json()["tokens"]
 
 
-async def test_dni_par_es_black(client: AsyncClient) -> None:
-    tokens = await _registrar_login(client, _dni(par=True))
+async def test_al_dia_es_black(client: AsyncClient, padron) -> None:
+    dni = _dni()
+    padron.al_dia(dni, True)
+    tokens = await _registrar_login(client, dni)
     headers = {"Authorization": f"Bearer {tokens['access_token']}"}
     r = await client.get("/api/v1/ciudadania/mi-estado", headers=headers)
     assert r.status_code == 200, r.text
     assert r.json()["nivel"] == "BLACK"
 
 
-async def test_dni_impar_es_platino(client: AsyncClient) -> None:
-    tokens = await _registrar_login(client, _dni(par=False))
+async def test_no_al_dia_es_platino(client: AsyncClient, padron) -> None:
+    dni = _dni()
+    padron.al_dia(dni, False)
+    tokens = await _registrar_login(client, dni)
     headers = {"Authorization": f"Bearer {tokens['access_token']}"}
     r = await client.get("/api/v1/ciudadania/mi-estado", headers=headers)
     assert r.status_code == 200
     assert r.json()["nivel"] == "PLATINO"
 
 
-async def test_padron_mi_estado_y_tarjeta(client: AsyncClient) -> None:
-    tokens = await _registrar_login(client, _dni(par=True))
+async def test_padron_mi_estado_y_tarjeta(client: AsyncClient, padron) -> None:
+    dni = _dni()
+    padron.al_dia(dni, True)
+    tokens = await _registrar_login(client, dni)
     headers = {"Authorization": f"Bearer {tokens['access_token']}"}
     r = await client.get("/api/v1/padron/mi-estado", headers=headers)
     assert r.status_code == 200
@@ -97,8 +101,10 @@ async def test_padron_mi_estado_y_tarjeta(client: AsyncClient) -> None:
     assert len(r.json()["numero_tarjeta"]) == 16
 
 
-async def test_actualizar_estado_limite_diario(client: AsyncClient) -> None:
-    tokens = await _registrar_login(client, _dni(par=False))
+async def test_actualizar_estado_limite_diario(client: AsyncClient, padron) -> None:
+    dni = _dni()
+    padron.al_dia(dni, False)
+    tokens = await _registrar_login(client, dni)
     headers = {"Authorization": f"Bearer {tokens['access_token']}"}
     for _ in range(3):
         r = await client.post("/api/v1/ciudadania/actualizar-estado", headers=headers)

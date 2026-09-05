@@ -17,7 +17,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 | Módulo | Estado | Detalle / de qué depende para completarse |
 |---|---|---|
 | identidad | **Parcial** | Registro abierto, login, MFA (TOTP), dispositivos, perfiles: reales. Sesión web: refresh en **cookie HttpOnly** + access en memoria (§12 P1-A). **Verificación de identidad: autodeclarada** (no hay RENAPER; fuera de alcance, §12.2-C). Recuperación de cuenta por email: **flujo completo** (token de un solo uso, cierra sesiones); el **envío real espera proveedor** (`EMAIL_PROVEEDOR`, en dev por consola). |
-| padron | **Simulada** | Puerto `ClientePadron` con cliente real y simulación. En dev/tests el simulador decide por paridad de DNI/CUIT; **en prod ese atajo está prohibido** y el arranque se bloquea con `padron_modo=simulacion`. Depende de: endpoint municipal real + credenciales. |
+| padron | **Simulada** | Puerto `ClientePadron` con cliente real y simulación. En dev/tests el simulador lee un **YAML** (`datos/padron.yaml`) con **recarga en caliente**; lo no listado devuelve `false` (sin paridad, §13.1). **En prod ese atajo está prohibido** y el arranque se bloquea con `padron_modo=simulacion`. Depende de: endpoint municipal real + credenciales. |
 | ciudadania | **Implementada** | Perfil, nivel (Platino/Black), tarjeta digital, historial de nivel. Tarjeta **física**: parcial (número emitido; no hay impresión/logística). |
 | comercios | **Implementada** | Adhesión (máquina de estados), sucursales con PostGIS, usuarios y roles, PIN de cajero atado a dispositivo, turnos, QR de comprobante en PDF. |
 | promociones | **Implementada** | Mecánicas, vigencia, topes atómicos, moderación por confianza, descubrimiento (pg_trgm + unaccent). |
@@ -35,7 +35,7 @@ no llama a un servicio real) · **Pendiente** (no construida).
 
 | Integración | Estado | Hoy hace | Depende de |
 |---|---|---|---|
-| Padrón municipal | **Simulada** | Veredicto por paridad de DNI/CUIT (solo dev/tests) | Endpoint real + credenciales |
+| Padrón municipal | **Simulada** | Veredicto desde `datos/padron.yaml` con recarga en caliente (dev/tests); lo no listado es `false` | Endpoint real + credenciales (`docs/padron-simulado.md`) |
 | Verificación de identidad (RENAPER) | **Fuera de alcance** | Autodeclaración en el alta | Decisión de negocio; no pedido |
 | OTP de celular | **Simulada** | Código por consola/log | Proveedor SMS |
 | Recuperación de cuenta por email | **Simulada** | Flujo completo; el token se escribe al log en dev (`EmailConsola`) | Proveedor de email real (`EMAIL_PROVEEDOR=real`); la guarda de arranque bloquea prod en simulación |
