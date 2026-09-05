@@ -71,3 +71,7 @@ config/produccion.env
 # Artefactos de build de apps (§15.4) y keystore de firma (irreemplazable: resguardar aparte)
 build/
 config/*.jks
+
+# Autogenerados por Next (agentRules) — no versionar
+apps/*/AGENTS.md
+apps/*/CLAUDE.md

@@ -15,18 +15,19 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.45 0.15 250);
-  --primary-foreground: oklch(0.985 0 0);
+  /* Marca oficial Rivadavia Cumple: verde acción #4A863C (botones del municipio). */
+  --primary: #4a863c;
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --accent: #eef4ea;
+  --accent-foreground: #304830;
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.45 0.15 250);
+  --ring: #4a863c;
 }
 
 .dark {
@@ -36,18 +37,18 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.7 0.14 250);
+  --primary: #6fb45f;
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --accent: oklch(0.32 0.04 140);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.7 0.14 250);
+  --ring: #6fb45f;
 }
 
 @theme inline {
@@ -75,12 +76,16 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Tokens del municipio (marca) — configurables */
-  --color-brand-50: oklch(0.97 0.02 250);
-  --color-brand-100: oklch(0.93 0.04 250);
-  --color-brand-500: oklch(0.55 0.16 250);
-  --color-brand-600: oklch(0.48 0.16 250);
-  --color-brand-900: oklch(0.28 0.09 250);
+  /* Marca oficial "Rivadavia Cumple" (colores exactos del logotipo del municipio).
+     Verde bosque #304830 (lettering), verde acción #4A863C (botones), verde tilde #589048. */
+  --color-brand-50: #eef4ea;
+  --color-brand-100: #d7e6cf;
+  --color-brand-200: #b3d0a4;
+  --color-brand-300: #8fba79;
+  --color-brand-500: #589048;
+  --color-brand-600: #4a863c;
+  --color-brand-700: #3d6f31;
+  --color-brand-900: #304830;
 
   /* Niveles de ciudadano */
   --color-nivel-platino: oklch(0.62 0.1 200);

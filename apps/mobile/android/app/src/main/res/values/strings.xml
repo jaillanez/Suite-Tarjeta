@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Tarjeta de Beneficios</string>
-    <string name="title_activity_main">Tarjeta de Beneficios</string>
+    <string name="app_name">Tarjeta Rivadavia</string>
+    <string name="title_activity_main">Tarjeta Rivadavia</string>
     <string name="package_name">ar.gob.tarjeta.app</string>
     <string name="custom_url_scheme">ar.gob.tarjeta.app</string>
 </resources>
