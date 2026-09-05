@@ -42,7 +42,7 @@ Se puede lanzar sin esto, pero con costo.
 
 | # | Qué falta | Responsable | Fecha objetivo | Estado |
 |---|---|---|---|---|
-| 2.1 | **Plugin nativo de Keychain/Keystore.** El plugin (`capacitor-secure-storage-plugin`) ya está cableado detrás del seam. Falta **verificarlo en un teléfono real** (`cap:sync` + build nativo): CI no compila el proyecto nativo. | ⛔ definir (QA en dispositivo) | ⛔ definir | **Abierto** (código listo; falta probar en dispositivo) |
+| 2.1 | ~~**Plugin nativo de Keychain/Keystore.**~~ **Verificado en Android real (§15.6):** los tokens quedan cifrados en el Keystore, nada en claro; se corrigió de paso una carrera del primer login. Falta re-verificar en **iOS** al generar el proyecto nativo. | Equipo de desarrollo (Android hecho) | iOS: al generar el proyecto | **Cerrado en Android** (falta iOS) |
 | 2.2 | **Quién modera las promociones y con qué tiempo de respuesta.** Sin alguien mirando la cola, el primer comercio que carga una promo espera indefinidamente. | ⛔ definir | ⛔ definir | Abierto |
 | 2.3 | **Quién atiende el soporte.** Van a llegar consultas desde el día uno. | ⛔ definir | ⛔ definir | Abierto |
 | 2.4 | **Capacitación de comercios.** Un cajero que no sabe usar la caja no aplica el descuento. Diez minutos por comercio. | Equipo del programa | ⛔ definir | Abierto |

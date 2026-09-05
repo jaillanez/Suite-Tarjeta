@@ -10,11 +10,12 @@ const REFRESH = 'tarjeta_refresh';
 const PERFIL = 'tarjeta_perfil_activo';
 
 export async function guardarSesion(access: string, refresh: string): Promise<void> {
+  // Escribe SOLO en el almacén seguro (en el dispositivo, Keystore/Keychain; el seam espera a que
+  // esté listo, así que no hay carrera). No se toca Preferences: hacerlo borraba el token recién
+  // guardado cuando el almacén seguro ES Preferences (dev web) o aún no estaba cableado el plugin
+  // (dispositivo, primer login) → 401. La limpieza de restos legacy la hace `leerConMigracion`.
   await almacenSeguro.set(ACCESS, access);
   await almacenSeguro.set(REFRESH, refresh);
-  // Limpia restos de versiones previas que guardaban el token en el almacén no seguro.
-  await Preferences.remove({ key: ACCESS });
-  await Preferences.remove({ key: REFRESH });
 }
 
 /**
