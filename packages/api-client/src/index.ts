@@ -12,6 +12,12 @@ export interface ApiClientOptions {
   baseUrl: string;
   /** Devuelve el token de acceso (o null si no hay sesión). */
   getToken?: () => string | null | Promise<string | null>;
+  /**
+   * Huella del dispositivo. La sesión de cajero queda atada a la huella (§06.5), así que TODAS sus
+   * requests deben mandarla en `X-Device-Huella`. Enviarla siempre es inocuo para sesiones que no
+   * están atadas (ciudadano): el backend solo la exige si el token la lleva.
+   */
+  getHuella?: () => string | null | Promise<string | null>;
   maxRetries?: number;
   retryBaseMs?: number;
   /**
@@ -26,17 +32,21 @@ export interface ApiClientOptions {
 export class ApiError extends Error {
   readonly code: string;
   readonly status: number;
+  /** Segundos a esperar antes de reintentar (cabecera Retry-After), p. ej. en el bloqueo de caja. */
+  readonly retryAfter?: number;
 
-  constructor(message: string, code: string, status: number) {
+  constructor(message: string, code: string, status: number, retryAfter?: number) {
     super(message);
     this.name = 'ApiError';
     this.code = code;
     this.status = status;
+    if (retryAfter !== undefined) this.retryAfter = retryAfter;
   }
 }
 
 interface BackendError {
   error?: { code?: string; message?: string };
+  detail?: string;
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -50,7 +60,8 @@ export interface ReadyResponse {
 }
 
 export function createApiClient(options: ApiClientOptions) {
-  const { baseUrl, getToken, maxRetries = 3, retryBaseMs = 300, authMode = 'body' } = options;
+  const { baseUrl, getToken, getHuella, maxRetries = 3, retryBaseMs = 300, authMode = 'body' } =
+    options;
   const modoCookie = authMode === 'cookie';
 
   async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -60,6 +71,12 @@ export function createApiClient(options: ApiClientOptions) {
 
     const token = getToken ? await getToken() : null;
     if (token) headers.set('authorization', `Bearer ${token}`);
+    // La huella del dispositivo va en toda request (la sesión de cajero está atada a ella). No pisa
+    // la que fijan explícitamente cajeroLista/cajeroLogin.
+    if (getHuella && !headers.has('x-device-huella')) {
+      const huella = await getHuella();
+      if (huella) headers.set('x-device-huella', huella);
+    }
     // Modo cookie: el refresh viaja en la cookie HttpOnly; hay que mandar credenciales y avisar.
     if (modoCookie) headers.set('x-auth-mode', 'cookie');
     const credentials: RequestCredentials = modoCookie ? 'include' : 'same-origin';
@@ -90,10 +107,13 @@ export function createApiClient(options: ApiClientOptions) {
         } catch {
           // respuesta sin cuerpo JSON
         }
+        const retryHeader = res.headers.get('retry-after');
+        const retryAfter = retryHeader ? Number(retryHeader) : undefined;
         throw new ApiError(
-          body.error?.message ?? res.statusText ?? 'Error de la API',
+          body.error?.message ?? body.detail ?? res.statusText ?? 'Error de la API',
           body.error?.code ?? `http_${res.status}`,
           res.status,
+          Number.isFinite(retryAfter) ? retryAfter : undefined,
         );
       } catch (err) {
         if (err instanceof ApiError) throw err;
@@ -233,6 +253,12 @@ export function createApiClient(options: ApiClientOptions) {
         headers: { 'content-type': 'application/json', 'X-Device-Huella': huella },
         body: JSON.stringify({ pin }),
       }),
+    // Selector de caja: cajeros registrados en este dispositivo (resuelto por la huella).
+    cajeroLista: (huella: string) =>
+      request<CajeroCortoOut[]>('/api/v1/portal-comercio/cajero/lista', {
+        headers: { 'X-Device-Huella': huella },
+      }),
+    // El id_usuario sale del selector; el login valida que pertenezca a la huella (§06.5).
     cajeroLogin: (id_usuario: string, pin: string, huella: string) =>
       request<Tokens>('/api/v1/portal-comercio/cajero/login', {
         method: 'POST',
@@ -548,6 +574,7 @@ export type PromocionOut = S['PromocionOut'];
 export type PromocionFeedOut = S['PromocionFeedOut'];
 export type FichaPublicaOut = S['FichaPublicaOut'];
 export type FeedOut = S['FeedOut'];
+export type CajeroCortoOut = S['CajeroCortoOut'];
 export type PromocionIn = S['PromocionIn'];
 
 // canje (PASO 08)

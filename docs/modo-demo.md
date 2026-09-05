@@ -9,8 +9,9 @@ uv run python -m tarjeta.scripts.demo
 
 Deja, con un solo comando:
 
-- Un vecino **Black** (DNI `20111222`) y uno **Platino** (DNI `27333444`), contraseña
-  `demo-contrasena-123`.
+- Un vecino **Black** (DNI `20111222`, contraseña `Back@12345`) y uno **Platino**
+  (DNI `27333444`, contraseña `Platino@12`). El resto de los usuarios usa
+  `demo-contrasena-123` (o `TARJETA_DEMO_PASSWORD` si se define).
 - Un **grupo familiar** (Black titular, Platino miembro, billetera común).
 - Un **comercio** ("Comercio Demostración") con **cajero** (DNI `23555666`, PIN `1234`) y **turno
   abierto**.

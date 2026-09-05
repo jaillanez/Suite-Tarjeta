@@ -317,6 +317,18 @@ class SqlAlchemyUsuarioComercioRepository:
         ).scalars()
         return [self._to_domain(m) for m in rows]
 
+    async def listar_por_huella(self, huella: str) -> list[UsuarioComercio]:
+        # Cajeros cuyo PIN está atado a este dispositivo (§06.5): el ingreso de caja los
+        # identifica por la huella y solo pide el PIN, sin tipear el id de usuario.
+        rows = (
+            await self._s.execute(
+                select(UsuarioComercioModel).where(
+                    UsuarioComercioModel.huella_dispositivo == huella
+                )
+            )
+        ).scalars()
+        return [self._to_domain(m) for m in rows]
+
 
 class SqlAlchemyInvitacionRepository:
     def __init__(self, session: AsyncSession) -> None:

@@ -12,6 +12,7 @@ Uso:  uv run python -m tarjeta.scripts.demo
 from __future__ import annotations
 
 import asyncio
+import os
 import uuid
 from datetime import UTC, date, datetime
 
@@ -42,7 +43,19 @@ from tarjeta.shared.infrastructure.crypto import FieldCipher
 from tarjeta.shared.infrastructure.database import get_sessionmaker
 
 _NS = uuid.uuid5(uuid.NAMESPACE_DNS, "suite-tarjeta.demo")  # namespace estable de la demo
-_PASSWORD = "demo-contrasena-123"  # noqa: S105 - contraseña de datos de demostración
+# Contraseña de los usuarios demo. Configurable por env para pruebas (mín. 10 caracteres).
+_PASSWORD = os.environ.get("TARJETA_DEMO_PASSWORD", "demo-contrasena-123")  # noqa: S105
+# Contraseñas por DNI, fáciles de recordar para las demostraciones (mín. 10 caracteres).
+_PASSWORDS: dict[str, str] = {
+    "20111222": "Back@12345",  # vecino Black
+    "27333444": "Platino@12",  # vecino Platino
+}
+
+
+def _password_de(dni: str) -> str:
+    return _PASSWORDS.get(dni, _PASSWORD)
+
+
 _PIN = "1234"
 
 
@@ -183,12 +196,16 @@ async def _sembrar() -> None:
             if await s.get(PersonaModel, pid) is None:
                 s.add(persona_to_model(p, cipher, pepper))
                 await s.flush()
-            if await s.get(CredencialModel, _did("cred", str(pid))) is None:
+            clave = _password_de(str(p.dni))
+            cred = await s.get(CredencialModel, _did("cred", str(pid)))
+            if cred is None:
                 s.add(
                     CredencialModel(
-                        id=_did("cred", str(pid)), id_persona=pid, hash=hasher.hash(_PASSWORD)
+                        id=_did("cred", str(pid)), id_persona=pid, hash=hasher.hash(clave)
                     )
                 )
+            else:
+                cred.hash = hasher.hash(clave)  # re-setea la contraseña del demo
             # Nivel (lo que lee /ciudadania/mi-estado).
             pc = await s.get(PerfilCiudadanoModel, pid)
             if pc is None:
@@ -214,12 +231,15 @@ async def _sembrar() -> None:
         if await s.get(PersonaModel, cpid) is None:
             s.add(persona_to_model(cajero, cipher, pepper))
             await s.flush()
-        if await s.get(CredencialModel, _did("cred", str(cpid))) is None:
+        cred_cajero = await s.get(CredencialModel, _did("cred", str(cpid)))
+        if cred_cajero is None:
             s.add(
                 CredencialModel(
                     id=_did("cred", str(cpid)), id_persona=cpid, hash=hasher.hash(_PASSWORD)
                 )
             )
+        else:
+            cred_cajero.hash = hasher.hash(_PASSWORD)  # re-setea la contraseña del demo
         id_usuario = _did("usuario", _CUIT_DEMO, str(cpid))
         uc = await s.get(UsuarioComercioModel, id_usuario)
         if uc is None:
@@ -229,7 +249,9 @@ async def _sembrar() -> None:
         uc.sucursales = [str(id_sucursal)]
         uc.estado = "ACTIVO"
         uc.pin_hash = Argon2PinHasher().hash(_PIN)
-        uc.huella_dispositivo = "demo-dispositivo"
+        # Para probar la caja en un teléfono real: exportá TARJETA_DEMO_HUELLA con la huella del
+        # dispositivo (Preferences: tarjeta_huella_dispositivo) antes de correr el demo.
+        uc.huella_dispositivo = os.environ.get("TARJETA_DEMO_HUELLA", "demo-dispositivo")
         uc.pin_intentos = 0
         # Turno abierto = cerrado_en NULL. id_cajero = id del UsuarioComercio (no de la persona).
         id_turno = _did("turno", str(id_usuario))
@@ -313,9 +335,10 @@ async def _sembrar() -> None:
 def main() -> None:
     asyncio.run(_sembrar())
     print(
-        "Demo cargada. Vecinos: DNI 20111222 (Black) y 27333444 (Platino), contraseña "
-        f"'{_PASSWORD}'. Cajero: DNI 23555666, PIN {_PIN}. Comercio 'Comercio Demostración' "
-        "con turno abierto y promos activas."
+        "Demo cargada. Vecino Black: DNI 20111222 / "
+        f"{_password_de('20111222')}. Vecino Platino: DNI 27333444 / {_password_de('27333444')}. "
+        f"Cajero: DNI 23555666, PIN {_PIN}. Comercio 'Comercio Demostración' con turno abierto "
+        "y promos activas."
     )
 
 

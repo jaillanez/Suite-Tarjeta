@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BadgeCheck, ChevronRight, Coins, Ticket, Users } from 'lucide-react';
 import type { EstadoCiudadano, PersonaMe } from '@tarjeta/api-client';
-import { Button, Marca, type Nivel, TarjetaCredencial } from '@tarjeta/ui';
+import { Button, type Nivel, TarjetaCredencial } from '@tarjeta/ui';
+import { CerrarSesion } from '@/components/CerrarSesion';
 import { api } from '@/lib/api';
 import { esSesionVencida, mensajeDeError } from '@/lib/errores';
 
@@ -49,7 +50,7 @@ export default function InicioPage() {
           <p className="truncate text-sm text-muted-foreground">Hola{nombre ? `, ${nombre}` : ''}</p>
           <h1 className="text-xl font-bold">Tu tarjeta de {municipio}</h1>
         </div>
-        <Marca variante="emblema" alto={28} />
+        <CerrarSesion compact />
       </header>
 
       {error && !estado ? (
