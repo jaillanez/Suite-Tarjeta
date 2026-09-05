@@ -2,6 +2,7 @@
 # Compila el AAB FIRMADO de publicación (§15.4). Genera el keystore si no existe y guarda su
 # contraseña en config/produccion.env. Pensado para macOS con el Android SDK.
 set -euo pipefail
+umask 077  # los archivos que cree este script (config, keystore) quedan solo para el usuario
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MOVIL="$RAIZ/apps/mobile"
@@ -31,16 +32,21 @@ if [ -z "${STORE_PASS:-}" ]; then
   grep -v -E '^ANDROID_KEYSTORE_PASSWORD=' "$CONFIG" > "$CONFIG.tmp" 2>/dev/null || true
   mv "$CONFIG.tmp" "$CONFIG" 2>/dev/null || true
   printf 'ANDROID_KEYSTORE_PASSWORD=%s\n' "$STORE_PASS" >> "$CONFIG"
-  info "Se generó la contraseña del keystore y se guardó en $CONFIG"
+  chmod 600 "$CONFIG"
+  info "Se generó la contraseña del keystore y se guardó en $CONFIG (permisos 600)"
 fi
+# La contraseña se pasa por variable de entorno (no por línea de comandos, que es visible en `ps`).
+export KEYSTORE_PW="$STORE_PASS"
 
 # --- keystore: generarlo si no existe ----------------------------------------
 if [ ! -f "$KEYSTORE" ]; then
   info "Generando el keystore de publicación…"
+  # -storepass:env / -keypass:env leen la contraseña de la variable de entorno, no del `ps`.
   keytool -genkeypair -v -keystore "$KEYSTORE" -alias "$ALIAS" \
     -keyalg RSA -keysize 2048 -validity 10000 \
-    -storepass "$STORE_PASS" -keypass "$STORE_PASS" \
+    -storepass:env KEYSTORE_PW -keypass:env KEYSTORE_PW \
     -dname "CN=Tarjeta de Beneficios, O=Municipio de Rivadavia, L=Rivadavia, ST=San Juan, C=AR"
+  chmod 600 "$KEYSTORE"
   echo
   aviso "###############################################################################"
   aviso "# ATENCIÓN: RESGUARDÁ config/tarjeta-release.jks Y SU CONTRASEÑA.              #"
@@ -57,11 +63,21 @@ cd "$MOVIL"
 pnpm exec cap sync android
 info "Compilando AAB firmado (bundleRelease)…"
 cd "$MOVIL/android"
-./gradlew bundleRelease \
-  -Pandroid.injected.signing.store.file="$KEYSTORE" \
-  -Pandroid.injected.signing.store.password="$STORE_PASS" \
-  -Pandroid.injected.signing.key.alias="$ALIAS" \
-  -Pandroid.injected.signing.key.password="$STORE_PASS"
+# Las credenciales de firma van en un gradle.properties temporal (permisos 600) que Gradle lee
+# solo, NO en la línea de comandos (que sería visible en `ps`). Se restaura al salir.
+GP="gradle.properties"
+GP_BACKUP=""
+[ -f "$GP" ] && { GP_BACKUP="$(mktemp)"; cp "$GP" "$GP_BACKUP"; }
+_restaurar_gp() { if [ -n "$GP_BACKUP" ]; then mv -f "$GP_BACKUP" "$GP"; else rm -f "$GP"; fi; }
+trap _restaurar_gp EXIT
+{
+  echo "android.injected.signing.store.file=$KEYSTORE"
+  echo "android.injected.signing.store.password=$STORE_PASS"
+  echo "android.injected.signing.key.alias=$ALIAS"
+  echo "android.injected.signing.key.password=$STORE_PASS"
+} >> "$GP"
+chmod 600 "$GP"
+./gradlew bundleRelease
 
 mkdir -p "$SALIDA_DIR"
 cp "$MOVIL/android/app/build/outputs/bundle/release/app-release.aab" "$SALIDA"
