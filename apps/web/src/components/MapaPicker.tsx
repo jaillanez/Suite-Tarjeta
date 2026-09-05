@@ -1,17 +1,19 @@
 'use client';
 
 // Mapa con pin arrastrable (Leaflet). Se carga solo en el cliente (SSR seguro).
-// §13.0: por ahora los tiles salen del servidor público de OpenStreetMap (solo para pruebas y
-// uso local; su política NO permite producción). Antes de abrir al público se pasa a tiles
-// propios por configuración (NEXT_PUBLIC_TILES_URL), sin recompilar. Ver docs/tiles-mapa.md.
+// §14.1: en desarrollo usa OSM público sin configurar nada; en producción, si no hay tiles propios
+// configurados (NEXT_PUBLIC_TILES_URL), el mapa NO cae al server público: muestra "mapa no
+// disponible" (fail-closed). La distinción es por entorno de compilación. Ver docs/tiles-mapa.md.
 
 import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
+import { resolverTiles } from '@/lib/tiles';
 
-// URL de tiles configurable (sin recompilar). Por defecto, OSM público (ver nota de arriba).
-const TILES_URL =
-  process.env.NEXT_PUBLIC_TILES_URL ?? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-const TILES_ATTR = process.env.NEXT_PUBLIC_TILES_ATTR ?? '© OpenStreetMap contributors';
+const TILES = resolverTiles(
+  process.env.NEXT_PUBLIC_TILES_URL,
+  process.env.NEXT_PUBLIC_TILES_ATTR,
+  process.env.NODE_ENV === 'production',
+);
 
 interface Props {
   lat: number | null;
@@ -25,10 +27,12 @@ export function MapaPicker({ lat, lon, onChange, centro }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
-  // §08.0.C: si los tiles no cargan, un aviso claro en vez de un rectángulo en blanco.
-  const [tilesFallan, setTilesFallan] = useState(false);
+  // §08.0.C / §14.1: si los tiles no cargan (o no hay tiles propios en prod), un aviso claro en
+  // vez de un rectángulo en blanco. Si TILES es null (fail-closed), arranca ya con el aviso.
+  const [tilesFallan, setTilesFallan] = useState(TILES === null);
 
   useEffect(() => {
+    if (TILES === null) return; // fail-closed: sin tiles propios en prod, no se inicializa el mapa
     const nodo = ref.current;
     if (!nodo) return;
     let map: import('leaflet').Map | null = null;
@@ -42,7 +46,7 @@ export function MapaPicker({ lat, lon, onChange, centro }: Props) {
         lon ?? centro?.lon ?? -68.398,
       ];
       map = L.map(nodo).setView(inicial, 14);
-      const capa = L.tileLayer(TILES_URL, { attribution: TILES_ATTR, maxZoom: 19 });
+      const capa = L.tileLayer(TILES.url, { attribution: TILES.attribution, maxZoom: 19 });
       capa.on('tileerror', () => setTilesFallan(true));
       capa.addTo(map);
 
