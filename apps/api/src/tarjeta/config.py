@@ -8,10 +8,15 @@ logo) también son configuración: no se escriben literalmente en ningún otro m
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic import PostgresDsn, RedisDsn, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Raíz de apps/api (…/src/tarjeta/config.py -> parents[2]). Se usa para resolver rutas por defecto
+# (`.env`, datos/) sin depender del directorio desde el que se corra el comando.
+API_ROOT = Path(__file__).resolve().parents[2]
 
 
 class Settings(BaseSettings):
@@ -46,7 +51,9 @@ class Settings(BaseSettings):
     padron_timeout_seconds: float = 5.0
     padron_cache_ttl_seconds: int = 21600  # 6 h
     padron_modo: Literal["real", "simulacion"] = "simulacion"
-    padron_sim_archivo: str = "datos/padron.yaml"  # YAML por DNI/CUIT (§13.1), recarga en caliente
+    # YAML por DNI/CUIT (§13.1), recarga en caliente. Ruta absoluta a apps/api/datos para no
+    # depender del directorio de ejecución.
+    padron_sim_archivo: str = str(API_ROOT / "datos" / "padron.yaml")
 
     # Seguridad
     jwt_secret: SecretStr
@@ -142,7 +149,12 @@ class Settings(BaseSettings):
     # (PRESENCIAL/DOCUMENTAL) para ciertas operaciones futuras, se podrá prender.
     ff_exigir_identidad_verificada: bool = False
 
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="TARJETA_", extra="ignore")
+    # env_file con ruta absoluta a apps/api/.env: así el `.env` se carga aunque el comando se corra
+    # desde otro directorio (p. ej. `uv run --project apps/api ...` desde la raíz del repo). En CI
+    # y prod no hay `.env` y pydantic lo ignora, usando las variables de entorno.
+    model_config = SettingsConfigDict(
+        env_file=str(API_ROOT / ".env"), env_prefix="TARJETA_", extra="ignore"
+    )
 
 
 @lru_cache
